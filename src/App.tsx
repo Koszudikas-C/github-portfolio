@@ -45,6 +45,7 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
   const [selectedLanguage, setSelectedLanguage] = useState<string>("Todas");
   const [visibilityFilter, setVisibilityFilter] = useState<"Todos" | "Publicos" | "Privados">("Todos");
+  const [sortOrder, setSortOrder] = useState<"default" | "recent" | "oldest">("default");
   const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null);
 
   // 1. Estatísticas gerais
@@ -80,7 +81,7 @@ export default function App() {
 
   // 3. Filtragem de repositórios
   const filteredRepos = useMemo(() => {
-    return repositories.filter(repo => {
+    let filtered = repositories.filter(repo => {
       const matchesSearch = 
         repo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         repo.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -96,29 +97,40 @@ export default function App() {
 
       return matchesSearch && matchesCategory && matchesLanguage && matchesVisibility;
     });
-  }, [searchQuery, selectedCategory, selectedLanguage, visibilityFilter]);
+
+    if (sortOrder === "recent") {
+      filtered = filtered.sort((a, b) => b.id - a.id);
+    } else if (sortOrder === "oldest") {
+      filtered = filtered.sort((a, b) => a.id - b.id);
+    }
+
+    return filtered;
+  }, [searchQuery, selectedCategory, selectedLanguage, visibilityFilter, sortOrder]);
 
   return (
-    <div className="min-h-screen bg-[#070b13] text-[#f3f4f6] font-sans selection:bg-[#aa3bff]/30 selection:text-white pb-20">
+    <div className="min-h-screen bg-[#070b13] text-[#f3f4f6] font-sans selection:bg-[#2563eb]/30 selection:text-white pb-20">
       
       {/* Background Decorativo */}
       <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-[#180f33]/30 via-transparent to-transparent pointer-events-none z-0" />
       <div className="absolute top-[-10%] left-[20%] w-[400px] h-[400px] bg-[#6366f1]/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] bg-[#aa3bff]/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] bg-[#2563eb]/10 rounded-full blur-[150px] pointer-events-none" />
 
       {/* Header */}
       <header className="relative z-10 max-w-7xl mx-auto px-6 pt-12 pb-6 border-b border-[#ffffff]/5">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
             <div className="flex items-center gap-3">
-              <span className="px-3 py-1 text-xs font-semibold bg-[#aa3bff]/20 text-[#c084fc] rounded-full border border-[#aa3bff]/30 animate-pulse">
+              <span className="px-3 py-1 text-xs font-semibold bg-[#2563eb]/20 text-[#3b82f6] rounded-full border border-[#2563eb]/30 animate-pulse">
                 Projetos & Portfólio
               </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mt-3">
               <span className="text-gradient">Koszudikas-C</span>.dev
             </h1>
-            <p className="text-[#9ca3af] mt-2 text-lg max-w-2xl font-light">
+            <h2 className="text-xl md:text-2xl font-medium text-[#3b82f6] mt-1">
+              Matheus Gomes
+            </h2>
+            <p className="text-[#9ca3af] mt-3 text-lg max-w-2xl font-light">
               Exploração técnica de sistemas embarcados de IA, criptografia blockchain, raspagem de dados escalável e arquiteturas limpas.
             </p>
           </div>
@@ -129,7 +141,7 @@ export default function App() {
               rel="noreferrer"
               className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all font-medium text-sm text-[#f3f4f6]"
             >
-              <svg className="w-5 h-5 text-[#c084fc]" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-5 h-5 text-[#3b82f6]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.08-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.18 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" />
               </svg>
               Ver perfil no GitHub
@@ -146,7 +158,7 @@ export default function App() {
           
           {/* Card Geral */}
           <div className="glass-panel p-6 rounded-2xl">
-            <h2 className="text-lg font-semibold flex items-center gap-2 text-[#c084fc]">
+            <h2 className="text-lg font-semibold flex items-center gap-2 text-[#3b82f6]">
               <Layers className="w-5 h-5" />
               Estatísticas Gerais
             </h2>
@@ -161,18 +173,18 @@ export default function App() {
               </div>
               <div className="text-center bg-white/5 p-3 rounded-xl border border-white/5">
                 <span className="text-xs text-[#9ca3af] block">Privados</span>
-                <span className="text-2xl font-bold text-purple-400">{stats.privateCount}</span>
+                <span className="text-2xl font-bold text-slate-400">{stats.privateCount}</span>
               </div>
             </div>
           </div>
 
           {/* Gráfico de Linguagens */}
           <div className="glass-panel p-6 rounded-2xl flex flex-col">
-            <h2 className="text-lg font-semibold flex items-center gap-2 text-[#c084fc] mb-4">
+            <h2 className="text-lg font-semibold flex items-center gap-2 text-[#3b82f6] mb-4">
               <Code className="w-5 h-5" />
               Linguagens Utilizadas
             </h2>
-            <div className="w-full h-[180px]">
+            <div className="w-full h-[220px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={stats.langData} layout="vertical" margin={{ left: -10, right: 10, top: 0, bottom: 0 }}>
                   <XAxis type="number" hide />
@@ -183,6 +195,7 @@ export default function App() {
                     tickLine={false} 
                     tick={{ fill: '#d1d5db', fontSize: 12 }} 
                     width={80}
+                    interval={0}
                   />
                   <Tooltip 
                     cursor={{ fill: 'rgba(255,255,255,0.05)' }}
@@ -224,7 +237,7 @@ export default function App() {
                   placeholder="Pesquisar por nome do repositório, descrição ou tecnologia..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-sm text-[#f3f4f6] placeholder-[#9ca3af] focus:outline-none focus:border-[#aa3bff] focus:ring-1 focus:ring-[#aa3bff] transition-all"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-sm text-[#f3f4f6] placeholder-[#9ca3af] focus:outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb] transition-all"
                 />
                 {searchQuery && (
                   <button 
@@ -240,21 +253,46 @@ export default function App() {
               <div className="flex p-1 bg-white/5 border border-white/5 rounded-xl self-stretch md:self-auto">
                 <button 
                   onClick={() => setVisibilityFilter("Todos")}
-                  className={`flex-1 md:flex-none px-4 py-2 text-xs font-medium rounded-lg transition-all ${visibilityFilter === "Todos" ? "bg-[#aa3bff] text-white shadow-lg shadow-[#aa3bff]/30" : "text-[#9ca3af] hover:text-white"}`}
+                  className={`flex-1 md:flex-none px-4 py-2 text-xs font-medium rounded-lg transition-all ${visibilityFilter === "Todos" ? "bg-[#2563eb] text-white shadow-lg shadow-[#2563eb]/30" : "text-[#9ca3af] hover:text-white"}`}
                 >
                   Todos
                 </button>
                 <button 
                   onClick={() => setVisibilityFilter("Publicos")}
-                  className={`flex-1 md:flex-none px-4 py-2 text-xs font-medium rounded-lg transition-all ${visibilityFilter === "Publicos" ? "bg-[#aa3bff] text-white shadow-lg shadow-[#aa3bff]/30" : "text-[#9ca3af] hover:text-white"}`}
+                  className={`flex-1 md:flex-none px-4 py-2 text-xs font-medium rounded-lg transition-all ${visibilityFilter === "Publicos" ? "bg-[#2563eb] text-white shadow-lg shadow-[#2563eb]/30" : "text-[#9ca3af] hover:text-white"}`}
                 >
                   Públicos
                 </button>
                 <button 
                   onClick={() => setVisibilityFilter("Privados")}
-                  className={`flex-1 md:flex-none px-4 py-2 text-xs font-medium rounded-lg transition-all ${visibilityFilter === "Privados" ? "bg-[#aa3bff] text-white shadow-lg shadow-[#aa3bff]/30" : "text-[#9ca3af] hover:text-white"}`}
+                  className={`flex-1 md:flex-none px-4 py-2 text-xs font-medium rounded-lg transition-all ${visibilityFilter === "Privados" ? "bg-[#2563eb] text-white shadow-lg shadow-[#2563eb]/30" : "text-[#9ca3af] hover:text-white"}`}
                 >
                   Privados
+                </button>
+              </div>
+            </div>
+
+            {/* Linha 1.5: Ordenação */}
+            <div className="flex flex-wrap items-center gap-2 text-xs border-t border-white/5 pt-4">
+              <span className="text-[#9ca3af] font-medium mr-2">Ordenar por:</span>
+              <div className="flex p-1 bg-white/5 border border-white/5 rounded-xl">
+                <button 
+                  onClick={() => setSortOrder("default")}
+                  className={`px-4 py-2 text-xs font-medium rounded-lg transition-all ${sortOrder === "default" ? "bg-[#2563eb] text-white shadow-lg shadow-[#2563eb]/30" : "text-[#9ca3af] hover:text-white"}`}
+                >
+                  Padrão
+                </button>
+                <button 
+                  onClick={() => setSortOrder("recent")}
+                  className={`px-4 py-2 text-xs font-medium rounded-lg transition-all ${sortOrder === "recent" ? "bg-[#2563eb] text-white shadow-lg shadow-[#2563eb]/30" : "text-[#9ca3af] hover:text-white"}`}
+                >
+                  Mais Recentes
+                </button>
+                <button 
+                  onClick={() => setSortOrder("oldest")}
+                  className={`px-4 py-2 text-xs font-medium rounded-lg transition-all ${sortOrder === "oldest" ? "bg-[#2563eb] text-white shadow-lg shadow-[#2563eb]/30" : "text-[#9ca3af] hover:text-white"}`}
+                >
+                  Mais Antigos
                 </button>
               </div>
             </div>
@@ -265,7 +303,7 @@ export default function App() {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 text-xs font-semibold rounded-xl border transition-all ${selectedCategory === cat ? "bg-[#aa3bff]/20 text-[#c084fc] border-[#aa3bff]/50" : "bg-white/5 text-[#9ca3af] border-transparent hover:bg-white/10 hover:text-white"}`}
+                  className={`px-4 py-2 text-xs font-semibold rounded-xl border transition-all ${selectedCategory === cat ? "bg-[#2563eb]/20 text-[#3b82f6] border-[#2563eb]/50" : "bg-white/5 text-[#9ca3af] border-transparent hover:bg-white/10 hover:text-white"}`}
                 >
                   {cat}
                 </button>
@@ -296,24 +334,24 @@ export default function App() {
                   <article 
                     key={repo.id}
                     onClick={() => setSelectedRepo(repo)}
-                    className="group relative cursor-pointer glass-panel p-6 rounded-2xl hover:border-[#aa3bff]/50 hover:shadow-xl hover:shadow-[#aa3bff]/5 transition-all duration-300 flex flex-col justify-between"
+                    className="group relative cursor-pointer glass-panel p-6 rounded-2xl hover:border-[#2563eb]/50 hover:shadow-xl hover:shadow-[#2563eb]/5 transition-all duration-300 flex flex-col justify-between"
                   >
                     <div>
                       {/* Top Header Card */}
                       <div className="flex items-center justify-between gap-3 mb-4">
                         <div className="flex items-center gap-2">
-                          <CategoryIcon className="w-5 h-5 text-[#c084fc] group-hover:scale-110 transition-transform" />
+                          <CategoryIcon className="w-5 h-5 text-[#3b82f6] group-hover:scale-110 transition-transform" />
                           <span className="text-[10px] text-[#9ca3af] tracking-wider uppercase font-semibold">
                             {repo.category}
                           </span>
                         </div>
-                        <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-md border ${repo.private ? "bg-purple-950/40 text-purple-300 border-purple-800/40" : "bg-blue-950/40 text-blue-300 border-blue-800/40"}`}>
+                        <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-md border ${repo.private ? "bg-slate-950/40 text-slate-300 border-slate-800/40" : "bg-blue-950/40 text-blue-300 border-blue-800/40"}`}>
                           {repo.private ? "Privado" : "Público"}
                         </span>
                       </div>
 
                       {/* Nome do Projeto */}
-                      <h3 className="text-lg font-bold text-[#f3f4f6] group-hover:text-[#c084fc] transition-colors leading-snug">
+                      <h3 className="text-lg font-bold text-[#f3f4f6] group-hover:text-[#3b82f6] transition-colors leading-snug">
                         {repo.name}
                       </h3>
 
@@ -335,7 +373,7 @@ export default function App() {
                       </div>
                       
                       {/* Botão Ação */}
-                      <span className="text-[#c084fc] font-semibold group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                      <span className="text-[#3b82f6] font-semibold group-hover:translate-x-1 transition-transform flex items-center gap-1">
                         Ver detalhes &rarr;
                       </span>
                     </div>
@@ -344,7 +382,7 @@ export default function App() {
               })
             ) : (
               <div className="col-span-full glass-panel p-16 rounded-2xl text-center flex flex-col items-center justify-center">
-                <Terminal className="w-12 h-12 text-[#aa3bff] mb-4 opacity-50" />
+                <Terminal className="w-12 h-12 text-[#2563eb] mb-4 opacity-50" />
                 <p className="text-[#f3f4f6] text-lg font-medium">Nenhum repositório encontrado</p>
                 <p className="text-[#9ca3af] text-sm mt-1 max-w-sm">Tente redefinir os filtros de pesquisa para visualizar mais resultados.</p>
                 <button 
@@ -354,7 +392,7 @@ export default function App() {
                     setSelectedLanguage("Todas");
                     setVisibilityFilter("Todos");
                   }} 
-                  className="mt-6 px-5 py-2.5 bg-[#aa3bff] hover:bg-[#b85eff] rounded-xl text-xs font-semibold transition-all shadow-lg shadow-[#aa3bff]/30"
+                  className="mt-6 px-5 py-2.5 bg-[#2563eb] hover:bg-[#1d4ed8] rounded-xl text-xs font-semibold transition-all shadow-lg shadow-[#2563eb]/30"
                 >
                   Limpar todos os filtros
                 </button>
@@ -370,7 +408,7 @@ export default function App() {
           <div className="relative bg-[#0d1425] border border-[#ffffff]/10 rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl shadow-black/80 overflow-hidden animate-in fade-in zoom-in duration-200">
             
             {/* Background Decorativo Modal */}
-            <div className="absolute top-0 left-0 w-full h-[150px] bg-gradient-to-b from-[#aa3bff]/10 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute top-0 left-0 w-full h-[150px] bg-gradient-to-b from-[#2563eb]/10 via-transparent to-transparent pointer-events-none" />
 
             {/* Header Modal */}
             <div className="p-6 border-b border-white/5 flex items-start justify-between gap-6 relative z-10">
@@ -379,7 +417,7 @@ export default function App() {
                   <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-white/5 text-[#9ca3af] border border-white/10 uppercase">
                     {selectedRepo.category}
                   </span>
-                  <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md border ${selectedRepo.private ? "bg-purple-950/40 text-purple-300 border-purple-800/40" : "bg-blue-950/40 text-blue-300 border-blue-800/40"}`}>
+                  <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md border ${selectedRepo.private ? "bg-slate-950/40 text-slate-300 border-slate-800/40" : "bg-blue-950/40 text-blue-300 border-blue-800/40"}`}>
                     {selectedRepo.private ? "Privado" : "Público"}
                   </span>
                   {selectedRepo.stars > 0 && (
@@ -405,7 +443,7 @@ export default function App() {
               {/* Descrição Detalhada */}
               <div>
                 <h4 className="text-xs font-semibold tracking-wider text-[#9ca3af] uppercase mb-2 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-[#c084fc]" />
+                  <FileText className="w-4 h-4 text-[#3b82f6]" />
                   Sobre o Projeto
                 </h4>
                 <p className="text-[#d1d5db] text-sm leading-relaxed whitespace-pre-line font-light">
@@ -416,14 +454,14 @@ export default function App() {
               {/* Stack de Tecnologias */}
               <div>
                 <h4 className="text-xs font-semibold tracking-wider text-[#9ca3af] uppercase mb-3 flex items-center gap-2">
-                  <Code className="w-4 h-4 text-[#c084fc]" />
+                  <Code className="w-4 h-4 text-[#3b82f6]" />
                   Tecnologias Utilizadas
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {selectedRepo.techStack.map((tech) => (
                     <span 
                       key={tech} 
-                      className="px-3 py-1 bg-white/5 border border-white/5 hover:border-[#aa3bff]/30 text-[#f3f4f6] text-xs font-medium rounded-lg transition-all"
+                      className="px-3 py-1 bg-white/5 border border-white/5 hover:border-[#2563eb]/30 text-[#f3f4f6] text-xs font-medium rounded-lg transition-all"
                     >
                       {tech}
                     </span>
@@ -442,7 +480,7 @@ export default function App() {
             {/* Footer Modal */}
             <div className="p-6 border-t border-white/5 bg-[#0b0f1a] flex flex-col sm:flex-row gap-4 items-center justify-between relative z-10">
               <span className="text-xs text-[#9ca3af]">
-                Repositório: <code className="text-purple-300 text-[11px] font-mono">{selectedRepo.fullName}</code>
+                Repositório: <code className="text-slate-300 text-[11px] font-mono">{selectedRepo.fullName}</code>
               </span>
               
               {!selectedRepo.private ? (
@@ -450,7 +488,7 @@ export default function App() {
                   href={selectedRepo.htmlUrl} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-[#aa3bff] hover:bg-[#b85eff] rounded-xl font-semibold text-xs text-white transition-all shadow-lg shadow-[#aa3bff]/30"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-[#2563eb] hover:bg-[#1d4ed8] rounded-xl font-semibold text-xs text-white transition-all shadow-lg shadow-[#2563eb]/30"
                 >
                   <ExternalLink className="w-4 h-4" />
                   Ver Código no GitHub

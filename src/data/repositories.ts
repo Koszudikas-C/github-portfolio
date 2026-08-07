@@ -434,5 +434,35 @@ export const repositories: Repository[] = [
     category: "Web & Front-end",
     details: "Dashboard front-end em tempo real. Conecta via WebSockets ao servidor do minerador C# para exibir estatísticas como hashrate, blocos minerados com sucesso, dificuldade de rede e temperatura da CPU.",
     techStack: ["HTML5", "CSS3", "JavaScript", "WebSockets"]
+  },
+  {
+    id: 1305482666,
+    name: "OrchestratorMarketplacesCs2",
+    fullName: "Koszudikas-C/OrchestratorMarketplacesCs2",
+    htmlUrl: "https://github.com/Koszudikas-C/OrchestratorMarketplacesCs2",
+    description: "Orquestrador de integração e gerenciamento para múltiplos marketplaces de CS2.",
+    language: "C#",
+    stars: 0,
+    forks: 0,
+    issues: 0,
+    private: true,
+    category: "IA, Integração & Automação",
+    details: "Sistema orquestrador em C# responsável por gerenciar e integrar fluxos de dados, estoques e transações financeiras em múltiplos marketplaces de CS2 simultaneamente.",
+    techStack: ["C#", ".NET Core", "API Integration", "Automation"]
+  },
+  {
+    id: 1299422585,
+    name: "github-portfolio",
+    fullName: "Koszudikas-C/github-portfolio",
+    htmlUrl: "https://github.com/Koszudikas-C/github-portfolio",
+    description: "Meu portfólio interativo focado em apresentar projetos do GitHub.",
+    language: "TypeScript",
+    stars: 0,
+    forks: 0,
+    issues: 0,
+    private: false,
+    category: "Web & Front-end",
+    details: "Portfólio interativo em React/TypeScript com design moderno (Glassmorphism), focado em apresentar os projetos em destaque.",
+    techStack: ["React", "TypeScript", "Tailwind CSS", "Vite"]
   }
 ];
