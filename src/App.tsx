@@ -18,17 +18,18 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 
 import { repositories } from './data/repositories';
 import type { Repository } from './data/repositories';
 
-// Mapeamento de cores para linguagens
+// Mapeamento de cores para linguagens (ajustadas para alto contraste em tema escuro)
 const languageColors: Record<string, string> = {
-  "PHP": "#4F5D95",
-  "TypeScript": "#3178C6",
-  "C#": "#178600",
-  "Rust": "#DEA584",
-  "CSS": "#563D7C",
-  "HTML": "#e34c26",
-  "JavaScript": "#f1e05a",
-  "Liquid": "#95bf47",
-  "Default": "#6b7280"
+  "PHP": "#777BB4",
+  "TypeScript": "#38bdf8",
+  "C#": "#22c55e",
+  "Rust": "#fb923c",
+  "CSS": "#a855f7",
+  "HTML": "#f97316",
+  "JavaScript": "#facc15",
+  "Liquid": "#84cc16",
+  "Shell": "#10b981",
+  "Default": "#94a3b8"
 };
 
 // Mapeamento de ícones para categorias
@@ -38,6 +39,32 @@ const categoryIcons: Record<string, any> = {
   "Blockchain & Cripto": Lock,
   "IA, Integração & Automação": Cpu,
   "Estudos & Utilitários": BookOpen
+};
+
+// Tooltip customizado de alto contraste para o gráfico de linguagens
+const CustomLanguageTooltip = ({ active, payload, totalRepos }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    const percentage = totalRepos > 0 ? Math.round((data.Quantidade / totalRepos) * 100) : 0;
+    return (
+      <div className="bg-[#0f172a]/95 backdrop-blur-md border border-slate-700/80 rounded-xl px-3.5 py-2.5 shadow-xl shadow-black/60 min-w-[150px]">
+        <div className="flex items-center gap-2 mb-1.5 border-b border-slate-800 pb-1.5">
+          <span
+            className="w-2.5 h-2.5 rounded-full shrink-0 ring-2 ring-white/20"
+            style={{ backgroundColor: data.color }}
+          />
+          <span className="font-bold text-sm text-white">{data.name}</span>
+        </div>
+        <div className="flex items-center justify-between gap-4 text-xs">
+          <span className="text-slate-300">Repositórios:</span>
+          <span className="font-semibold text-white">
+            {data.Quantidade} <span className="text-slate-400 font-normal">({percentage}%)</span>
+          </span>
+        </div>
+      </div>
+    );
+  }
+  return null;
 };
 
 export default function App() {
@@ -99,9 +126,9 @@ export default function App() {
     });
 
     if (sortOrder === "recent") {
-      filtered = filtered.sort((a, b) => b.id - a.id);
+      filtered = [...filtered].sort((a, b) => b.id - a.id);
     } else if (sortOrder === "oldest") {
-      filtered = filtered.sort((a, b) => a.id - b.id);
+      filtered = [...filtered].sort((a, b) => a.id - b.id);
     }
 
     return filtered;
@@ -116,21 +143,21 @@ export default function App() {
       <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] bg-[#2563eb]/10 rounded-full blur-[150px] pointer-events-none" />
 
       {/* Header */}
-      <header className="relative z-10 max-w-7xl mx-auto px-6 pt-12 pb-6 border-b border-[#ffffff]/5">
+      <header className="relative z-10 max-w-7xl mx-auto px-6 pt-12 pb-8 border-b border-slate-800/80">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
             <div className="flex items-center gap-3">
-              <span className="px-3 py-1 text-xs font-semibold bg-[#2563eb]/20 text-[#3b82f6] rounded-full border border-[#2563eb]/30 animate-pulse">
+              <span className="px-3 py-1 text-xs font-semibold bg-[#2563eb]/20 text-[#60a5fa] rounded-full border border-[#3b82f6]/30">
                 Projetos & Portfólio
               </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mt-3">
               <span className="text-gradient">Koszudikas-C</span>.dev
             </h1>
-            <h2 className="text-xl md:text-2xl font-medium text-[#3b82f6] mt-1">
+            <h2 className="text-xl md:text-2xl font-medium text-[#60a5fa] mt-1">
               Matheus Gomes
             </h2>
-            <p className="text-[#9ca3af] mt-3 text-lg max-w-2xl font-light">
+            <p className="text-slate-300 mt-3 text-base md:text-lg max-w-2xl font-light leading-relaxed">
               Exploração técnica de sistemas embarcados de IA, criptografia blockchain, raspagem de dados escalável e arquiteturas limpas.
             </p>
           </div>
@@ -139,85 +166,156 @@ export default function App() {
               href="https://github.com/Koszudikas-C" 
               target="_blank" 
               rel="noreferrer"
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all font-medium text-sm text-[#f3f4f6]"
+              className="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-slate-800/70 hover:bg-blue-600/20 border border-slate-700 hover:border-blue-500/50 transition-all font-medium text-sm text-white shadow-sm"
             >
-              <svg className="w-5 h-5 text-[#3b82f6]" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-5 h-5 text-[#60a5fa]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.08-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.18 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" />
               </svg>
               Ver perfil no GitHub
-              <ExternalLink className="w-4 h-4 text-[#9ca3af]" />
+              <ExternalLink className="w-4 h-4 text-slate-300" />
             </a>
           </div>
         </div>
       </header>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-6 mt-12 grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <main className="relative z-10 max-w-7xl mx-auto px-6 mt-10 grid grid-cols-1 lg:grid-cols-4 gap-8">
         
         {/* Lado Esquerdo - Estatísticas & Painel (Sticky) */}
         <section className="lg:col-span-1 lg:sticky lg:top-6 h-fit flex flex-col gap-6">
           
           {/* Card Geral */}
           <div className="glass-panel p-6 rounded-2xl">
-            <h2 className="text-lg font-semibold flex items-center gap-2 text-[#3b82f6]">
+            <h2 className="text-base font-semibold flex items-center gap-2 text-[#60a5fa]">
               <Layers className="w-5 h-5" />
               Estatísticas Gerais
             </h2>
-            <div className="grid grid-cols-3 gap-4 mt-6">
-              <div className="text-center bg-white/5 p-3 rounded-xl border border-white/5">
-                <span className="text-xs text-[#9ca3af] block">Total</span>
-                <span className="text-2xl font-bold text-gradient">{stats.total}</span>
-              </div>
-              <div className="text-center bg-white/5 p-3 rounded-xl border border-white/5">
-                <span className="text-xs text-[#9ca3af] block">Públicos</span>
-                <span className="text-2xl font-bold text-blue-400">{stats.publicCount}</span>
-              </div>
-              <div className="text-center bg-white/5 p-3 rounded-xl border border-white/5">
-                <span className="text-xs text-[#9ca3af] block">Privados</span>
-                <span className="text-2xl font-bold text-slate-400">{stats.privateCount}</span>
-              </div>
+            <div className="grid grid-cols-3 gap-3 mt-5">
+              <button
+                onClick={() => setVisibilityFilter("Todos")}
+                className={`text-center p-3 rounded-xl border transition-all cursor-pointer ${
+                  visibilityFilter === "Todos"
+                    ? "bg-blue-500/15 border-blue-500/40 shadow-inner"
+                    : "bg-slate-800/40 border-slate-700/50 hover:bg-slate-800/70 hover:border-slate-600"
+                }`}
+              >
+                <span className="text-xs text-slate-300 block font-medium">Total</span>
+                <span className="text-2xl font-bold text-white mt-0.5 block">{stats.total}</span>
+              </button>
+              <button
+                onClick={() => setVisibilityFilter("Publicos")}
+                className={`text-center p-3 rounded-xl border transition-all cursor-pointer ${
+                  visibilityFilter === "Publicos"
+                    ? "bg-emerald-500/15 border-emerald-500/40 shadow-inner"
+                    : "bg-slate-800/40 border-slate-700/50 hover:bg-slate-800/70 hover:border-slate-600"
+                }`}
+              >
+                <span className="text-xs text-slate-300 block font-medium">Públicos</span>
+                <span className="text-2xl font-bold text-emerald-400 mt-0.5 block">{stats.publicCount}</span>
+              </button>
+              <button
+                onClick={() => setVisibilityFilter("Privados")}
+                className={`text-center p-3 rounded-xl border transition-all cursor-pointer ${
+                  visibilityFilter === "Privados"
+                    ? "bg-amber-500/15 border-amber-500/40 shadow-inner"
+                    : "bg-slate-800/40 border-slate-700/50 hover:bg-slate-800/70 hover:border-slate-600"
+                }`}
+              >
+                <span className="text-xs text-slate-300 block font-medium">Privados</span>
+                <span className="text-2xl font-bold text-amber-300 mt-0.5 block">{stats.privateCount}</span>
+              </button>
             </div>
           </div>
 
           {/* Gráfico de Linguagens */}
           <div className="glass-panel p-6 rounded-2xl flex flex-col">
-            <h2 className="text-lg font-semibold flex items-center gap-2 text-[#3b82f6] mb-4">
-              <Code className="w-5 h-5" />
-              Linguagens Utilizadas
-            </h2>
-            <div className="w-full h-[220px]">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-semibold flex items-center gap-2 text-[#60a5fa]">
+                <Code className="w-5 h-5" />
+                Linguagens Utilizadas
+              </h2>
+              {selectedLanguage !== "Todas" && (
+                <button
+                  onClick={() => setSelectedLanguage("Todas")}
+                  className="text-[11px] text-blue-400 hover:text-blue-300 underline cursor-pointer"
+                >
+                  Limpar
+                </button>
+              )}
+            </div>
+            <div className="w-full h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stats.langData} layout="vertical" margin={{ left: -10, right: 10, top: 0, bottom: 0 }}>
+                <BarChart
+                  data={stats.langData}
+                  layout="vertical"
+                  margin={{ left: -5, right: 12, top: 4, bottom: 4 }}
+                >
                   <XAxis type="number" hide />
                   <YAxis 
                     dataKey="name" 
                     type="category" 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fill: '#d1d5db', fontSize: 12 }} 
-                    width={80}
+                    tick={{ fill: '#e2e8f0', fontSize: 12, fontWeight: 500 }} 
+                    width={82}
                     interval={0}
                   />
                   <Tooltip 
-                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                    contentStyle={{ background: '#111827', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                    cursor={{ fill: 'rgba(59, 130, 246, 0.12)', radius: 6 }}
+                    content={<CustomLanguageTooltip totalRepos={stats.total} />}
                   />
-                  <Bar dataKey="Quantidade" radius={[0, 4, 4, 0]} barSize={12}>
-                    {stats.langData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
+                  <Bar
+                    dataKey="Quantidade"
+                    radius={[0, 6, 6, 0]}
+                    barSize={14}
+                    className="cursor-pointer"
+                    onClick={(data: any) => {
+                      if (data && data.name) {
+                        setSelectedLanguage(prev => prev === data.name ? "Todas" : data.name);
+                      }
+                    }}
+                  >
+                    {stats.langData.map((entry, index) => {
+                      const isSelected = selectedLanguage === "Todas" || selectedLanguage === entry.name;
+                      return (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.color}
+                          fillOpacity={isSelected ? 1 : 0.3}
+                        />
+                      );
+                    })}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
             
-            {/* Lista Legendada */}
-            <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-              {stats.langData.slice(0, 6).map((item) => (
-                <div key={item.name} className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="text-[#d1d5db] truncate">{item.name} ({item.Quantidade})</span>
-                </div>
-              ))}
+            {/* Lista Legendada Interativa */}
+            <div className="mt-4 pt-4 border-t border-slate-800/80 grid grid-cols-2 gap-2 text-xs">
+              {stats.langData.map((item) => {
+                const active = selectedLanguage === item.name;
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => setSelectedLanguage(prev => prev === item.name ? "Todas" : item.name)}
+                    className={`flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-lg border text-left transition-all cursor-pointer ${
+                      active
+                        ? "bg-blue-500/20 border-blue-400/50 text-white font-semibold"
+                        : "bg-slate-800/30 border-transparent hover:bg-slate-800/80 hover:border-slate-700 text-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span
+                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="truncate">{item.name}</span>
+                    </div>
+                    <span className="text-[11px] font-semibold text-slate-300 bg-slate-900/70 px-1.5 py-0.5 rounded">
+                      {item.Quantidade}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -226,23 +324,23 @@ export default function App() {
         <section className="lg:col-span-3 flex flex-col gap-6">
           
           {/* Barra de Filtros e Busca */}
-          <div className="glass-panel p-6 rounded-2xl flex flex-col gap-6">
+          <div className="glass-panel p-6 rounded-2xl flex flex-col gap-5">
             
             {/* Linha 1: Pesquisa e Visibilidade */}
             <div className="flex flex-col md:flex-row gap-4 items-center">
               <div className="relative flex-1 w-full">
-                <Search className="absolute left-4 top-3.5 w-5 h-5 text-[#9ca3af]" />
+                <Search className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
                 <input 
                   type="text" 
                   placeholder="Pesquisar por nome do repositório, descrição ou tecnologia..." 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-sm text-[#f3f4f6] placeholder-[#9ca3af] focus:outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb] transition-all"
+                  className="w-full bg-slate-900/70 border border-slate-700/80 rounded-xl py-3 pl-12 pr-10 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] transition-all"
                 />
                 {searchQuery && (
                   <button 
                     onClick={() => setSearchQuery("")} 
-                    className="absolute right-4 top-3.5 text-[#9ca3af] hover:text-white"
+                    className="absolute right-3.5 top-3.5 text-slate-400 hover:text-white cursor-pointer"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -250,60 +348,69 @@ export default function App() {
               </div>
 
               {/* Filtro Visibilidade */}
-              <div className="flex p-1 bg-white/5 border border-white/5 rounded-xl self-stretch md:self-auto">
+              <div className="flex p-1 bg-slate-900/80 border border-slate-800 rounded-xl self-stretch md:self-auto">
                 <button 
                   onClick={() => setVisibilityFilter("Todos")}
-                  className={`flex-1 md:flex-none px-4 py-2 text-xs font-medium rounded-lg transition-all ${visibilityFilter === "Todos" ? "bg-[#2563eb] text-white shadow-lg shadow-[#2563eb]/30" : "text-[#9ca3af] hover:text-white"}`}
+                  className={`flex-1 md:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${visibilityFilter === "Todos" ? "bg-[#2563eb] text-white shadow-md shadow-[#2563eb]/30" : "text-slate-300 hover:text-white hover:bg-slate-800/60"}`}
                 >
                   Todos
                 </button>
                 <button 
                   onClick={() => setVisibilityFilter("Publicos")}
-                  className={`flex-1 md:flex-none px-4 py-2 text-xs font-medium rounded-lg transition-all ${visibilityFilter === "Publicos" ? "bg-[#2563eb] text-white shadow-lg shadow-[#2563eb]/30" : "text-[#9ca3af] hover:text-white"}`}
+                  className={`flex-1 md:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${visibilityFilter === "Publicos" ? "bg-[#2563eb] text-white shadow-md shadow-[#2563eb]/30" : "text-slate-300 hover:text-white hover:bg-slate-800/60"}`}
                 >
                   Públicos
                 </button>
                 <button 
                   onClick={() => setVisibilityFilter("Privados")}
-                  className={`flex-1 md:flex-none px-4 py-2 text-xs font-medium rounded-lg transition-all ${visibilityFilter === "Privados" ? "bg-[#2563eb] text-white shadow-lg shadow-[#2563eb]/30" : "text-[#9ca3af] hover:text-white"}`}
+                  className={`flex-1 md:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${visibilityFilter === "Privados" ? "bg-[#2563eb] text-white shadow-md shadow-[#2563eb]/30" : "text-slate-300 hover:text-white hover:bg-slate-800/60"}`}
                 >
                   Privados
                 </button>
               </div>
             </div>
 
-            {/* Linha 1.5: Ordenação */}
-            <div className="flex flex-wrap items-center gap-2 text-xs border-t border-white/5 pt-4">
-              <span className="text-[#9ca3af] font-medium mr-2">Ordenar por:</span>
-              <div className="flex p-1 bg-white/5 border border-white/5 rounded-xl">
-                <button 
-                  onClick={() => setSortOrder("default")}
-                  className={`px-4 py-2 text-xs font-medium rounded-lg transition-all ${sortOrder === "default" ? "bg-[#2563eb] text-white shadow-lg shadow-[#2563eb]/30" : "text-[#9ca3af] hover:text-white"}`}
-                >
-                  Padrão
-                </button>
-                <button 
-                  onClick={() => setSortOrder("recent")}
-                  className={`px-4 py-2 text-xs font-medium rounded-lg transition-all ${sortOrder === "recent" ? "bg-[#2563eb] text-white shadow-lg shadow-[#2563eb]/30" : "text-[#9ca3af] hover:text-white"}`}
-                >
-                  Mais Recentes
-                </button>
-                <button 
-                  onClick={() => setSortOrder("oldest")}
-                  className={`px-4 py-2 text-xs font-medium rounded-lg transition-all ${sortOrder === "oldest" ? "bg-[#2563eb] text-white shadow-lg shadow-[#2563eb]/30" : "text-[#9ca3af] hover:text-white"}`}
-                >
-                  Mais Antigos
-                </button>
+            {/* Linha 1.5: Ordenação e Categorias */}
+            <div className="flex flex-wrap items-center justify-between gap-4 text-xs border-t border-slate-800/80 pt-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-slate-300 font-medium mr-1">Ordenar por:</span>
+                <div className="flex p-1 bg-slate-900/80 border border-slate-800 rounded-xl">
+                  <button 
+                    onClick={() => setSortOrder("default")}
+                    className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${sortOrder === "default" ? "bg-[#2563eb] text-white shadow-md shadow-[#2563eb]/30" : "text-slate-300 hover:text-white hover:bg-slate-800/60"}`}
+                  >
+                    Padrão
+                  </button>
+                  <button 
+                    onClick={() => setSortOrder("recent")}
+                    className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${sortOrder === "recent" ? "bg-[#2563eb] text-white shadow-md shadow-[#2563eb]/30" : "text-slate-300 hover:text-white hover:bg-slate-800/60"}`}
+                  >
+                    Mais Recentes
+                  </button>
+                  <button 
+                    onClick={() => setSortOrder("oldest")}
+                    className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${sortOrder === "oldest" ? "bg-[#2563eb] text-white shadow-md shadow-[#2563eb]/30" : "text-slate-300 hover:text-white hover:bg-slate-800/60"}`}
+                  >
+                    Mais Antigos
+                  </button>
+                </div>
               </div>
+              <span className="text-xs text-slate-400">
+                Exibindo <strong className="text-white">{filteredRepos.length}</strong> de {stats.total} projetos
+              </span>
             </div>
 
             {/* Linha 2: Categorias */}
-            <div className="flex flex-wrap gap-2 border-t border-white/5 pt-4">
+            <div className="flex flex-wrap gap-2 border-t border-slate-800/80 pt-4">
               {["Todos", "Web & Front-end", "APIs & Back-end", "Blockchain & Cripto", "IA, Integração & Automação", "Estudos & Utilitários"].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 text-xs font-semibold rounded-xl border transition-all ${selectedCategory === cat ? "bg-[#2563eb]/20 text-[#3b82f6] border-[#2563eb]/50" : "bg-white/5 text-[#9ca3af] border-transparent hover:bg-white/10 hover:text-white"}`}
+                  className={`px-3.5 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
+                    selectedCategory === cat
+                      ? "bg-[#2563eb] text-white border-[#3b82f6] shadow-md shadow-[#2563eb]/25"
+                      : "bg-slate-800/50 text-slate-200 border-slate-700/60 hover:bg-slate-800 hover:text-white hover:border-slate-600"
+                  }`}
                 >
                   {cat}
                 </button>
@@ -311,15 +418,25 @@ export default function App() {
             </div>
 
             {/* Linha 3: Filtro por Linguagem */}
-            <div className="flex flex-wrap items-center gap-2 text-xs border-t border-white/5 pt-4">
-              <span className="text-[#9ca3af] font-medium mr-2">Linguagem:</span>
+            <div className="flex flex-wrap items-center gap-2 text-xs border-t border-slate-800/80 pt-4">
+              <span className="text-slate-300 font-medium mr-1">Linguagem:</span>
               {allLanguages.map((lang) => (
                 <button
                   key={lang}
                   onClick={() => setSelectedLanguage(lang)}
-                  className={`px-3 py-1.5 rounded-lg transition-all ${selectedLanguage === lang ? "bg-white/10 text-white font-semibold" : "text-[#9ca3af] hover:text-white hover:bg-white/5"}`}
+                  className={`px-3 py-1.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 ${
+                    selectedLanguage === lang
+                      ? "bg-blue-500/20 text-white border-blue-400/50 font-semibold"
+                      : "bg-slate-800/30 text-slate-300 border-transparent hover:text-white hover:bg-slate-800/80 hover:border-slate-700"
+                  }`}
                 >
-                  {lang === "Todas" ? "Todas" : lang}
+                  {lang !== "Todas" && (
+                    <span
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: languageColors[lang] || languageColors.Default }}
+                    />
+                  )}
+                  {lang}
                 </button>
               ))}
             </div>
@@ -334,46 +451,74 @@ export default function App() {
                   <article 
                     key={repo.id}
                     onClick={() => setSelectedRepo(repo)}
-                    className="group relative cursor-pointer glass-panel p-6 rounded-2xl hover:border-[#2563eb]/50 hover:shadow-xl hover:shadow-[#2563eb]/5 transition-all duration-300 flex flex-col justify-between"
+                    className="group relative cursor-pointer glass-card p-6 rounded-2xl flex flex-col justify-between overflow-hidden"
                   >
-                    <div>
+                    <div className="min-w-0">
                       {/* Top Header Card */}
-                      <div className="flex items-center justify-between gap-3 mb-4">
-                        <div className="flex items-center gap-2">
-                          <CategoryIcon className="w-5 h-5 text-[#3b82f6] group-hover:scale-110 transition-transform" />
-                          <span className="text-[10px] text-[#9ca3af] tracking-wider uppercase font-semibold">
+                      <div className="flex items-center justify-between gap-2 mb-3.5">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="p-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[#60a5fa] group-hover:bg-blue-500/20 group-hover:text-white transition-colors shrink-0">
+                            <CategoryIcon className="w-4 h-4" />
+                          </div>
+                          <span className="text-[11px] text-slate-300 group-hover:text-slate-200 tracking-wide uppercase font-semibold truncate">
                             {repo.category}
                           </span>
                         </div>
-                        <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-md border ${repo.private ? "bg-slate-950/40 text-slate-300 border-slate-800/40" : "bg-blue-950/40 text-blue-300 border-blue-800/40"}`}>
+                        <span className={`px-2.5 py-0.5 text-[11px] font-semibold rounded-full border shrink-0 ${
+                          repo.private
+                            ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                            : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                        }`}>
                           {repo.private ? "Privado" : "Público"}
                         </span>
                       </div>
 
                       {/* Nome do Projeto */}
-                      <h3 className="text-lg font-bold text-[#f3f4f6] group-hover:text-[#3b82f6] transition-colors leading-snug">
+                      <h3
+                        title={repo.name}
+                        className="text-lg font-bold text-white group-hover:text-[#60a5fa] transition-colors leading-snug truncate"
+                      >
                         {repo.name}
                       </h3>
 
                       {/* Descrição Curta */}
-                      <p className="text-[#9ca3af] text-sm mt-2 line-clamp-2 leading-relaxed">
+                      <p className="text-slate-300 group-hover:text-slate-100 text-sm mt-2 line-clamp-2 leading-relaxed transition-colors">
                         {repo.description || "Nenhuma descrição fornecida."}
                       </p>
+
+                      {/* Mini Tech Stack Badges */}
+                      {repo.techStack && repo.techStack.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-3.5">
+                          {repo.techStack.slice(0, 3).map((tech) => (
+                            <span
+                              key={tech}
+                              className="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-800/80 text-slate-200 border border-slate-700/70 group-hover:border-blue-400/30 group-hover:bg-slate-800 transition-colors"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                          {repo.techStack.length > 3 && (
+                            <span className="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-800/50 text-slate-400">
+                              +{repo.techStack.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Footer do Card */}
-                    <div className="border-t border-white/5 pt-4 mt-4 flex items-center justify-between text-xs">
+                    <div className="border-t border-slate-800/80 group-hover:border-blue-500/30 pt-4 mt-5 flex items-center justify-between text-xs transition-colors">
                       {/* Linguagem Badge */}
                       <div className="flex items-center gap-2">
                         <span 
-                          className="w-2.5 h-2.5 rounded-full" 
+                          className="w-2.5 h-2.5 rounded-full ring-2 ring-white/10" 
                           style={{ backgroundColor: languageColors[repo.language] || languageColors.Default }}
                         />
-                        <span className="text-[#d1d5db] font-medium">{repo.language || "Outra"}</span>
+                        <span className="text-slate-200 font-medium">{repo.language || "Outra"}</span>
                       </div>
                       
                       {/* Botão Ação */}
-                      <span className="text-[#3b82f6] font-semibold group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                      <span className="text-[#60a5fa] group-hover:text-white font-semibold group-hover:translate-x-1 transition-all flex items-center gap-1">
                         Ver detalhes &rarr;
                       </span>
                     </div>
@@ -382,9 +527,9 @@ export default function App() {
               })
             ) : (
               <div className="col-span-full glass-panel p-16 rounded-2xl text-center flex flex-col items-center justify-center">
-                <Terminal className="w-12 h-12 text-[#2563eb] mb-4 opacity-50" />
-                <p className="text-[#f3f4f6] text-lg font-medium">Nenhum repositório encontrado</p>
-                <p className="text-[#9ca3af] text-sm mt-1 max-w-sm">Tente redefinir os filtros de pesquisa para visualizar mais resultados.</p>
+                <Terminal className="w-12 h-12 text-[#60a5fa] mb-4 opacity-70" />
+                <p className="text-white text-lg font-medium">Nenhum repositório encontrado</p>
+                <p className="text-slate-300 text-sm mt-1 max-w-sm">Tente redefinir os filtros de pesquisa para visualizar mais resultados.</p>
                 <button 
                   onClick={() => {
                     setSearchQuery("");
@@ -392,7 +537,7 @@ export default function App() {
                     setSelectedLanguage("Todas");
                     setVisibilityFilter("Todos");
                   }} 
-                  className="mt-6 px-5 py-2.5 bg-[#2563eb] hover:bg-[#1d4ed8] rounded-xl text-xs font-semibold transition-all shadow-lg shadow-[#2563eb]/30"
+                  className="mt-6 px-5 py-2.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white rounded-xl text-xs font-semibold transition-all shadow-lg shadow-[#2563eb]/30 cursor-pointer"
                 >
                   Limpar todos os filtros
                 </button>

@@ -157,7 +157,7 @@ export const repositories: Repository[] = [
     htmlUrl: "https://github.com/Koszudikas-C/purple_deco_theme",
     description: "Tema personalizado desenvolvido do zero em Liquid para e-commerce Shopify.",
     language: "Liquid",
-    stars: 0,
+    stars: 1,
     forks: 0,
     issues: 0,
     private: true,
@@ -215,15 +215,15 @@ export const repositories: Repository[] = [
     name: "ExtensionWebDrive",
     fullName: "Koszudikas-C/ExtensionWebDrive",
     htmlUrl: "https://github.com/Koszudikas-C/ExtensionWebDrive",
-    description: "Extensão para controle remoto e automação Web baseada em comandos.",
+    description: "Extensão Manifest V3 com Event Bus bidirecional para extração criptografada do WhatsApp Web e integração 99Freelas.",
     language: "TypeScript",
     stars: 0,
     forks: 0,
-    issues: 1,
+    issues: 0,
     private: true,
     category: "IA, Integração & Automação",
-    details: "Extensão para automatizar processos de preenchimento de formulários, scraping e web-driving diretamente de páginas abertas. Funciona enviando comandos via websockets e processando ações no DOM de maneira transparente.",
-    techStack: ["TypeScript", "Chrome Extensions", "WebSockets", "DOM Automation"]
+    details: "Extensão Chrome/Edge (Manifest V3) que atua como ponte bidirecional (Event Bus) e motor de extração 100% local com criptografia via Web Crypto API. Integra o motor WPPConnect para sincronização em lotes de conversas do WhatsApp Web e extrai oportunidades autenticadas do 99Freelas diretamente para o painel do ecossistema AIFreelas.",
+    techStack: ["TypeScript", "Chrome Extension MV3", "WPPConnect", "Web Crypto API", "Webpack"]
   },
   {
     id: 1015028188,
@@ -290,15 +290,15 @@ export const repositories: Repository[] = [
     name: "AIFreelas",
     fullName: "Koszudikas-C/AIFreelas",
     htmlUrl: "https://github.com/Koszudikas-C/AIFreelas",
-    description: "Núcleo de processamento e orquestração de Inteligência Artificial para freelancers.",
+    description: "Plataforma em .NET 10 para calibração estatística de persona, funil comercial e negociação assistida por IA multimodelo.",
     language: "C#",
     stars: 0,
     forks: 0,
     issues: 0,
-    private: false,
+    private: true,
     category: "IA, Integração & Automação",
-    details: "Back-end robusto feito em C# que orquestra tarefas automáticas como processamento de áudios de clientes, transcrição, geração de rascunhos de propostas de contratos e resposta inteligente a dúvidas frequentes.",
-    techStack: ["C#", ".NET Core", "OpenAI API", "Whisper API", "Entity Framework"]
+    details: "Back-end em .NET 10 e C# 13 estruturado em Clean Architecture, DDD e CQRS com PostgreSQL + pgvector e mais de 470 testes automatizados. Realiza calibração estatística de persona a partir de conversas reais do WhatsApp, negociação assistida em duas etapas (Response Planner + Voice Renderer), ingestão de funil comercial (99Freelas/WhatsApp) e sanitização avançada contra prompt injection.",
+    techStack: ["C#", ".NET 10", "PostgreSQL", "pgvector", "Clean Architecture", "OpenAI / Gemini", "Ollama"]
   },
   {
     id: 862967594,
@@ -320,15 +320,15 @@ export const repositories: Repository[] = [
     name: "ProviderAuth",
     fullName: "Koszudikas-C/ProviderAuth",
     htmlUrl: "https://github.com/Koszudikas-C/ProviderAuth",
-    description: "Provedor de autenticação centralizado e Identity Server customizado.",
+    description: "Microsserviço de identidade e autenticação centralizada multi-device em ASP.NET Core.",
     language: "C#",
     stars: 0,
     forks: 0,
     issues: 0,
     private: true,
     category: "APIs & Back-end",
-    details: "Microsserviço de autenticação e autorização (Identity Provider). Suporta protocolos OAuth2/OpenID Connect para centralizar o login e chaves de segurança dos diferentes sistemas do ecossistema do usuário.",
-    techStack: ["C#", "ASP.NET Core", "IdentityServer", "OAuth2", "PostgreSQL"]
+    details: "Microsserviço de autenticação e autorização (Identity API) em ASP.NET Core com controle de sessões simultâneas por dispositivo (deviceToken), RBAC completo (Roles e Policies), webhooks de eventos de segurança, documentação técnica para integração de Agentes IA e suíte com 230+ testes automatizados (>85% de cobertura).",
+    techStack: ["C#", ".NET 10", "ASP.NET Core", "JWT / Multi-Device", "PostgreSQL", "Docker", "xUnit"]
   },
   {
     id: 1282224358,
@@ -410,15 +410,15 @@ export const repositories: Repository[] = [
     name: "AIFreelas-SIte",
     fullName: "Koszudikas-C/AIFreelas-SIte",
     htmlUrl: "https://github.com/Koszudikas-C/AIFreelas-SIte",
-    description: "Interface e site oficial do ecossistema AIFreelas para profissionais independentes.",
+    description: "Front-end em Angular do ecossistema AIFreelas com Cockpit de negociação, calibração de persona e integração 99Freelas.",
     language: "TypeScript",
     stars: 0,
     forks: 0,
     issues: 0,
     private: true,
     category: "Web & Front-end",
-    details: "Frontend do ecossistema AIFreelas. Permite aos usuários gerenciar projetos, criar propostas geradas por IA, visualizar chats e acompanhar orçamentos. Altamente responsivo e interativo.",
-    techStack: ["TypeScript", "React", "Next.js", "Tailwind CSS", "Recharts"]
+    details: "Aplicação web moderna em Angular e SCSS do ecossistema AIFreelas. Oferece Cockpit de negociação com perfil enriquecido do cliente, funil comercial, calibração de persona, quality gate (Laya) e comunicação em tempo real via Content Script Bridge com a extensão para importação de oportunidades do 99Freelas e WhatsApp.",
+    techStack: ["Angular", "TypeScript", "SCSS", "RxJS", "Vitest", "Extension Bridge"]
   },
   {
     id: 1006011475,
@@ -440,15 +440,15 @@ export const repositories: Repository[] = [
     name: "OrchestratorMarketplacesCs2",
     fullName: "Koszudikas-C/OrchestratorMarketplacesCs2",
     htmlUrl: "https://github.com/Koszudikas-C/OrchestratorMarketplacesCs2",
-    description: "Orquestrador de integração e gerenciamento para múltiplos marketplaces de CS2.",
+    description: "Sistema de inteligência e arbitragem automatizada de skins de CS2 em 7 marketplaces e Steam.",
     language: "C#",
     stars: 0,
     forks: 0,
     issues: 0,
     private: true,
     category: "IA, Integração & Automação",
-    details: "Sistema orquestrador em C# responsável por gerenciar e integrar fluxos de dados, estoques e transações financeiras em múltiplos marketplaces de CS2 simultaneamente.",
-    techStack: ["C#", ".NET Core", "API Integration", "Automation"]
+    details: "Plataforma completa em .NET 10 com Clean Architecture, DDD e interface desktop híbrida (.NET MAUI + MudBlazor). Monitora 7 marketplaces em tempo real (CSFloat, DMarket, Skinport, BuffMarket, BleikStore, ShadowPay e CubeSkins), coleta orderbooks em massa da Steam (Harvester), calcula taxas/liquidez e transmite oportunidades via SignalR com resiliência Polly.",
+    techStack: ["C#", ".NET 10", ".NET MAUI", "MudBlazor", "SignalR", "EF Core SQLite", "Polly", "Docker"]
   },
   {
     id: 1299422585,
@@ -462,7 +462,52 @@ export const repositories: Repository[] = [
     issues: 0,
     private: false,
     category: "Web & Front-end",
-    details: "Portfólio interativo em React/TypeScript com design moderno (Glassmorphism), focado em apresentar os projetos em destaque.",
-    techStack: ["React", "TypeScript", "Tailwind CSS", "Vite"]
+    details: "Portfólio interativo em React/TypeScript com design moderno (Glassmorphism), gráficos analíticos interativos e filtros dinâmicos para apresentação dos projetos e arquiteturas.",
+    techStack: ["React", "TypeScript", "Tailwind CSS", "Recharts", "Vite"]
+  },
+  {
+    id: 1341376090,
+    name: "InstaFlow",
+    fullName: "Koszudikas-C/InstaFlow",
+    htmlUrl: "https://github.com/Koszudikas-C/InstaFlow",
+    description: "Automação desktop híbrida com navegador anti-detecção, resolução de Captcha com IA Vision/ONNX e gestão de contas.",
+    language: "C#",
+    stars: 0,
+    forks: 0,
+    issues: 0,
+    private: true,
+    category: "IA, Integração & Automação",
+    details: "Aplicação desktop híbrida em .NET 10 (Windows Forms + Blazor WebView) para automação em lote com navegador anti-detecção (Camoufox/CloakBrowser via Playwright), controle de fingerprint e telemetria, suporte a múltiplos modos de proxy, integração OAuth2/IMAP (Gmail via Cloud Pub/Sub e Outlook) para captura automática de códigos OTP, resolução multi-estágio de Captcha (ONNX local + DeepSeek Vision + Gemini) e criptografia autenticada AES-256-GCM com persistência em SQLite.",
+    techStack: ["C#", ".NET 10", "Blazor Hybrid", "Playwright", "ONNX Runtime", "Gemini Vision", "SQLite", "AES-256-GCM"]
+  },
+  {
+    id: 1393327124,
+    name: "runner",
+    fullName: "Koszudikas-C/runner",
+    htmlUrl: "https://github.com/Koszudikas-C/runner",
+    description: "Motor em Rust de alta performance para inteligência cadastral da Receita Federal e automação de e-mails.",
+    language: "Rust",
+    stars: 0,
+    forks: 0,
+    issues: 0,
+    private: true,
+    category: "IA, Integração & Automação",
+    details: "Motor modular de alta performance em Rust projetado para leitura em streaming de datasets massivos (7GB+) da Receita Federal do Brasil (RFB), filtragem seletiva por CNAE, enriquecimento de inteligência comercial, controle de estado transacional em SQLite e automação de disparos e leitura de bounces (NDR) via Microsoft Graph API com OAuth2, rotação Round-Robin e anti-spam jitter.",
+    techStack: ["Rust", "SQLite", "Microsoft Graph API", "OAuth2", "Streaming I/O", "CLI"]
+  },
+  {
+    id: 1411669749,
+    name: "Project-AIFreelas",
+    fullName: "Koszudikas-C/Project-AIFreelas",
+    htmlUrl: "https://github.com/Koszudikas-C/Project-AIFreelas",
+    description: "Infraestrutura Kubernetes (K3s), automação DevOps e suíte de testes de API do ecossistema AIFreelas.",
+    language: "Shell",
+    stars: 0,
+    forks: 0,
+    issues: 0,
+    private: true,
+    category: "IA, Integração & Automação",
+    details: "Repositório central de infraestrutura, orquestração e governança do ecossistema AIFreelas. Contém manifestos e overlays Kubernetes (K3s) para ambientes de desenvolvimento e produção, scripts de provisionamento e migração de bancos de dados, limpeza automatizada multiplataforma (Linux/Windows) e coleções completas do Postman com geração dinâmica de device fingerprint.",
+    techStack: ["Kubernetes (K3s)", "Shell Script", "Python", "PowerShell", "Postman", "DevOps"]
   }
 ];
