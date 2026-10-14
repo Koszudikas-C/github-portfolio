@@ -233,9 +233,14 @@ export default function App() {
                 </span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mt-2.5">
-                <span className="text-gradient">Koszudikas-C</span>.dev
-              </h1>
+              <div className="flex items-center gap-3 mt-2.5">
+                <div className="p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-blue-500/20 via-indigo-500/20 to-cyan-500/20 border border-blue-400/40 text-[#38bdf8] shadow-lg shadow-blue-500/15 shrink-0 flex items-center justify-center">
+                  <Terminal className="w-6 h-6 sm:w-7 sm:h-7 text-[#38bdf8]" />
+                </div>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+                  <span className="text-gradient">Koszudikas-C</span>.dev
+                </h1>
+              </div>
               <p className="text-lg sm:text-xl font-medium text-[#60a5fa] mt-0.5">
                 Matheus Gomes <span className="text-slate-500 font-normal text-sm sm:text-base">• Full-Stack & Systems Architect</span>
               </p>
@@ -993,7 +998,13 @@ export default function App() {
       )}
 
       {/* Footer Geral */}
-      <footer className="max-w-7xl mx-auto px-6 mt-20 text-center text-xs text-slate-400 border-t border-slate-800/80 pt-8">
+      <footer className="max-w-7xl mx-auto px-6 mt-20 text-center text-xs text-slate-400 border-t border-slate-800/80 pt-8 pb-10 flex flex-col items-center justify-center gap-2.5">
+        <div className="flex items-center gap-2 text-slate-300">
+          <div className="p-1.5 rounded-lg bg-blue-500/10 border border-blue-500/30 text-[#38bdf8] flex items-center justify-center">
+            <Terminal className="w-3.5 h-3.5 text-[#38bdf8]" />
+          </div>
+          <span className="font-bold text-white tracking-wide">Koszudikas-C.dev</span>
+        </div>
         <p>&copy; {new Date().getFullYear()} Koszudikas-C (Matheus Gomes). Construído com React, TypeScript, Tailwind CSS e Recharts.</p>
       </footer>
 
