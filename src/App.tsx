@@ -28,11 +28,15 @@ import {
   ArrowRight,
   Check,
   Loader2,
-  Hand
+  Hand,
+  Menu
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
 import { repositories } from './data/repositories';
 import type { Repository } from './data/repositories';
+import avatarTransparentImg from './assets/avatar-transparent.png';
+import avatarProfileImg from './assets/avatar-profile.png';
+import { useLanguage } from './i18n/useLanguage';
 
 // Mapeamento de cores para linguagens
 const languageColors: Record<string, string> = {
@@ -122,6 +126,10 @@ const CustomLanguageTooltip = ({ active, payload, totalRepos }: any) => {
 };
 
 export default function App() {
+  const { language, setLanguage, t } = useLanguage();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<'hero' | 'about' | 'portfolio' | 'contact'>('hero');
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
   const [selectedLanguage, setSelectedLanguage] = useState<string>("Todas");
@@ -140,6 +148,41 @@ export default function App() {
 
   // Estado do Carrossel de Projetos em Destaque
   const [carouselIndex, setCarouselIndex] = useState(0);
+
+  // Efeito 3D de inclinação dinâmica / Parallax com CSS 3D
+  const [heroTilt, setHeroTilt] = useState({ x: 0, y: 0 });
+
+  const handleHeroMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setHeroTilt({ x: Number((x * 16).toFixed(2)), y: Number((-y * 16).toFixed(2)) });
+  };
+
+  const handleHeroMouseLeave = () => {
+    setHeroTilt({ x: 0, y: 0 });
+  };
+
+  // Monitorar a rolagem da página para destacar a seção ativa no header
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['contact', 'portfolio', 'about', 'hero'] as const;
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 200) {
+            setActiveSection(sectionId);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Estado do Formulário de Contato
   const [contactName, setContactName] = useState("");
@@ -170,10 +213,13 @@ export default function App() {
     }
   };
 
-  // Fechar modal com tecla ESC
+  // Fechar modal ou menu mobile com tecla ESC
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSelectedRepo(null);
+      if (e.key === 'Escape') {
+        setSelectedRepo(null);
+        setMobileMenuOpen(false);
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -317,14 +363,17 @@ export default function App() {
       <div className="fixed top-[-10%] left-[10%] w-[500px] h-[500px] bg-[#38bdf8]/5 rounded-full blur-[140px] pointer-events-none z-0" />
       <div className="fixed top-[30%] right-[5%] w-[600px] h-[600px] bg-[#6366f1]/5 rounded-full blur-[160px] pointer-events-none z-0" />
 
-      {/* 1. NAVBAR / HEADER SUPERIOR (inspirado no topo da referência com Cubo e Som) */}
-      <nav className="sticky top-0 z-40 backdrop-blur-xl bg-[#070b13]/80 border-b border-slate-800/80">
+      {/* 1. NAVBAR / HEADER SUPERIOR (Sticky com Scroll Tracking, Menu Mobile & Seletor de Idioma) */}
+      <nav className="sticky top-0 z-40 backdrop-blur-xl bg-[#070b13]/85 border-b border-slate-800/80 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-3.5 sm:px-6 h-16 sm:h-18 flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Logo Isometric Cube */}
           <a
             href="#hero"
-            onClick={() => playSound(520, 0.05)}
+            onClick={() => {
+              playSound(520, 0.05);
+              setMobileMenuOpen(false);
+            }}
             className="flex items-center gap-2 sm:gap-3 group cursor-pointer shrink-0 min-w-0"
           >
             <IsometricCubeLogo className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 group-hover:scale-110 transition-transform duration-300" />
@@ -338,24 +387,96 @@ export default function App() {
             </div>
           </a>
 
-          {/* Links de Navegação */}
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
-            <a href="#hero" className="hover:text-white hover:text-[#38bdf8] transition-colors">Início</a>
-            <a href="#about" className="hover:text-white hover:text-[#38bdf8] transition-colors">Sobre & Skills</a>
-            <a href="#portfolio" className="hover:text-white hover:text-[#38bdf8] transition-colors">Projetos</a>
-            <a href="#contact" className="hover:text-white hover:text-[#38bdf8] transition-colors">Contato</a>
+          {/* Links de Navegação Desktop com Indicador Ativo de Scroll */}
+          <div className="hidden md:flex items-center gap-1.5 lg:gap-2 text-sm font-medium">
+            <a 
+              href="#hero" 
+              onClick={() => playSound(480, 0.04)}
+              className={`px-3 py-1.5 rounded-xl transition-all ${
+                activeSection === 'hero' 
+                  ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              {t.nav.home}
+            </a>
+            <a 
+              href="#about" 
+              onClick={() => playSound(520, 0.04)}
+              className={`px-3 py-1.5 rounded-xl transition-all ${
+                activeSection === 'about' 
+                  ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              {t.nav.about}
+            </a>
+            <a 
+              href="#portfolio" 
+              onClick={() => playSound(560, 0.04)}
+              className={`px-3 py-1.5 rounded-xl transition-all ${
+                activeSection === 'portfolio' 
+                  ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              {t.nav.projects}
+            </a>
+            <a 
+              href="#contact" 
+              onClick={() => playSound(600, 0.04)}
+              className={`px-3 py-1.5 rounded-xl transition-all ${
+                activeSection === 'contact' 
+                  ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              {t.nav.contact}
+            </a>
           </div>
 
-          {/* Controles da Direita (Botão de Som + GitHub) */}
-          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            {/* Botão de Som (como na referência no canto superior direito) */}
+          {/* Controles da Direita (Seletor de Idioma + Som + GitHub + Hamburger Mobile) */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            {/* Seletor de Idioma PT / EN Desktop */}
+            <div className="flex items-center p-0.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-xs font-mono">
+              <button
+                onClick={() => {
+                  playSound(620, 0.04);
+                  setLanguage('pt');
+                }}
+                className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
+                  language === 'pt'
+                    ? 'bg-blue-600/30 text-[#38bdf8] font-bold border border-blue-500/40 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title="Português (Brasil)"
+              >
+                PT
+              </button>
+              <button
+                onClick={() => {
+                  playSound(620, 0.04);
+                  setLanguage('en');
+                }}
+                className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
+                  language === 'en'
+                    ? 'bg-blue-600/30 text-[#38bdf8] font-bold border border-blue-500/40 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title="English (US)"
+              >
+                EN
+              </button>
+            </div>
+
+            {/* Botão de Som */}
             <button
               onClick={() => {
                 const nextState = !soundEnabled;
                 setSoundEnabled(nextState);
                 if (nextState) playSound(580, 0.1);
               }}
-              title={soundEnabled ? "Desativar efeitos sonoros" : "Ativar efeitos sonoros interativos"}
+              title={soundEnabled ? t.nav.soundActive : t.nav.soundInactive}
               className={`p-2 sm:p-2.5 rounded-xl border transition-all cursor-pointer ${
                 soundEnabled 
                   ? "bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-sm shadow-amber-500/20" 
@@ -365,22 +486,150 @@ export default function App() {
               {soundEnabled ? <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
             </button>
 
-            {/* Link GitHub */}
+            {/* Link GitHub (visível em telas sm+) */}
             <a
               href="https://github.com/Koszudikas-C"
               target="_blank"
               rel="noreferrer"
               onClick={() => playSound(620, 0.05)}
-              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-slate-800/80 hover:bg-blue-600/20 border border-slate-700 hover:border-blue-500/40 text-xs font-semibold text-white transition-all shadow-sm"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-xl bg-slate-800/80 hover:bg-blue-600/20 border border-slate-700 hover:border-blue-500/40 text-xs font-semibold text-white transition-all shadow-sm"
             >
               <svg className="w-4 h-4 text-[#38bdf8] shrink-0" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.08-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.18 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" />
               </svg>
               <span>GitHub</span>
             </a>
+
+            {/* Botão Hamburger Mobile */}
+            <button
+              onClick={() => {
+                playSound(540, 0.05);
+                setMobileMenuOpen(!mobileMenuOpen);
+              }}
+              className="md:hidden p-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-slate-300 hover:text-white transition-all cursor-pointer"
+              title={mobileMenuOpen ? t.nav.closeMenu : t.nav.openMenu}
+              aria-label="Menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5 text-[#38bdf8]" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
 
         </div>
+
+        {/* Menu Dropdown Mobile com Animação e Blur */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-slate-800/90 bg-[#070b13]/98 backdrop-blur-2xl px-4 py-5 shadow-2xl transition-all animate-fade-slide-down">
+            <div className="flex flex-col gap-2">
+              <a
+                href="#hero"
+                onClick={() => {
+                  playSound(480, 0.04);
+                  setMobileMenuOpen(false);
+                }}
+                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  activeSection === 'hero'
+                    ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
+                    : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                }`}
+              >
+                <span>{t.nav.home}</span>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </a>
+              <a
+                href="#about"
+                onClick={() => {
+                  playSound(520, 0.04);
+                  setMobileMenuOpen(false);
+                }}
+                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  activeSection === 'about'
+                    ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
+                    : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                }`}
+              >
+                <span>{t.nav.about}</span>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </a>
+              <a
+                href="#portfolio"
+                onClick={() => {
+                  playSound(560, 0.04);
+                  setMobileMenuOpen(false);
+                }}
+                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  activeSection === 'portfolio'
+                    ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
+                    : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                }`}
+              >
+                <span>{t.nav.projects}</span>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </a>
+              <a
+                href="#contact"
+                onClick={() => {
+                  playSound(600, 0.04);
+                  setMobileMenuOpen(false);
+                }}
+                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  activeSection === 'contact'
+                    ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
+                    : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                }`}
+              >
+                <span>{t.nav.contact}</span>
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              </a>
+
+              {/* Divisor */}
+              <div className="h-px bg-slate-800/80 my-2" />
+
+              {/* Controles no Menu Mobile: Idioma & GitHub */}
+              <div className="flex items-center justify-between gap-3 pt-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-400 font-mono">{t.nav.langSwitch}:</span>
+                  <div className="flex p-0.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono">
+                    <button
+                      onClick={() => {
+                        playSound(620, 0.04);
+                        setLanguage('pt');
+                      }}
+                      className={`px-3 py-1 rounded-md transition-all ${
+                        language === 'pt' ? 'bg-blue-600/40 text-[#38bdf8] font-bold' : 'text-slate-400'
+                      }`}
+                    >
+                      PT
+                    </button>
+                    <button
+                      onClick={() => {
+                        playSound(620, 0.04);
+                        setLanguage('en');
+                      }}
+                      className={`px-3 py-1 rounded-md transition-all ${
+                        language === 'en' ? 'bg-blue-600/40 text-[#38bdf8] font-bold' : 'text-slate-400'
+                      }`}
+                    >
+                      EN
+                    </button>
+                  </div>
+                </div>
+
+                <a
+                  href="https://github.com/Koszudikas-C"
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => playSound(620, 0.05)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-semibold text-white"
+                >
+                  <svg className="w-3.5 h-3.5 text-[#38bdf8]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.08-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.18 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" />
+                  </svg>
+                  <span>GitHub</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* 2. HERO SECTION ("Hi, my name is David" -> Matheus Gomes) */}
@@ -392,110 +641,138 @@ export default function App() {
             
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/25 text-[#38bdf8] text-xs font-semibold mb-6">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              Disponível para Projetos & Arquiteturas
+              {t.hero.statusBadge}
             </div>
 
             <h1 className="text-3xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
-              Olá, meu <br />
-              nome é <span className="text-gradient">Matheus.</span>
+              {t.hero.greetingPre} <br />
+              {t.hero.greetingName} <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-[#38bdf8] to-amber-400">{t.hero.name}</span>
             </h1>
 
             <p className="text-slate-300 text-base sm:text-xl mt-5 sm:mt-6 max-w-xl font-light leading-relaxed">
-              Arquiteto de software & desenvolvedor full-stack. Crio sistemas distribuídos de alta performance, agentes autônomos de IA e soluções de engenharia robustas.
+              {t.hero.roleSubtitle}
             </p>
 
-            {/* Botões de Ação estilo "Get in touch" */}
+            {/* Botões de Ação estilo David Heckhoff com Amarelo/Laranja Vibrante */}
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-7 sm:mt-8 w-full sm:w-auto">
               <a
                 href="#contact"
                 onClick={() => playSound(520, 0.08)}
-                className="flex-1 sm:flex-initial justify-center px-6 sm:px-7 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm transition-all shadow-lg shadow-blue-500/25 cursor-pointer flex items-center gap-2 group"
+                className="flex-1 sm:flex-initial justify-center px-7 py-3.5 rounded-2xl btn-cta-orange text-slate-950 font-extrabold text-sm transition-all shadow-lg cursor-pointer flex items-center gap-2 group active:scale-95"
               >
-                Entre em contato
+                {t.hero.ctaPrimary}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </a>
 
               <a
                 href="#portfolio"
                 onClick={() => playSound(440, 0.08)}
-                className="flex-1 sm:flex-initial justify-center px-5 sm:px-6 py-3.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-white font-semibold text-sm transition-all cursor-pointer flex items-center gap-2"
+                className="flex-1 sm:flex-initial justify-center px-6 py-3.5 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 text-white font-semibold text-sm transition-all cursor-pointer flex items-center gap-2 hover:border-[#38bdf8]/50"
               >
-                Ver Projetos
+                {t.hero.ctaSecondary}
                 <Code className="w-4 h-4 text-[#38bdf8]" />
               </a>
             </div>
 
-            {/* Quick Badges no Rodapé do Hero */}
+            {/* Quick Badges no Rodapé do Hero com as cores favoritas */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-8 sm:mt-10 pt-5 sm:pt-6 border-t border-slate-800/80 text-xs text-slate-400 w-full">
-              <span className="text-slate-300 font-semibold">Especialidades:</span>
-              <span className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">.NET 10 / C#</span>
-              <span className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">Rust High-Throughput</span>
-              <span className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">Angular & React</span>
-              <span className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">IA & ONNX Vision</span>
+              <span className="text-slate-300 font-semibold">{language === 'pt' ? 'Especialidades:' : 'Core Stack:'}</span>
+              {t.hero.miniTechs.map((tech, idx) => {
+                const borderColors = [
+                  "border-rose-500/30 text-rose-300",
+                  "border-amber-500/30 text-amber-300",
+                  "border-blue-500/30 text-blue-300",
+                  "border-cyan-500/30 text-cyan-300"
+                ];
+                return (
+                  <span key={tech} className={`px-2.5 py-1 rounded-lg bg-slate-900/90 border ${borderColors[idx % borderColors.length]} font-mono`}>
+                    {tech}
+                  </span>
+                );
+              })}
             </div>
 
           </div>
 
-          {/* Lado Direito - Ilustração / Estação de Trabalho do Desenvolvedor (inspirada no 3D Desk da referência) */}
-          <div className="lg:col-span-5 relative flex items-center justify-center w-full">
-            
-            <div className="relative w-full max-w-md rounded-3xl p-5 sm:p-6 glass-panel border border-slate-700/80 shadow-2xl flex flex-col justify-between overflow-hidden group">
+          {/* Lado Direito - Personagem 3D Direto na Cena (Sem Círculos Artificiais / Textos Ultra-Nítidos) */}
+          <div 
+            className="lg:col-span-5 relative flex flex-col items-center justify-center w-full py-4 select-none"
+            onMouseMove={handleHeroMouseMove}
+            onMouseLeave={handleHeroMouseLeave}
+          >
+            {/* Contêiner de Layout Geral */}
+            <div className="relative flex flex-col items-center justify-center w-full max-w-lg">
               
-              {/* Background Glow */}
-              <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
-
-              {/* Terminal Header */}
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3 gap-2 min-w-0">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="w-3 h-3 rounded-full bg-rose-500/80 shrink-0" />
-                  <span className="w-3 h-3 rounded-full bg-amber-500/80 shrink-0" />
-                  <span className="w-3 h-3 rounded-full bg-emerald-500/80 shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-mono text-slate-400 ml-1.5 sm:ml-2 truncate">koszudikas-c@devstation:~</span>
-                </div>
-                <Sparkles className="w-4 h-4 text-[#38bdf8] shrink-0" />
+              {/* Luz de Fundo e Brilho Suave */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 sm:w-[420px] h-80 sm:h-[420px] bg-gradient-to-tr from-blue-600/20 via-[#38bdf8]/15 to-orange-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+              
+              {/* Badges Flutuantes 100% Nítidos em Camada Vetorial (Sem degradação de renderização 3D) */}
+              {/* Chip 1 - Superior Esquerdo */}
+              <div 
+                className="hidden sm:flex absolute top-4 -left-6 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c] border border-rose-500/50 text-rose-300 text-xs font-mono font-medium shadow-xl shadow-rose-950/30 animate-float pointer-events-none"
+              >
+                <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
+                <span className="font-semibold tracking-wide">.NET 10 • Clean Arch</span>
               </div>
 
-              {/* Centro: Avatar com Moldura Isométrica e Status */}
-              <div className="my-auto flex flex-col items-center text-center py-4">
-                <div className="relative group/avatar cursor-pointer">
-                  <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-[#38bdf8] via-[#6366f1] to-[#a855f7] opacity-60 blur-md group-hover/avatar:opacity-100 transition duration-500 animate-pulse-glow" />
-                  <img
-                    src="https://github.com/Koszudikas-C.png"
-                    alt="Matheus Gomes"
-                    className="relative w-22 h-22 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-slate-700 shadow-2xl bg-slate-900"
-                  />
-                  <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-slate-950 border border-slate-700">
-                    <span className="block w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-emerald-400" />
-                  </div>
-                </div>
-
-                <h3 className="text-base sm:text-lg font-bold text-white mt-3 sm:mt-4 flex items-center gap-1.5">
-                  Matheus Gomes
-                </h3>
-                <p className="text-[11px] sm:text-xs text-[#38bdf8] font-mono">
-                  @Koszudikas-C • Systems Architect
-                </p>
-
-                {/* Linha de Código Interativa */}
-                <div className="mt-3.5 sm:mt-4 p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-left font-mono text-[10px] sm:text-[11px] text-slate-300 w-full overflow-hidden">
-                  <div className="text-emerald-400 flex items-center gap-1 truncate">
-                    <Terminal className="w-3 h-3 shrink-0" />
-                    <span className="truncate">$ cargo run --release --target=clean-arch</span>
-                  </div>
-                  <div className="text-slate-400 mt-1">
-                    ✓ 33 repositórios compilados com sucesso.
-                  </div>
-                  <div className="text-blue-400 mt-0.5 leading-tight text-[9.5px] sm:text-[11px]">
-                    ● +1.120 testes auditados (API: 470 • Front: 416 • Auth: 234).
-                  </div>
-                </div>
+              {/* Chip 2 - Superior Direito */}
+              <div 
+                style={{ animationDelay: '1.2s' }}
+                className="hidden sm:flex absolute top-14 -right-6 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c] border border-amber-500/50 text-amber-300 text-xs font-mono font-medium shadow-xl shadow-amber-950/30 animate-float pointer-events-none"
+              >
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                <span className="font-semibold tracking-wide">Rust High-I/O</span>
               </div>
 
-              {/* Rodapé do Card Terminal */}
-              <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 border-t border-slate-800 pt-3 font-mono mt-2">
-                <span>ESTADO: ONLINE</span>
-                <span className="text-emerald-400">LATÊNCIA: 12ms</span>
+              {/* Chip 3 - Lateral Esquerda */}
+              <div 
+                style={{ animationDelay: '2.4s' }}
+                className="hidden sm:flex absolute bottom-28 -left-8 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c] border border-sky-500/50 text-[#38bdf8] text-xs font-mono font-medium shadow-xl shadow-sky-950/30 animate-float pointer-events-none"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#38bdf8]" />
+                <span className="font-semibold tracking-wide">AI Agent Systems</span>
+              </div>
+
+              {/* O Personagem 3D com Tilt Interativo e Altíssima Resolução (Sem molduras e sem círculos sob os pés) */}
+              <div 
+                style={{
+                  transform: `perspective(1000px) rotateY(${heroTilt.x}deg) rotateX(${heroTilt.y}deg)`,
+                  willChange: 'transform',
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                }}
+                className="relative flex flex-col items-center justify-center transition-transform duration-200 ease-out cursor-pointer group"
+              >
+                <img
+                  src={avatarTransparentImg}
+                  alt="Matheus Gomes"
+                  className="relative z-10 h-[390px] sm:h-[490px] lg:h-[550px] w-auto max-w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.65)] pointer-events-none group-hover:scale-[1.02] transition-transform duration-300"
+                />
+
+                {/* Sombra de Contato Natural no Chão (Sem círculo neon ou pedestais artificiais) */}
+                <div className="w-40 sm:w-52 h-4 rounded-full bg-black/70 blur-md -mt-2 pointer-events-none z-0" />
+              </div>
+
+              {/* Identificação e Telemetria Abaixo do Avatar (100% Nítida, Alto Contraste) */}
+              <div className="mt-4 flex flex-col items-center gap-2 text-center z-10 w-full max-w-sm">
+                <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#090d1c] border border-slate-700 shadow-xl">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-xs font-mono font-bold text-white tracking-wide">
+                    Matheus Gomes
+                  </span>
+                  <span className="text-xs font-mono text-[#38bdf8]">
+                    @Koszudikas-C
+                  </span>
+                  <span className="text-[10px] font-mono font-semibold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                    ONLINE • 12ms
+                  </span>
+                </div>
+
+                <div className="px-4 py-1.5 rounded-xl bg-[#090d1c] border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-2 shadow-lg">
+                  <Terminal className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span className="text-emerald-400 font-bold">$ cargo run</span>
+                  <span className="text-slate-400">• 33 repos • 1.120 testes auditados</span>
+                </div>
               </div>
 
             </div>
@@ -512,13 +789,13 @@ export default function App() {
         <div className="mb-12">
           <span className="text-xs font-semibold uppercase tracking-wider text-[#38bdf8] flex items-center gap-2">
             <Cpu className="w-4 h-4" />
-            — Sobre mim & Habilidades
+            — {t.about.badge}
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2">
-            Estação de Habilidades & Trajetória
+            {t.about.title}
           </h2>
           <p className="text-slate-400 text-sm mt-1 max-w-2xl">
-            Inspirada na estação de bio-escaneamento e laboratório HUD da referência, consolidando a stack técnica e visão arquitetural.
+            {t.about.description}
           </p>
         </div>
 
@@ -533,23 +810,23 @@ export default function App() {
               <div className="flex items-center gap-4">
                 <div className="relative shrink-0">
                   <img
-                    src="https://github.com/Koszudikas-C.png"
+                    src={avatarProfileImg}
                     alt="Matheus"
-                    className="w-16 h-16 rounded-xl object-cover border border-[#38bdf8]/40"
+                    className="w-16 h-16 rounded-xl object-cover object-top border border-[#38bdf8]/40"
                   />
                   <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[#38bdf8] animate-ping" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-mono text-[#38bdf8] tracking-widest uppercase">ID_DEVs: #0023</span>
-                  <h3 className="text-xl font-bold text-white leading-tight">Matheus Gomes</h3>
-                  <span className="text-xs text-slate-400 font-medium">Full-Stack & Systems Architect</span>
+                  <span className="text-[10px] font-mono text-[#38bdf8] tracking-widest uppercase">{t.about.idDev}</span>
+                  <h3 className="text-xl font-bold text-white leading-tight">{t.about.devName}</h3>
+                  <span className="text-xs text-slate-400 font-medium">{t.about.devRole}</span>
                 </div>
               </div>
 
               {/* Informações Rápidas Estilo Ficha */}
               <div className="grid grid-cols-2 gap-3 text-xs font-mono">
                 <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-                  <span className="text-slate-500 block text-[10px]">PAÍS / BASE</span>
+                  <span className="text-slate-500 block text-[10px]">{language === 'pt' ? 'PAÍS / BASE' : 'COUNTRY / BASE'}</span>
                   <div className="flex items-center gap-1.5 font-semibold text-white mt-0.5">
                     <svg className="w-4 h-3 rounded-[2px] shrink-0 overflow-hidden" viewBox="0 0 720 504">
                       <rect width="720" height="504" fill="#009b3a"/>
@@ -557,12 +834,12 @@ export default function App() {
                       <circle cx="360" cy="252" r="126" fill="#002776"/>
                       <path d="M234,252 A126,126 0 0,0 486,252 A126,110 0 0,1 234,252" fill="#ffffff" />
                     </svg>
-                    <span>Brasil</span>
+                    <span>{language === 'pt' ? 'Brasil' : 'Brazil'}</span>
                   </div>
                 </div>
                 <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-                  <span className="text-slate-500 block text-[10px]">REPOSITÓRIOS</span>
-                  <span className="text-[#38bdf8] font-bold">{stats.total} Ativos</span>
+                  <span className="text-slate-500 block text-[10px]">{language === 'pt' ? 'REPOSITÓRIOS' : 'REPOSITORIES'}</span>
+                  <span className="text-[#38bdf8] font-bold">{stats.total} {language === 'pt' ? 'Ativos' : 'Active'}</span>
                 </div>
               </div>
             </div>
@@ -572,9 +849,9 @@ export default function App() {
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-xs font-bold font-mono tracking-wider uppercase text-[#38bdf8] flex items-center gap-2">
                   <Code className="w-4 h-4" />
-                  Matriz de Habilidades Principais
+                  {language === 'pt' ? 'Matriz de Habilidades Principais' : 'Core Skills Matrix'}
                 </h4>
-                <span className="text-[11px] text-slate-400 font-mono">NÍVEL DE DOMÍNIO</span>
+                <span className="text-[11px] text-slate-400 font-mono">{language === 'pt' ? 'NÍVEL DE DOMÍNIO' : 'PROFICIENCY LEVEL'}</span>
               </div>
 
               <div className="space-y-4">
@@ -603,7 +880,7 @@ export default function App() {
             <div className="pt-6 border-t border-slate-800">
               <h4 className="text-xs font-bold font-mono tracking-wider uppercase text-[#38bdf8] flex items-center gap-2 mb-4">
                 <User className="w-4 h-4" />
-                Trajetória & Foco Arquitetural
+                {language === 'pt' ? 'Trajetória & Foco Arquitetural' : 'Trajectory & Architectural Focus'}
               </h4>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -612,9 +889,9 @@ export default function App() {
                   <div className="p-2 rounded-lg bg-pink-500/10 border border-pink-500/20 text-pink-400 w-fit">
                     <Heart className="w-4 h-4" />
                   </div>
-                  <h5 className="text-xs font-bold text-white">Engenharia Limpa</h5>
+                  <h5 className="text-xs font-bold text-white">{t.about.pillars.p1Title}</h5>
                   <p className="text-[12px] text-slate-300 leading-relaxed">
-                    Clean Architecture, DDD e CQRS desacoplado com foco em alta manutenibilidade, isolamento de domínio e suítes completas de testes automatizados.
+                    {t.about.pillars.p1Desc}
                   </p>
                 </div>
 
@@ -622,9 +899,9 @@ export default function App() {
                   <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[#38bdf8] w-fit">
                     <Rocket className="w-4 h-4" />
                   </div>
-                  <h5 className="text-xs font-bold text-white">IA Generativa & Visão</h5>
+                  <h5 className="text-xs font-bold text-white">{t.about.pillars.p2Title}</h5>
                   <p className="text-[12px] text-slate-300 leading-relaxed">
-                    Sistemas com calibração estatística de personas, agentes autônomos multimodelo (OpenAI/Gemini/Ollama) e inferência em CPU com ONNX Runtime.
+                    {t.about.pillars.p2Desc}
                   </p>
                 </div>
 
@@ -632,9 +909,9 @@ export default function App() {
                   <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 w-fit">
                     <ShieldCheck className="w-4 h-4" />
                   </div>
-                  <h5 className="text-xs font-bold text-white">Segurança & Concorrência</h5>
+                  <h5 className="text-xs font-bold text-white">{t.about.pillars.p3Title}</h5>
                   <p className="text-[12px] text-slate-300 leading-relaxed">
-                    Navegadores anti-detecção stealth, sanitização profunda contra prompt injection, streaming I/O massivo e criptografia AES-256-GCM.
+                    {t.about.pillars.p3Desc}
                   </p>
                 </div>
 
@@ -649,7 +926,7 @@ export default function App() {
             {/* Câmara Holográfica / Card de Status */}
             <div className="hud-panel p-6 rounded-2xl flex flex-col items-center text-center">
               <span className="text-[10px] font-mono tracking-widest text-[#38bdf8] uppercase mb-4">
-                TELEMETRIA DE ARQUITETURA
+                {language === 'pt' ? 'TELEMETRIA DE ARQUITETURA' : 'ARCHITECTURE TELEMETRY'}
               </span>
 
               {/* Wireframe Hologram Box */}
@@ -661,25 +938,25 @@ export default function App() {
 
               <div className="w-full mt-4 space-y-2.5 text-xs font-mono">
                 <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
-                  <span className="text-slate-400">Total de Projetos</span>
-                  <span className="text-white font-bold">{stats.total} Repositórios</span>
+                  <span className="text-slate-400">{language === 'pt' ? 'Total de Projetos' : 'Total Projects'}</span>
+                  <span className="text-white font-bold">{stats.total} {language === 'pt' ? 'Repositórios' : 'Repositories'}</span>
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
                   <div className="flex flex-col text-left">
-                    <span className="text-slate-400">Testes Auditados</span>
+                    <span className="text-slate-400">{language === 'pt' ? 'Testes Auditados' : 'Audited Tests'}</span>
                     <span className="text-[10px] text-slate-500 font-normal">API: 470 • Front: 416 • Auth: 234</span>
                   </div>
-                  <span className="text-emerald-400 font-bold text-sm">1.120 Casos</span>
+                  <span className="text-emerald-400 font-bold text-sm">{language === 'pt' ? '1.120 Casos' : '1,120 Cases'}</span>
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
-                  <span className="text-slate-400">Públicos / Privados</span>
+                  <span className="text-slate-400">{language === 'pt' ? 'Públicos / Privados' : 'Public / Private'}</span>
                   <span className="text-[#38bdf8] font-bold">{stats.publicCount} / {stats.privateCount}</span>
                 </div>
               </div>
 
               <div className="mt-5 pt-4 border-t border-slate-800 w-full flex items-center justify-center gap-2 text-xs text-emerald-400 font-mono">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                STATUS: DISPONÍVEL PARA PROJETOS
+                {language === 'pt' ? 'STATUS: DISPONÍVEL PARA PROJETOS' : 'STATUS: AVAILABLE FOR PROJECTS'}
               </div>
             </div>
 
@@ -687,7 +964,7 @@ export default function App() {
             <div className="glass-panel p-6 rounded-2xl">
               <h4 className="text-xs font-bold font-mono tracking-wider text-slate-300 uppercase mb-3 flex items-center gap-2">
                 <Network className="w-4 h-4 text-indigo-400" />
-                Principais Ecossistemas
+                {language === 'pt' ? 'Principais Ecossistemas' : 'Core Ecosystems'}
               </h4>
               <div className="space-y-2 text-xs">
                 {Object.entries(stats.ecosystemCounts).slice(0, 3).map(([eco, count]) => (
@@ -723,13 +1000,15 @@ export default function App() {
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-[#38bdf8] flex items-center gap-2">
               <Folder className="w-4 h-4" />
-              — Portfólio
+              — {t.featured.badge}
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2">
-              Alguns projetos que construí
+              {language === 'pt' ? 'Alguns projetos que construí' : "Some projects I've built"}
             </h2>
             <p className="text-slate-400 text-sm mt-1">
-              Navegue pelos projetos em destaque usando as setas do carrossel ou explore o catálogo completo abaixo.
+              {language === 'pt' 
+                ? 'Navegue pelos projetos em destaque usando as setas do carrossel ou explore o catálogo completo abaixo.'
+                : 'Browse featured projects using the carousel arrows or explore the full catalog below.'}
             </p>
           </div>
 
@@ -737,7 +1016,7 @@ export default function App() {
           <div className="flex items-center gap-3 self-start md:self-auto">
             <button
               onClick={prevSlide}
-              title="Projeto Anterior"
+              title={t.featured.prevSlide}
               className="p-3 rounded-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white transition-all cursor-pointer shadow-lg active:scale-95"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -747,7 +1026,7 @@ export default function App() {
             </span>
             <button
               onClick={nextSlide}
-              title="Próximo Projeto"
+              title={t.featured.nextSlide}
               className="p-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white transition-all cursor-pointer shadow-lg active:scale-95"
             >
               <ChevronRight className="w-5 h-5" />
@@ -786,7 +1065,7 @@ export default function App() {
                         ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
                         : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
                     }`}>
-                      {repo.private ? "Privado" : "Público"}
+                      {repo.private ? t.catalog.card.privateBadge : t.catalog.card.publicBadge}
                     </span>
                   </div>
 
@@ -866,15 +1145,17 @@ export default function App() {
             <div>
               <h3 className="text-2xl font-bold text-white flex items-center gap-2">
                 <Database className="w-6 h-6 text-[#38bdf8]" />
-                Catálogo Geral de Repositórios
+                {t.catalog.title}
               </h3>
               <p className="text-slate-400 text-xs mt-1">
-                Filtre por tecnologias, visibilidade e categorias em tempo real.
+                {language === 'pt' ? 'Filtre por tecnologias, visibilidade e categorias em tempo real.' : 'Filter by technologies, visibility, and categories in real-time.'}
               </p>
             </div>
 
             <span className="text-xs text-slate-400 font-mono">
-              Exibindo <strong className="text-white">{filteredRepos.length}</strong> de {stats.total} projetos
+              {language === 'pt' 
+                ? <>Exibindo <strong className="text-white">{filteredRepos.length}</strong> de {stats.total} projetos</>
+                : <>Showing <strong className="text-white">{filteredRepos.length}</strong> of {stats.total} projects</>}
             </span>
           </div>
 
@@ -885,7 +1166,7 @@ export default function App() {
                 <Search className="absolute left-4 top-3 w-4 h-4 text-slate-400" />
                 <input 
                   type="text" 
-                  placeholder="Pesquisar por nome, tecnologia (.NET 10, Rust, Angular, ONNX) ou descrição..." 
+                  placeholder={t.catalog.searchPlaceholder} 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl py-2.5 pl-11 pr-9 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] transition-all"
@@ -906,19 +1187,19 @@ export default function App() {
                   onClick={() => setVisibilityFilter("Todos")}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${visibilityFilter === "Todos" ? "bg-[#2563eb] text-white" : "text-slate-300 hover:text-white"}`}
                 >
-                  Todos ({stats.total})
+                  {t.catalog.filterAll} ({stats.total})
                 </button>
                 <button 
                   onClick={() => setVisibilityFilter("Publicos")}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${visibilityFilter === "Publicos" ? "bg-[#2563eb] text-white" : "text-slate-300 hover:text-white"}`}
                 >
-                  Públicos ({stats.publicCount})
+                  {t.catalog.filterPublic} ({stats.publicCount})
                 </button>
                 <button 
                   onClick={() => setVisibilityFilter("Privados")}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${visibilityFilter === "Privados" ? "bg-[#2563eb] text-white" : "text-slate-300 hover:text-white"}`}
                 >
-                  Privados ({stats.privateCount})
+                  {t.catalog.filterPrivate} ({stats.privateCount})
                 </button>
               </div>
             </div>
@@ -930,6 +1211,7 @@ export default function App() {
                   const Icon = categoryIcons[cat] || Folder;
                   const active = selectedCategory === cat;
                   const count = stats.categoryCounts[cat] || 0;
+                  const label = t.categories[cat as keyof typeof t.categories] || cat;
                   return (
                     <button
                       key={cat}
@@ -941,7 +1223,7 @@ export default function App() {
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5 shrink-0" />
-                      <span>{cat}</span>
+                      <span>{label}</span>
                       <span className={`px-1.5 py-0.2 rounded-md text-[10px] ${
                         active ? "bg-blue-800/80 text-blue-100" : "bg-slate-900/80 text-slate-400"
                       }`}>
@@ -957,7 +1239,7 @@ export default function App() {
                   onClick={resetAllFilters}
                   className="text-xs text-[#38bdf8] hover:underline font-medium cursor-pointer ml-auto"
                 >
-                  Limpar filtros
+                  {t.catalog.clearFilters}
                 </button>
               )}
             </div>
@@ -967,14 +1249,14 @@ export default function App() {
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
                   <Code className="w-3.5 h-3.5 text-[#38bdf8]" />
-                  Distribuição de Linguagens:
+                  {language === 'pt' ? 'Distribuição de Linguagens:' : 'Language Distribution:'}
                 </span>
                 {selectedLanguage !== "Todas" && (
                   <button
                     onClick={() => setSelectedLanguage("Todas")}
                     className="text-[11px] text-[#38bdf8] hover:underline cursor-pointer"
                   >
-                    Mostrar todas
+                    {language === 'pt' ? 'Mostrar todas' : 'Show all'}
                   </button>
                 )}
               </div>
@@ -1034,20 +1316,21 @@ export default function App() {
             {filteredRepos.length === 0 ? (
               <div className="col-span-full py-16 text-center glass-card rounded-2xl border border-slate-800">
                 <Folder className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <h3 className="text-white font-bold text-lg">Nenhum projeto encontrado</h3>
+                <h3 className="text-white font-bold text-lg">{t.catalog.emptyTitle}</h3>
                 <p className="text-slate-400 text-sm mt-1 max-w-md mx-auto">
-                  Nenhum repositório corresponde aos filtros selecionados. Tente ajustar os termos de busca ou limpar os filtros.
+                  {t.catalog.emptyDesc}
                 </p>
                 <button
                   onClick={resetAllFilters}
                   className="mt-4 px-4 py-2 rounded-xl bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 text-xs font-semibold cursor-pointer transition-all"
                 >
-                  Limpar filtros
+                  {t.catalog.clearFilters}
                 </button>
               </div>
             ) : (
               visibleRepos.map((repo, idx) => {
                 const CategoryIcon = categoryIcons[repo.category] || Folder;
+                const catLabel = t.categories[repo.category as keyof typeof t.categories] || repo.category;
                 return (
                   <article
                     key={`catalog-${repo.id}`}
@@ -1065,7 +1348,7 @@ export default function App() {
                             <CategoryIcon className="w-4 h-4" />
                           </div>
                           <span className="text-[11px] text-slate-300 tracking-wide uppercase font-semibold truncate">
-                            {repo.category}
+                            {catLabel}
                           </span>
                         </div>
                         <span className={`px-2.5 py-0.5 text-[11px] font-semibold rounded-full border shrink-0 ${
@@ -1073,7 +1356,7 @@ export default function App() {
                             ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
                             : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
                         }`}>
-                          {repo.private ? "Privado" : "Público"}
+                          {repo.private ? t.catalog.card.privateBadge : t.catalog.card.publicBadge}
                         </span>
                       </div>
 
@@ -1081,7 +1364,7 @@ export default function App() {
                         <div className="mb-2">
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-[10px] font-semibold">
                             <Network className="w-3 h-3" />
-                            {repo.ecosystem}
+                            {t.ecosystems[repo.ecosystem as keyof typeof t.ecosystems] || repo.ecosystem}
                           </span>
                         </div>
                       )}
@@ -1094,7 +1377,7 @@ export default function App() {
                       </h4>
 
                       <p className="text-slate-300 text-sm mt-2 line-clamp-2 leading-relaxed">
-                        {repo.description || "Nenhuma descrição fornecida."}
+                        {repo.description || (language === 'pt' ? "Nenhuma descrição fornecida." : "No description provided.")}
                       </p>
 
                       {repo.techStack && repo.techStack.length > 0 && (
@@ -1117,11 +1400,11 @@ export default function App() {
                           className="w-2.5 h-2.5 rounded-full ring-2 ring-white/10" 
                           style={{ backgroundColor: languageColors[repo.language] || languageColors.Default }}
                         />
-                        <span className="text-slate-200 font-medium">{repo.language || "Outra"}</span>
+                        <span className="text-slate-200 font-medium">{repo.language || (language === 'pt' ? "Outra" : "Other")}</span>
                       </div>
 
                       <span className="text-[#38bdf8] group-hover:text-white font-semibold flex items-center gap-1">
-                        Ver detalhes &rarr;
+                        {language === 'pt' ? 'Ver detalhes' : 'View details'} &rarr;
                       </span>
                     </div>
                   </article>
@@ -1133,13 +1416,15 @@ export default function App() {
               <div ref={loadMoreRef} className="col-span-full py-8 flex flex-col items-center justify-center gap-2">
                 <div className="flex items-center gap-2 text-xs text-[#38bdf8] font-mono">
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Carregando mais projetos...</span>
+                  <span>{language === 'pt' ? 'Carregando mais projetos...' : 'Loading more projects...'}</span>
                 </div>
                 <button
                   onClick={() => setVisibleCount(filteredRepos.length)}
                   className="text-[11px] text-slate-400 hover:text-white underline cursor-pointer mt-1"
                 >
-                  Carregar todos de uma vez ({filteredRepos.length - visibleCount} restantes)
+                  {language === 'pt' 
+                    ? `Carregar todos de uma vez (${filteredRepos.length - visibleCount} restantes)` 
+                    : `Load all at once (${filteredRepos.length - visibleCount} remaining)`}
                 </button>
               </div>
             )}
@@ -1158,23 +1443,23 @@ export default function App() {
           <div className="lg:col-span-7 flex flex-col">
             
             <span className="text-xs font-semibold uppercase tracking-wider text-amber-400 flex items-center gap-2">
-              — Diga um olá
+              — {t.contact.badge}
               <Hand className="w-3.5 h-3.5 text-amber-400 inline-block -rotate-12" />
             </span>
             <h2 className="text-3xl sm:text-5xl font-extrabold text-white mt-2">
-              Entre em contato
+              {t.contact.title}
             </h2>
             <p className="text-slate-400 text-sm sm:text-base mt-2 max-w-lg font-light leading-relaxed">
-              Tem um projeto em mente, busca consultoria em arquitetura de software ou quer trocar uma ideia sobre IA e sistemas distribuídos? Envie uma mensagem abaixo.
+              {t.contact.description}
             </p>
 
             {contactSubmitted ? (
               <div className="mt-8 p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center gap-4">
                 <Check className="w-8 h-8 shrink-0 text-emerald-400" />
                 <div>
-                  <h4 className="font-bold text-white text-base">Mensagem Iniciada!</h4>
+                  <h4 className="font-bold text-white text-base">{t.contact.form.successTitle}</h4>
                   <p className="text-xs text-slate-300 mt-0.5">
-                    Seu cliente de e-mail foi aberto com os dados preenchidos para envio direto a Matheus Gomes (matheusprgc@gmail.com).
+                    {t.contact.form.successDesc}
                   </p>
                 </div>
               </div>
@@ -1184,12 +1469,12 @@ export default function App() {
                 {/* Campo Nome */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-medium text-slate-300">
-                    Nome:
+                    {t.contact.form.nameLabel}:
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="Seu nome ou empresa..."
+                    placeholder={t.contact.form.namePlaceholder}
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
                     className="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#38bdf8] focus:ring-1 focus:ring-[#38bdf8] transition-all"
@@ -1199,12 +1484,12 @@ export default function App() {
                 {/* Campo Email */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-medium text-slate-300">
-                    Email:
+                    {t.contact.form.emailLabel}:
                   </label>
                   <input
                     type="email"
                     required
-                    placeholder="seu.email@exemplo.com"
+                    placeholder={t.contact.form.emailPlaceholder}
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                     className="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#38bdf8] focus:ring-1 focus:ring-[#38bdf8] transition-all"
@@ -1214,12 +1499,12 @@ export default function App() {
                 {/* Campo Mensagem */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-medium text-slate-300">
-                    Mensagem:
+                    {t.contact.form.messageLabel}:
                   </label>
                   <textarea
                     required
                     rows={4}
-                    placeholder="Conte sobre seu projeto, desafio técnico ou oportunidade..."
+                    placeholder={t.contact.form.messagePlaceholder}
                     value={contactMessage}
                     onChange={(e) => setContactMessage(e.target.value)}
                     className="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#38bdf8] focus:ring-1 focus:ring-[#38bdf8] transition-all resize-none"
@@ -1250,7 +1535,7 @@ export default function App() {
                     className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-orange-500/20 cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                   >
                     <Send className="w-4 h-4" />
-                    Submit
+                    {t.contact.form.submitBtn}
                   </button>
 
                 </div>
@@ -1267,9 +1552,9 @@ export default function App() {
               <div className="relative mb-6">
                 <div className="w-32 h-32 rounded-3xl overflow-hidden border-2 border-slate-700 shadow-2xl bg-slate-900">
                   <img
-                    src="https://github.com/Koszudikas-C.png"
+                    src={avatarProfileImg}
                     alt="Matheus Gomes"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-top"
                   />
                 </div>
                 <div className="absolute -bottom-2 -right-2 p-1.5 rounded-xl bg-slate-950 border border-slate-700 text-[#38bdf8]">
@@ -1277,21 +1562,21 @@ export default function App() {
                 </div>
               </div>
 
-              <h4 className="text-xl font-bold text-white">Matheus Gomes</h4>
-              <p className="text-xs text-[#38bdf8] font-mono mt-0.5">Software Engineer & Architect</p>
+              <h4 className="text-xl font-bold text-white">{t.contact.card.developerTitle}</h4>
+              <p className="text-xs text-[#38bdf8] font-mono mt-0.5">{t.contact.card.developerRole}</p>
 
               <p className="text-slate-300 text-xs mt-4 leading-relaxed max-w-sm">
-                Focado na entrega de soluções de alto impacto que combinam código limpo, pipelines de IA e alta taxa de transferência com arquiteturas modernas.
+                {t.contact.card.bio}
               </p>
 
               <div className="w-full mt-6 pt-6 border-t border-slate-800 text-xs font-mono text-slate-400 space-y-2">
                 <div className="flex justify-between">
-                  <span>RESPOSTA:</span>
-                  <span className="text-emerald-400 font-semibold">&lt; 24 HORAS</span>
+                  <span>{t.contact.card.responseLabel}</span>
+                  <span className="text-emerald-400 font-semibold">{t.contact.card.responseVal}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>MODELO:</span>
-                  <span className="text-white">REMOTO / CONSULTORIA</span>
+                  <span>{t.contact.card.locationLabel}</span>
+                  <span className="text-white">{t.contact.card.locationVal}</span>
                 </div>
               </div>
 
@@ -1321,19 +1606,19 @@ export default function App() {
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="px-2.5 py-0.5 text-[11px] font-bold rounded-md bg-slate-800 text-slate-200 border border-slate-700 uppercase">
-                    {selectedRepo.category}
+                    {t.categories[selectedRepo.category as keyof typeof t.categories] || selectedRepo.category}
                   </span>
                   <span className={`px-2.5 py-0.5 text-[11px] font-bold rounded-full border ${
                     selectedRepo.private
                       ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
                       : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
                   }`}>
-                    {selectedRepo.private ? "Privado" : "Público"}
+                    {selectedRepo.private ? t.catalog.card.privateBadge : t.catalog.card.publicBadge}
                   </span>
                   {selectedRepo.ecosystem && (
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 rounded-full">
                       <Network className="w-3 h-3" />
-                      {selectedRepo.ecosystem}
+                      {t.ecosystems[selectedRepo.ecosystem as keyof typeof t.ecosystems] || selectedRepo.ecosystem}
                     </span>
                   )}
                   {selectedRepo.stars > 0 && (
@@ -1365,7 +1650,7 @@ export default function App() {
               <div>
                 <h4 className="text-xs font-semibold tracking-wider text-slate-300 uppercase mb-2 flex items-center gap-2">
                   <FileText className="w-4 h-4 text-[#38bdf8]" />
-                  Visão Geral & Arquitetura
+                  {t.modal.overview}
                 </h4>
                 <p className="text-slate-200 text-sm leading-relaxed whitespace-pre-line">
                   {selectedRepo.details}
@@ -1377,7 +1662,7 @@ export default function App() {
                 <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-4">
                   <h4 className="text-xs font-semibold tracking-wider text-[#38bdf8] uppercase mb-3 flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
-                    Destaques Técnicos
+                    {t.modal.highlights}
                   </h4>
                   <ul className="space-y-2">
                     {selectedRepo.highlights.map((item, idx) => (
@@ -1394,7 +1679,7 @@ export default function App() {
               <div>
                 <h4 className="text-xs font-semibold tracking-wider text-slate-300 uppercase mb-3 flex items-center gap-2">
                   <Code className="w-4 h-4 text-[#38bdf8]" />
-                  Stack Tecnológica
+                  {language === 'pt' ? 'Stack Tecnológica' : 'Tech Stack'}
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {selectedRepo.techStack.map((tech) => (
@@ -1413,7 +1698,9 @@ export default function App() {
                 <div className="border-t border-slate-800 pt-5">
                   <h4 className="text-xs font-semibold tracking-wider text-indigo-300 uppercase mb-3 flex items-center gap-2">
                     <Network className="w-4 h-4 text-indigo-400" />
-                    Outros Módulos em {selectedRepo.ecosystem} ({relatedEcosystemRepos.length})
+                    {language === 'pt' 
+                      ? `Outros Módulos em ${selectedRepo.ecosystem} (${relatedEcosystemRepos.length})` 
+                      : `Other Modules in ${selectedRepo.ecosystem} (${relatedEcosystemRepos.length})`}
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {relatedEcosystemRepos.map((rel) => (
@@ -1439,7 +1726,7 @@ export default function App() {
 
               {/* Linguagem Base */}
               <div className="flex items-center gap-2 text-xs text-slate-300">
-                <span>Linguagem principal:</span>
+                <span>{language === 'pt' ? 'Linguagem principal:' : 'Primary language:'}</span>
                 <span
                   className="w-2.5 h-2.5 rounded-full"
                   style={{ backgroundColor: languageColors[selectedRepo.language] || languageColors.Default }}
@@ -1451,7 +1738,7 @@ export default function App() {
             {/* Footer Modal */}
             <div className="p-5 border-t border-slate-800 bg-[#090d18] flex flex-col sm:flex-row gap-4 items-center justify-between relative z-10">
               <span className="text-xs text-slate-400">
-                Repositório: <code className="text-slate-200 text-[11px] font-mono">{selectedRepo.fullName}</code>
+                {language === 'pt' ? 'Repositório:' : 'Repository:'} <code className="text-slate-200 text-[11px] font-mono">{selectedRepo.fullName}</code>
               </span>
               
               {!selectedRepo.private ? (
@@ -1462,12 +1749,12 @@ export default function App() {
                   className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-[#2563eb] hover:bg-[#1d4ed8] rounded-xl font-semibold text-xs text-white transition-all shadow-lg shadow-[#2563eb]/30"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  Ver Código no GitHub
+                  {t.modal.viewGithub}
                 </a>
               ) : (
                 <span className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-xl font-medium text-xs">
                   <Lock className="w-4 h-4" />
-                  Repositório Privado (Proprietário)
+                  {t.modal.statusPrivate}
                 </span>
               )}
             </div>
@@ -1482,15 +1769,15 @@ export default function App() {
           <IsometricCubeLogo className="w-5 h-5" />
           <span className="font-bold text-white tracking-wide">Koszudikas-C.dev</span>
         </div>
-        <p>&copy; {new Date().getFullYear()} Matheus Gomes (Koszudikas-C). Construído com React, TypeScript, Tailwind CSS e Recharts.</p>
+        <p>&copy; {new Date().getFullYear()} Matheus Gomes (Koszudikas-C). {t.footer.techStack}</p>
         <div className="flex items-center gap-4 text-[11px] text-slate-500">
-          <a href="#hero" className="hover:text-slate-300">Início</a>
+          <a href="#hero" className="hover:text-slate-300">{t.nav.home}</a>
           <span>•</span>
-          <a href="#about" className="hover:text-slate-300">Sobre & Skills</a>
+          <a href="#about" className="hover:text-slate-300">{t.nav.about}</a>
           <span>•</span>
-          <a href="#portfolio" className="hover:text-slate-300">Projetos</a>
+          <a href="#portfolio" className="hover:text-slate-300">{t.nav.projects}</a>
           <span>•</span>
-          <a href="#contact" className="hover:text-slate-300">Contato</a>
+          <a href="#contact" className="hover:text-slate-300">{t.nav.contact}</a>
         </div>
       </footer>
 

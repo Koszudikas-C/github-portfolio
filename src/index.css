@@ -7,16 +7,19 @@
     max-width: 100vw;
   }
   body {
-    background-color: #070b13;
+    background-color: #070a13;
     color: #f3f4f6;
-    font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+    font-family: 'Urbanist', 'Inter', system-ui, sans-serif;
     overflow-x: hidden;
     max-width: 100vw;
     background-image: 
-      radial-gradient(at 0% 0%, hsla(220,16%,7%,1) 0, transparent 50%), 
-      radial-gradient(at 50% 0%, hsla(225,39%,30%,0.1) 0, transparent 50%), 
-      radial-gradient(at 100% 0%, hsla(200,49%,30%,0.1) 0, transparent 50%);
+      radial-gradient(at 0% 0%, hsla(220, 25%, 6%, 1) 0, transparent 50%), 
+      radial-gradient(at 50% 0%, hsla(225, 45%, 15%, 0.15) 0, transparent 50%), 
+      radial-gradient(at 100% 0%, hsla(25, 50%, 20%, 0.08) 0, transparent 50%);
     background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 }
 
@@ -163,3 +166,94 @@
   content-visibility: auto;
   contain-intrinsic-size: 0 320px;
 }
+
+@keyframes fadeSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide-down {
+  animation: fadeSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* CSS 3D Engine & Holographic Stage */
+.perspective-stage {
+  perspective: 1200px;
+  perspective-origin: center center;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.floating-podium-3d {
+  transform: translateZ(25px);
+  transform-style: preserve-3d;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease;
+}
+
+.floating-podium-3d:hover {
+  transform: translateZ(45px) rotateY(-4deg) rotateX(4deg);
+}
+
+.depth-layer-1 { transform: translateZ(15px); }
+.depth-layer-2 { transform: translateZ(30px); }
+.depth-layer-3 { transform: translateZ(50px); }
+
+/* Holographic Blueprint Grid */
+.hologram-grid {
+  background-image: 
+    linear-gradient(rgba(56, 189, 248, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.hologram-radial {
+  background: radial-gradient(circle at center, rgba(37, 99, 235, 0.22) 0%, rgba(56, 189, 248, 0.08) 45%, transparent 70%);
+}
+
+/* Vibrant CTA Button with Yellow-to-Orange Glow (David style) */
+.btn-cta-orange {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  color: #050811;
+  font-weight: 800;
+  box-shadow: 0 4px 20px -2px rgba(245, 158, 11, 0.45);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-cta-orange:hover {
+  background: linear-gradient(135deg, #fbbf24 0%, #f97316 100%);
+  box-shadow: 0 8px 28px -2px rgba(249, 115, 22, 0.6);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Red / Crimson Accent Badge */
+.badge-crimson {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+/* Blue Accent Badge */
+.badge-blue {
+  background: rgba(37, 99, 235, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #7dd3fc;
+}
+
+/* Scanline Animation */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(600%); }
+}
+
+.animate-scanline {
+  animation: scanline 4s linear infinite;
+}
+
