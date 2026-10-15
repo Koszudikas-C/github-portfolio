@@ -29,7 +29,9 @@ import {
   Check,
   Loader2,
   Hand,
-  Menu
+  Menu,
+  Copy,
+  Mail
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
 import { repositories } from './data/repositories';
@@ -729,11 +731,51 @@ export default function App() {
     setSelectedRepo(repo);
   }, []);
 
-  // Estado do Formulário de Contato
+  // Estado do Formulário de Contato e Conversão
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactMessage, setContactMessage] = useState("");
   const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+
+  // Cópia rápida de e-mail com feedback
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText('matheusprgc@gmail.com');
+    setCopiedEmail(true);
+    playSound(680, 0.08);
+    setTimeout(() => setCopiedEmail(false), 2500);
+  };
+
+  // Conversão rápida a partir do Modal de Projeto
+  const handleDiscussProject = (repo: Repository) => {
+    setSelectedRepo(null);
+    playSound(720, 0.08);
+    const categoryName = t.categories[repo.category as keyof typeof t.categories] || repo.category;
+    const intro = language === 'pt' 
+      ? `Olá Matheus! Analisei o projeto "${repo.name}" (${categoryName}) e tenho interesse em implementar uma arquitetura ou solução semelhante para o meu negócio.\n\nDetalhes da demanda:`
+      : `Hi Matheus! I reviewed the "${repo.name}" project (${categoryName}) and I'm interested in implementing a similar architecture or solution for my business.\n\nProject details:`;
+    setContactMessage(intro);
+    setTimeout(() => {
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 120);
+  };
+
+  // Seleção rápida de pílulas de serviço
+  const handleSelectServiceChip = (chipText: string) => {
+    playSound(640, 0.05);
+    setContactMessage(prev => {
+      if (!prev.trim()) {
+        return language === 'pt'
+          ? `Olá Matheus! Gostaria de conversar sobre uma demanda com foco em: ${chipText}.\n\nEscopo inicial:`
+          : `Hi Matheus! I'd like to discuss a project focused on: ${chipText}.\n\nInitial scope:`;
+      }
+      if (prev.includes(chipText)) return prev;
+      return `${prev}\n• Foco: ${chipText}`;
+    });
+  };
 
   // Reprodução de bip sutil de sci-fi
   const playSound = useCallback((freq = 440, duration = 0.08) => {
@@ -971,13 +1013,14 @@ export default function App() {
             <a 
               href="#contact" 
               onClick={() => playSound(600, 0.04)}
-              className={`px-3 py-1.5 rounded-xl transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition-all font-semibold text-xs cursor-pointer ${
                 activeSection === 'contact' 
-                  ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  ? 'bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-lg shadow-orange-500/25 ring-1 ring-orange-400' 
+                  : 'bg-gradient-to-r from-orange-500/90 to-amber-600/90 hover:from-orange-500 hover:to-amber-500 text-white shadow-sm shadow-orange-950/40 hover:scale-[1.03] border border-orange-400/30'
               }`}
             >
-              {t.nav.contact}
+              <Send className="w-3.5 h-3.5" />
+              <span>{t.nav.contact}</span>
             </a>
           </div>
 
@@ -1114,13 +1157,19 @@ export default function App() {
                   playSound(600, 0.04);
                   setMobileMenuOpen(false);
                 }}
-                className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all ${
                   activeSection === 'contact'
-                    ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
-                    : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    ? 'bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-md shadow-orange-950/50'
+                    : 'bg-gradient-to-r from-orange-500/20 to-amber-600/20 border border-orange-500/40 text-orange-200 hover:bg-orange-500/30'
                 }`}
               >
-                {t.nav.contact}
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-orange-400" />
+                  <span>{t.nav.contact}</span>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-md bg-orange-500/30 text-orange-200 uppercase font-mono">
+                  {language === 'pt' ? 'Conversar' : 'Chat'}
+                </span>
               </a>
 
               {/* Divisor */}
@@ -1846,6 +1895,14 @@ export default function App() {
               {t.contact.description}
             </p>
 
+            {/* Badge de SLA & Resposta Rápida */}
+            <div className="flex flex-wrap items-center gap-3 mt-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-mono">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>{t.contact.slaBadge}</span>
+              </div>
+            </div>
+
             {contactSubmitted ? (
               <div className="mt-8 p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center gap-4">
                 <Check className="w-8 h-8 shrink-0 text-emerald-400" />
@@ -1887,6 +1944,26 @@ export default function App() {
                     onChange={(e) => setContactEmail(e.target.value)}
                     className="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#38bdf8] focus:ring-1 focus:ring-[#38bdf8] transition-all"
                   />
+                </div>
+
+                {/* Pílulas de Seleção Rápida de Escopo */}
+                <div className="flex flex-col gap-2 pt-1">
+                  <span className="text-xs font-mono text-slate-400 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    {t.contact.quickFocusLabel}
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {t.contact.serviceChips.map((chip) => (
+                      <button
+                        key={chip}
+                        type="button"
+                        onClick={() => handleSelectServiceChip(chip)}
+                        className="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-amber-500/50 hover:bg-amber-500/10 text-xs font-mono text-slate-300 hover:text-amber-300 transition-all cursor-pointer flex items-center gap-1 shadow-sm"
+                      >
+                        <span className="text-amber-400 font-bold">+</span> {chip}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Campo Mensagem */}
@@ -1971,6 +2048,19 @@ export default function App() {
                   <span>{t.contact.card.locationLabel}</span>
                   <span className="text-white">{t.contact.card.locationVal}</span>
                 </div>
+              </div>
+
+              {/* Ações Diretas: Copiar E-mail & Contato Imediato */}
+              <div className="w-full mt-6 pt-5 border-t border-slate-800 flex flex-col gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleCopyEmail}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-[#38bdf8]/50 text-xs font-semibold text-slate-200 hover:text-white transition-all cursor-pointer shadow-sm active:scale-98"
+                  title="Copiar matheusprgc@gmail.com"
+                >
+                  {copiedEmail ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-[#38bdf8]" />}
+                  <span>{copiedEmail ? t.contact.emailCopied : `${t.contact.copyEmail}: matheusprgc@gmail.com`}</span>
+                </button>
               </div>
 
             </div>
@@ -2125,6 +2215,29 @@ export default function App() {
                   style={{ backgroundColor: languageColors[selectedRepo.language] || languageColors.Default }}
                 />
                 <span className="text-white font-semibold">{selectedRepo.language}</span>
+              </div>
+
+              {/* Banner de Conversão / Fechamento de Projeto Semelhante */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-blue-500/10 border border-orange-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-1">
+                <div className="text-left">
+                  <p className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                    <Rocket className="w-4 h-4 text-orange-400 shrink-0" />
+                    <span>{t.modal.discussPrompt}</span>
+                  </p>
+                  <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
+                    {language === 'pt' 
+                      ? 'Inicie uma conversa técnica sobre arquitetura, requisitos e desenvolvimento para seu negócio.' 
+                      : 'Start a technical conversation on architecture, requirements, and development for your business.'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleDiscussProject(selectedRepo)}
+                  className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-500 text-white font-bold text-xs shadow-lg shadow-orange-500/25 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>{t.modal.discussSimilar}</span>
+                </button>
               </div>
             </div>
 
