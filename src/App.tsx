@@ -275,53 +275,149 @@ const RepositoryCard = memo(({
   );
 });
 
-// Componente Memoizado: Hero 3D Interactive Avatar (Direct DOM / rAF - Zero React state updates no cursor)
+// Componente Memoizado: Hero 3D Interactive Avatar (Direct DOM / rAF - Eye Tracking & Blinking)
 const HeroInteractiveAvatar = memo(({
   avatarImg,
   chip1Text,
   chip2Text,
   chip3Text,
+  onAvatarClick,
 }: {
   avatarImg: string;
   chip1Text: string;
   chip2Text: string;
   chip3Text: string;
+  onAvatarClick?: () => void;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const avatarRef = useRef<HTMLDivElement>(null);
+  const leftPupilRef = useRef<SVGGElement>(null);
+  const rightPupilRef = useRef<SVGGElement>(null);
+  const leftEyelidRef = useRef<SVGGElement>(null);
+  const rightEyelidRef = useRef<SVGGElement>(null);
   const rafRef = useRef<number | null>(null);
+  const blinkTimeoutRef = useRef<number | null>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current || !avatarRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    const tiltX = Number((x * 16).toFixed(2));
-    const tiltY = Number((-y * 16).toFixed(2));
+  // Blinking orgânico e natural (a cada 3.2s a 5.8s, com chance de piscada dupla)
+  const executeBlink = useCallback((isDouble = false) => {
+    if (!leftEyelidRef.current || !rightEyelidRef.current) return;
+    
+    // Fecha pálpebras
+    leftEyelidRef.current.style.transform = 'scaleY(1)';
+    rightEyelidRef.current.style.transform = 'scaleY(1)';
 
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      if (avatarRef.current) {
-        avatarRef.current.style.transform = `perspective(1000px) rotateY(${tiltX}deg) rotateX(${tiltY}deg)`;
+    setTimeout(() => {
+      if (!leftEyelidRef.current || !rightEyelidRef.current) return;
+      leftEyelidRef.current.style.transform = 'scaleY(0)';
+      rightEyelidRef.current.style.transform = 'scaleY(0)';
+
+      if (isDouble) {
+        // Segunda piscada rápida
+        setTimeout(() => {
+          if (!leftEyelidRef.current || !rightEyelidRef.current) return;
+          leftEyelidRef.current.style.transform = 'scaleY(1)';
+          rightEyelidRef.current.style.transform = 'scaleY(1)';
+          setTimeout(() => {
+            if (!leftEyelidRef.current || !rightEyelidRef.current) return;
+            leftEyelidRef.current.style.transform = 'scaleY(0)';
+            rightEyelidRef.current.style.transform = 'scaleY(0)';
+          }, 120);
+        }, 110);
       }
-    });
-  };
+    }, 130);
+  }, []);
 
-  const handleMouseLeave = () => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      if (avatarRef.current) {
-        avatarRef.current.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
-      }
-    });
-  };
+  useEffect(() => {
+    let active = true;
+    const scheduleNextBlink = () => {
+      if (!active) return;
+      const delay = 3200 + Math.random() * 2600; // entre 3.2s e 5.8s
+      blinkTimeoutRef.current = window.setTimeout(() => {
+        if (!active) return;
+        const isDouble = Math.random() < 0.18; // 18% de chance de piscada dupla
+        executeBlink(isDouble);
+        scheduleNextBlink();
+      }, delay);
+    };
+
+    scheduleNextBlink();
+
+    return () => {
+      active = false;
+      if (blinkTimeoutRef.current) clearTimeout(blinkTimeoutRef.current);
+    };
+  }, [executeBlink]);
+
+  // Rastreamento suave do ponteiro do mouse em toda a janela (Aceleração GPU / Zero re-render)
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current || !avatarRef.current) return;
+      
+      const rect = containerRef.current.getBoundingClientRect();
+      // Posição da cabeça do personagem (aproximadamente a 25% do topo do container)
+      const headCenterX = rect.left + rect.width * 0.5;
+      const headCenterY = rect.top + rect.height * 0.28;
+
+      const dx = e.clientX - headCenterX;
+      const dy = e.clientY - headCenterY;
+      const dist = Math.hypot(dx, dy);
+
+      // Tilt sutil 3D da cabeça/corpo (max 12deg no X, 9deg no Y)
+      const maxTilt = 12;
+      const tiltY = Math.max(-maxTilt, Math.min(maxTilt, (dx / (window.innerWidth * 0.5)) * maxTilt));
+      const tiltX = Math.max(-8, Math.min(8, (-dy / (window.innerHeight * 0.5)) * 8));
+
+      // Movimento das pupilas acompanhando o ponteiro (raio max de ~6.5px para anatomia orgânica)
+      const maxEyeShiftX = 6.2;
+      const maxEyeShiftY = 4.8;
+      const eyeDamping = Math.min(1, dist / 400);
+      const angle = Math.atan2(dy, dx);
+      const pupilX = Number((Math.cos(angle) * maxEyeShiftX * eyeDamping).toFixed(2));
+      const pupilY = Number((Math.sin(angle) * maxEyeShiftY * eyeDamping).toFixed(2));
+
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        if (avatarRef.current) {
+          avatarRef.current.style.transform = `perspective(1000px) rotateY(${tiltY.toFixed(2)}deg) rotateX(${tiltX.toFixed(2)}deg)`;
+        }
+        if (leftPupilRef.current) {
+          leftPupilRef.current.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+        }
+        if (rightPupilRef.current) {
+          rightPupilRef.current.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+        }
+      });
+    };
+
+    const handleMouseLeaveWindow = () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        if (avatarRef.current) {
+          avatarRef.current.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
+        }
+        if (leftPupilRef.current) {
+          leftPupilRef.current.style.transform = 'translate(0px, 0px)';
+        }
+        if (rightPupilRef.current) {
+          rightPupilRef.current.style.transform = 'translate(0px, 0px)';
+        }
+      });
+    };
+
+    window.addEventListener('mousemove', handleGlobalMouseMove, { passive: true });
+    document.addEventListener('mouseleave', handleMouseLeaveWindow);
+
+    return () => {
+      window.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseleave', handleMouseLeaveWindow);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
 
   return (
     <div
       ref={containerRef}
       className="lg:col-span-5 relative flex flex-col items-center justify-center w-full py-4 select-none"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
     >
       <div className="relative flex flex-col items-center justify-center w-full max-w-lg">
         {/* Luz de Fundo e Brilho Suave */}
@@ -349,9 +445,13 @@ const HeroInteractiveAvatar = memo(({
           <span className="font-semibold tracking-wide">{chip3Text}</span>
         </div>
 
-        {/* O Personagem 3D com Tilt Interativo e Altíssima Resolução */}
+        {/* O Personagem 3D com Tilt Interativo, Eye Tracking & Blinking */}
         <div
           ref={avatarRef}
+          onClick={() => {
+            executeBlink(true);
+            if (onAvatarClick) onAvatarClick();
+          }}
           style={{
             transform: 'perspective(1000px) rotateY(0deg) rotateX(0deg)',
             willChange: 'transform',
@@ -359,14 +459,132 @@ const HeroInteractiveAvatar = memo(({
             WebkitBackfaceVisibility: 'hidden',
           }}
           className="relative flex flex-col items-center justify-center transition-transform duration-150 ease-out cursor-pointer group"
+          title="Clique para interagir!"
         >
-          <img
-            src={avatarImg}
-            alt="Matheus Gomes"
-            loading="eager"
-            fetchPriority="high"
-            className="relative z-10 h-[390px] sm:h-[490px] lg:h-[550px] w-auto max-w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.65)] pointer-events-none group-hover:scale-[1.02] transition-transform duration-300"
-          />
+          <div className="relative inline-block">
+            <img
+              src={avatarImg}
+              alt="Matheus Gomes"
+              loading="eager"
+              fetchPriority="high"
+              className="relative z-10 h-[390px] sm:h-[490px] lg:h-[550px] w-auto max-w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.65)] pointer-events-none group-hover:scale-[1.01] transition-transform duration-300"
+            />
+
+            {/* Camada Interativa SVG: Scleras, Pupilas Vivas e Pálpebras Orgânicas */}
+            <svg
+              viewBox="0 0 662 1811"
+              className="absolute inset-0 w-full h-full pointer-events-none z-20"
+              aria-hidden="true"
+            >
+              <defs>
+                {/* Filtro de Suavização para Sombras e Bordas Orgânicas */}
+                <filter id="eyeShadowBlur" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3.5" />
+                </filter>
+
+                {/* Recorte das órbitas oculares (dentro da armação dos óculos) */}
+                <clipPath id="leftEyeClip">
+                  <ellipse cx="215" cy="450" rx="60" ry="50" />
+                </clipPath>
+                <clipPath id="rightEyeClip">
+                  <ellipse cx="434" cy="447" rx="64" ry="53" />
+                </clipPath>
+
+                {/* Gradiente 3D da Esclera (Globo Ocular com Iluminação Volumétrica) */}
+                <radialGradient id="sclera3DLeft" cx="46%" cy="40%" r="62%">
+                  <stop offset="0%" stop-color="#ffffff" />
+                  <stop offset="65%" stop-color="#ece8e2" />
+                  <stop offset="90%" stop-color="#d4cfc6" />
+                  <stop offset="100%" stop-color="#b8b2a7" />
+                </radialGradient>
+                <radialGradient id="sclera3DRight" cx="48%" cy="42%" r="62%">
+                  <stop offset="0%" stop-color="#ffffff" />
+                  <stop offset="65%" stop-color="#ece8e2" />
+                  <stop offset="90%" stop-color="#d4cfc6" />
+                  <stop offset="100%" stop-color="#b8b2a7" />
+                </radialGradient>
+
+                {/* Gradiente da Íris (Castanho Profundo Raytraced) */}
+                <radialGradient id="irisGrad" cx="42%" cy="38%" r="60%">
+                  <stop offset="0%" stop-color="#4d2b1f" />
+                  <stop offset="70%" stop-color="#361c14" />
+                  <stop offset="100%" stop-color="#1f100a" />
+                </radialGradient>
+
+                {/* Gradiente das Pálpebras (Tom de Pele Exato com Sombra de Dobra) */}
+                <linearGradient id="eyelidSkinGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#df9f87" />
+                  <stop offset="70%" stop-color="#cb8870" />
+                  <stop offset="95%" stop-color="#a45e49" />
+                  <stop offset="100%" stop-color="#48241b" />
+                </linearGradient>
+              </defs>
+
+              {/* Olho Esquerdo (do observador) */}
+              <g clip-path="url(#leftEyeClip)">
+                {/* Esclera 3D */}
+                <ellipse cx="215" cy="450" rx="60" ry="50" fill="url(#sclera3DLeft)" />
+                {/* Sombra de oclusão ambiente superior gerada pelos óculos */}
+                <ellipse cx="215" cy="415" rx="62" ry="24" fill="rgba(38, 22, 18, 0.55)" filter="url(#eyeShadowBlur)" />
+
+                {/* Pupila Móvel (Segue o mouse em tempo real) */}
+                <g ref={leftPupilRef} style={{ transition: 'transform 0.06s cubic-bezier(0.2, 0, 0, 1)' }}>
+                  {/* Borda externa sutil */}
+                  <circle cx="227" cy="450" r="37" fill="#b09985" opacity="0.85" />
+                  {/* Íris castanha principal */}
+                  <circle cx="227" cy="450" r="35" fill="url(#irisGrad)" />
+                  {/* Brilho especular nítido */}
+                  <circle cx="236" cy="442" r="8.5" fill="#ffffff" opacity="0.95" />
+                </g>
+
+                {/* Pálpebra Orgânica para Piscada */}
+                <g
+                  ref={leftEyelidRef}
+                  style={{
+                    transformOrigin: '215px 400px',
+                    transform: 'scaleY(0)',
+                    transition: 'transform 0.12s cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
+                >
+                  <rect x="145" y="395" width="140" height="115" fill="url(#eyelidSkinGrad)" rx="16" />
+                  {/* Linha dos cílios */}
+                  <line x1="152" y1="508" x2="278" y2="508" stroke="#3b1b13" stroke-width="3.5" stroke-linecap="round" />
+                </g>
+              </g>
+
+              {/* Olho Direito (do observador) */}
+              <g clip-path="url(#rightEyeClip)">
+                {/* Esclera 3D */}
+                <ellipse cx="434" cy="447" rx="64" ry="53" fill="url(#sclera3DRight)" />
+                {/* Sombra de oclusão ambiente superior gerada pelos óculos */}
+                <ellipse cx="434" cy="410" rx="66" ry="26" fill="rgba(38, 22, 18, 0.55)" filter="url(#eyeShadowBlur)" />
+
+                {/* Pupila Móvel (Segue o mouse em tempo real) */}
+                <g ref={rightPupilRef} style={{ transition: 'transform 0.06s cubic-bezier(0.2, 0, 0, 1)' }}>
+                  {/* Borda externa sutil */}
+                  <circle cx="424" cy="447" r="41.5" fill="#b09985" opacity="0.85" />
+                  {/* Íris castanha principal */}
+                  <circle cx="424" cy="447" r="39.5" fill="url(#irisGrad)" />
+                  {/* Brilho especular nítido */}
+                  <circle cx="433" cy="438" r="9.5" fill="#ffffff" opacity="0.95" />
+                </g>
+
+                {/* Pálpebra Orgânica para Piscada */}
+                <g
+                  ref={rightEyelidRef}
+                  style={{
+                    transformOrigin: '434px 394px',
+                    transform: 'scaleY(0)',
+                    transition: 'transform 0.12s cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
+                >
+                  <rect x="360" y="388" width="148" height="120" fill="url(#eyelidSkinGrad)" rx="16" />
+                  {/* Linha dos cílios */}
+                  <line x1="368" y1="506" x2="500" y2="506" stroke="#3b1b13" stroke-width="3.5" stroke-linecap="round" />
+                </g>
+              </g>
+            </svg>
+          </div>
 
           {/* Sombra de Contato Natural no Chão */}
           <div className="w-40 sm:w-52 h-4 rounded-full bg-black/70 blur-md -mt-2 pointer-events-none z-0" />
@@ -404,6 +622,34 @@ export default function App() {
   const { language, setLanguage, t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<'hero' | 'about' | 'portfolio' | 'contact'>('hero');
+  const navRef = useRef<HTMLElement | null>(null);
+
+  // Fecha o menu mobile ao clicar fora ou pressionar Escape
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside, { passive: true });
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
@@ -664,7 +910,7 @@ export default function App() {
       <div className="fixed top-[30%] right-[5%] w-[600px] h-[600px] bg-[#6366f1]/5 rounded-full blur-[110px] pointer-events-none -z-40 transform-gpu" />
 
       {/* 1. NAVBAR / HEADER SUPERIOR (Fixed com Scroll Tracking, Menu Mobile & Seletor de Idioma) */}
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#070b13]/90 border-b border-slate-800/80 shadow-lg shadow-black/40 transition-all duration-300">
+      <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#070b13]/90 border-b border-slate-800/80 shadow-lg shadow-black/40 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-3.5 sm:px-6 h-16 sm:h-18 flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Logo Isometric Cube */}
@@ -928,6 +1174,18 @@ export default function App() {
         )}
       </nav>
 
+      {/* Backdrop para fechar o menu mobile ao tocar/clicar fora */}
+      {mobileMenuOpen && (
+        <div
+          onClick={() => {
+            playSound(480, 0.04);
+            setMobileMenuOpen(false);
+          }}
+          className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-xs transition-opacity duration-200 cursor-pointer"
+          aria-hidden="true"
+        />
+      )}
+
       {/* Espaçador para compensar a navbar fixed no fluxo do documento */}
       <div className="h-16 sm:h-18" aria-hidden="true" />
 
@@ -999,6 +1257,7 @@ export default function App() {
             chip1Text={t.hero.chips.chip1}
             chip2Text={t.hero.chips.chip2}
             chip3Text={t.hero.chips.chip3}
+            onAvatarClick={() => playSound(720, 0.08)}
           />
 
         </div>
