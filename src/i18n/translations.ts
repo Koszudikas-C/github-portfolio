@@ -35,6 +35,7 @@ export const translations = {
       miniTechs: [
         ".NET 10 & C# 13",
         "Rust Tokio",
+        "PHP & REST APIs",
         "TypeScript & React",
         "IA & ONNX Vision",
       ]
@@ -56,7 +57,7 @@ export const translations = {
         xp: "EXPERIÊNCIA:",
         xpVal: "SÊNIOR / FULL-STACK",
       },
-      bio: "Engenheiro de software especializado na concepção e implementação de sistemas de alta vazão, arquiteturas resilientes e pipelines inteligentes de IA. Com sólido domínio em C# (.NET 10), Rust, TypeScript e microsserviços orientados a eventos, atuo desde o core de domínios complexos até interfaces web reativas e de alta performance. Apaixonado por código limpo, rigor em testes de software e engenharia sem atalhos.",
+      bio: "Engenheiro de software especializado na concepção e implementação de sistemas de alta vazão, arquiteturas resilientes e pipelines inteligentes de IA. Com sólido domínio em C# (.NET 10), Rust, PHP, TypeScript e microsserviços orientados a eventos, atuo desde o core de domínios complexos até interfaces web reativas e de alta performance. Apaixonado por código limpo, rigor em testes de software e engenharia sem atalhos.",
       pillars: {
         p1Title: "Arquitetura & DDD",
         p1Desc: "Clean Architecture, CQRS, Event-Driven e modelagem rica de domínio com testes unitários em todas as camadas.",
@@ -200,6 +201,7 @@ export const translations = {
       miniTechs: [
         ".NET 10 & C# 13",
         "Rust Tokio",
+        "PHP & REST APIs",
         "TypeScript & React",
         "AI & ONNX Vision",
       ]
@@ -221,7 +223,7 @@ export const translations = {
         xp: "EXPERIENCE:",
         xpVal: "SENIOR / FULL-STACK",
       },
-      bio: "Software engineer specialized in the design and implementation of high-throughput systems, resilient architectures, and intelligent AI pipelines. With deep expertise in C# (.NET 10), Rust, TypeScript, and event-driven microservices, I operate from core complex domains to reactive, high-performance web interfaces. Passionate about clean code, software testing rigor, and engineering without shortcuts.",
+      bio: "Software engineer specialized in the design and implementation of high-throughput systems, resilient architectures, and intelligent AI pipelines. With deep expertise in C# (.NET 10), Rust, PHP, TypeScript, and event-driven microservices, I operate from core complex domains to reactive, high-performance web interfaces. Passionate about clean code, software testing rigor, and engineering without shortcuts.",
       pillars: {
         p1Title: "Architecture & DDD",
         p1Desc: "Clean Architecture, CQRS, Event-Driven, and rich domain modeling with unit tests across all application layers.",
