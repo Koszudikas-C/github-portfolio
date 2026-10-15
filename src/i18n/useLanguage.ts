@@ -4,6 +4,49 @@ import { translations, type Language } from './translations';
 const STORAGE_KEY = 'user_language';
 const PT_COUNTRIES = new Set(['BR', 'PT', 'AO', 'MZ', 'CV', 'GW', 'ST', 'TL']);
 
+/**
+ * Fallback inteligente e multi-fator para identificar a linguagem do usuário
+ * através das preferências do navegador (navigator.languages) e fuso horário do sistema (Intl API).
+ */
+export function getBrowserLanguageFallback(): Language {
+  if (typeof navigator === 'undefined') return 'pt';
+
+  // 1. Array de preferências de idiomas do navegador (navigator.languages)
+  const navLanguages: string[] = [];
+  if (Array.isArray(navigator.languages) && navigator.languages.length > 0) {
+    navLanguages.push(...navigator.languages);
+  }
+  if (navigator.language) {
+    navLanguages.push(navigator.language);
+  }
+  if ((navigator as any).userLanguage) {
+    navLanguages.push((navigator as any).userLanguage);
+  }
+  if ((navigator as any).browserLanguage) {
+    navLanguages.push((navigator as any).browserLanguage);
+  }
+
+  // Verifica se o usuário tem preferência por português em qualquer uma das línguas configuradas
+  for (const l of navLanguages) {
+    if (typeof l === 'string' && l.toLowerCase().startsWith('pt')) {
+      return 'pt';
+    }
+  }
+
+  // 2. Fuso horário / Região do sistema (Intl API)
+  // Detecta se a máquina física do usuário está configurada em fusos horários do Brasil, Portugal ou países lusófonos
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    if (/^(America\/(Sao_Paulo|Fortaleza|Recife|Bahia|Belem|Manaus|Cuiaba|Porto_Velho|Boa_Vista|Campo_Grande|Maceio|Araguaina|Santarem|Noronha|Rio_Branco|Eirunepe)|Europe\/Lisbon|Atlantic\/(Madeira|Azores)|Africa\/(Luanda|Maputo|Bissau|Praia|Sao_Tome))/i.test(tz)) {
+      return 'pt';
+    }
+  } catch {
+    // Ignora erro de Intl
+  }
+
+  return 'en';
+}
+
 export function useLanguage() {
   const [language, setLanguageState] = useState<Language>(() => {
     // 1. Prioridade máxima: Escolha explícita salva pelo usuário no localStorage
@@ -16,11 +59,8 @@ export function useLanguage() {
       // Ignora erro de localStorage
     }
 
-    // Fallback inicial rápido pelo idioma do navegador enquanto faz a detecção de IP
-    const browserLang = typeof navigator !== 'undefined' 
-      ? (navigator.language || (navigator as any).userLanguage || 'pt')
-      : 'pt';
-    return browserLang.toLowerCase().startsWith('pt') ? 'pt' : 'en';
+    // Fallback inicial rápido síncrono
+    return getBrowserLanguageFallback();
   });
 
   const setLanguage = useCallback((lang: Language) => {
@@ -36,7 +76,7 @@ export function useLanguage() {
   }, []);
 
   useEffect(() => {
-    // Se o usuário já tiver uma escolha salva, não precisa consultar IP
+    // Se o usuário já tiver uma escolha manual salva no localStorage, não precisa consultar IP
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved === 'pt' || saved === 'en') {
@@ -44,45 +84,60 @@ export function useLanguage() {
         return;
       }
     } catch {
-      // Continua para IP detection
+      // Continua para detecção por IP
     }
 
-    // Consulta de Geolocalização por IP com Timeout (AbortController)
+    // Consulta de Geolocalização por IP com Timeout e Fallback resiliente
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2500);
 
     const detectByIp = async () => {
+      // 1. Tentativa primária: get.geojs.io (CORS público irrestrito, sem headers customizados, rápido via Cloudflare)
       try {
-        // Tenta api.country.is (ultra rápida e sem rate limit)
-        const res = await fetch('https://api.country.is/', {
+        const res = await fetch('https://get.geojs.io/v1/ip/country.json', {
           signal: controller.signal,
-          headers: { 'Accept': 'application/json' }
+          mode: 'cors'
         });
-        
         if (res.ok) {
           const data = await res.json();
           const country = (data.country || '').toUpperCase();
-          const detectedLang: Language = PT_COUNTRIES.has(country) ? 'pt' : 'en';
-          setLanguageState(detectedLang);
-          document.documentElement.lang = detectedLang === 'pt' ? 'pt-BR' : 'en';
-          return;
+          if (country) {
+            const detectedLang: Language = PT_COUNTRIES.has(country) ? 'pt' : 'en';
+            setLanguageState(detectedLang);
+            document.documentElement.lang = detectedLang === 'pt' ? 'pt-BR' : 'en';
+            return;
+          }
         }
       } catch {
-        // Timeout ou erro de rede -> Fallback para idioma do navegador
+        // Falha no GeoJS -> Tenta serviço secundário
+      }
+
+      // 2. Tentativa secundária: api.country.is (sem headers customizados para evitar preflight OPTIONS)
+      try {
+        const res = await fetch('https://api.country.is/', {
+          signal: controller.signal,
+          mode: 'cors'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const country = (data.country || '').toUpperCase();
+          if (country) {
+            const detectedLang: Language = PT_COUNTRIES.has(country) ? 'pt' : 'en';
+            setLanguageState(detectedLang);
+            document.documentElement.lang = detectedLang === 'pt' ? 'pt-BR' : 'en';
+            return;
+          }
+        }
+      } catch {
+        // Falha ou Timeout
       } finally {
         clearTimeout(timeoutId);
       }
 
-      // Fallback garantido: linguagem do navegador
-      try {
-        const browserLang = (navigator.language || (navigator as any).userLanguage || 'pt').toLowerCase();
-        const fallbackLang: Language = browserLang.startsWith('pt') ? 'pt' : 'en';
-        setLanguageState(fallbackLang);
-        document.documentElement.lang = fallbackLang === 'pt' ? 'pt-BR' : 'en';
-      } catch {
-        // Default final
-        setLanguageState('pt');
-      }
+      // 3. Fallback garantido por navegador + fuso horário
+      const fallbackLang = getBrowserLanguageFallback();
+      setLanguageState(fallbackLang);
+      document.documentElement.lang = fallbackLang === 'pt' ? 'pt-BR' : 'en';
     };
 
     detectByIp();
