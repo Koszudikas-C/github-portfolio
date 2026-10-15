@@ -310,7 +310,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070b13] text-[#f3f4f6] font-sans selection:bg-[#2563eb]/30 selection:text-white pb-16">
+    <div className="min-h-screen bg-[#070b13] text-[#f3f4f6] font-sans selection:bg-[#2563eb]/30 selection:text-white pb-16 overflow-x-hidden max-w-full">
       
       {/* Background Decorativo Global */}
       <div className="fixed top-0 left-0 w-full h-[700px] bg-gradient-to-b from-[#1e1b4b]/20 via-transparent to-transparent pointer-events-none z-0" />
@@ -319,20 +319,20 @@ export default function App() {
 
       {/* 1. NAVBAR / HEADER SUPERIOR (inspirado no topo da referência com Cubo e Som) */}
       <nav className="sticky top-0 z-40 backdrop-blur-xl bg-[#070b13]/80 border-b border-slate-800/80">
-        <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 h-16 sm:h-18 flex items-center justify-between gap-2 sm:gap-4">
           
           {/* Logo Isometric Cube */}
           <a
             href="#hero"
             onClick={() => playSound(520, 0.05)}
-            className="flex items-center gap-3 group cursor-pointer"
+            className="flex items-center gap-2 sm:gap-3 group cursor-pointer shrink-0 min-w-0"
           >
-            <IsometricCubeLogo className="w-9 h-9 group-hover:scale-110 transition-transform duration-300" />
-            <div className="flex flex-col">
-              <span className="font-extrabold text-base tracking-tight text-white group-hover:text-[#38bdf8] transition-colors leading-none">
+            <IsometricCubeLogo className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 group-hover:scale-110 transition-transform duration-300" />
+            <div className="flex flex-col min-w-0">
+              <span className="font-extrabold text-sm sm:text-base tracking-tight text-white group-hover:text-[#38bdf8] transition-colors leading-none whitespace-nowrap">
                 Koszudikas-C<span className="text-[#38bdf8]">.dev</span>
               </span>
-              <span className="text-[10px] text-slate-400 font-mono tracking-wider mt-0.5">
+              <span className="text-[9px] sm:text-[10px] text-slate-400 font-mono tracking-wider mt-0.5 whitespace-nowrap">
                 MATHEUS GOMES
               </span>
             </div>
@@ -347,7 +347,7 @@ export default function App() {
           </div>
 
           {/* Controles da Direita (Botão de Som + GitHub) */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {/* Botão de Som (como na referência no canto superior direito) */}
             <button
               onClick={() => {
@@ -356,13 +356,13 @@ export default function App() {
                 if (nextState) playSound(580, 0.1);
               }}
               title={soundEnabled ? "Desativar efeitos sonoros" : "Ativar efeitos sonoros interativos"}
-              className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+              className={`p-2 sm:p-2.5 rounded-xl border transition-all cursor-pointer ${
                 soundEnabled 
                   ? "bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-sm shadow-amber-500/20" 
                   : "bg-slate-800/50 text-slate-400 border-slate-700/60 hover:text-white hover:bg-slate-800"
               }`}
             >
-              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+              {soundEnabled ? <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
             </button>
 
             {/* Link GitHub */}
@@ -371,12 +371,12 @@ export default function App() {
               target="_blank"
               rel="noreferrer"
               onClick={() => playSound(620, 0.05)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/80 hover:bg-blue-600/20 border border-slate-700 hover:border-blue-500/40 text-xs font-semibold text-white transition-all shadow-sm"
+              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-slate-800/80 hover:bg-blue-600/20 border border-slate-700 hover:border-blue-500/40 text-xs font-semibold text-white transition-all shadow-sm"
             >
-              <svg className="w-4 h-4 text-[#38bdf8]" viewBox="0 0 24 24" fill="currentColor">
+              <svg className="w-4 h-4 text-[#38bdf8] shrink-0" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.08-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.18 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" />
               </svg>
-              GitHub
+              <span>GitHub</span>
             </a>
           </div>
 
@@ -384,8 +384,8 @@ export default function App() {
       </nav>
 
       {/* 2. HERO SECTION ("Hi, my name is David" -> Matheus Gomes) */}
-      <section id="hero" className="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section id="hero" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-14 sm:pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
           {/* Lado Esquerdo - Apresentação Limpa & Direta */}
           <div className="lg:col-span-7 flex flex-col items-start">
@@ -395,21 +395,21 @@ export default function App() {
               Disponível para Projetos & Arquiteturas
             </div>
 
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
+            <h1 className="text-3xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
               Olá, meu <br />
               nome é <span className="text-gradient">Matheus.</span>
             </h1>
 
-            <p className="text-slate-300 text-lg sm:text-xl mt-6 max-w-xl font-light leading-relaxed">
+            <p className="text-slate-300 text-base sm:text-xl mt-5 sm:mt-6 max-w-xl font-light leading-relaxed">
               Arquiteto de software & desenvolvedor full-stack. Crio sistemas distribuídos de alta performance, agentes autônomos de IA e soluções de engenharia robustas.
             </p>
 
             {/* Botões de Ação estilo "Get in touch" */}
-            <div className="flex flex-wrap items-center gap-4 mt-8">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-7 sm:mt-8 w-full sm:w-auto">
               <a
                 href="#contact"
                 onClick={() => playSound(520, 0.08)}
-                className="px-7 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm transition-all shadow-lg shadow-blue-500/25 cursor-pointer flex items-center gap-2 group"
+                className="flex-1 sm:flex-initial justify-center px-6 sm:px-7 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm transition-all shadow-lg shadow-blue-500/25 cursor-pointer flex items-center gap-2 group"
               >
                 Entre em contato
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -418,7 +418,7 @@ export default function App() {
               <a
                 href="#portfolio"
                 onClick={() => playSound(440, 0.08)}
-                className="px-6 py-3.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-white font-semibold text-sm transition-all cursor-pointer flex items-center gap-2"
+                className="flex-1 sm:flex-initial justify-center px-5 sm:px-6 py-3.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-white font-semibold text-sm transition-all cursor-pointer flex items-center gap-2"
               >
                 Ver Projetos
                 <Code className="w-4 h-4 text-[#38bdf8]" />
@@ -426,7 +426,7 @@ export default function App() {
             </div>
 
             {/* Quick Badges no Rodapé do Hero */}
-            <div className="flex flex-wrap items-center gap-3 mt-10 pt-6 border-t border-slate-800/80 text-xs text-slate-400">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-8 sm:mt-10 pt-5 sm:pt-6 border-t border-slate-800/80 text-xs text-slate-400 w-full">
               <span className="text-slate-300 font-semibold">Especialidades:</span>
               <span className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">.NET 10 / C#</span>
               <span className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">Rust High-Throughput</span>
@@ -437,23 +437,23 @@ export default function App() {
           </div>
 
           {/* Lado Direito - Ilustração / Estação de Trabalho do Desenvolvedor (inspirada no 3D Desk da referência) */}
-          <div className="lg:col-span-5 relative flex items-center justify-center">
+          <div className="lg:col-span-5 relative flex items-center justify-center w-full">
             
-            <div className="relative w-full max-w-md aspect-square rounded-3xl p-6 glass-panel border border-slate-700/80 shadow-2xl flex flex-col justify-between overflow-hidden group">
+            <div className="relative w-full max-w-md rounded-3xl p-5 sm:p-6 glass-panel border border-slate-700/80 shadow-2xl flex flex-col justify-between overflow-hidden group">
               
               {/* Background Glow */}
               <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
 
               {/* Terminal Header */}
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-rose-500/80" />
-                  <span className="w-3 h-3 rounded-full bg-amber-500/80" />
-                  <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                  <span className="text-xs font-mono text-slate-400 ml-2">koszudikas-c@devstation:~</span>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3 gap-2 min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-3 h-3 rounded-full bg-rose-500/80 shrink-0" />
+                  <span className="w-3 h-3 rounded-full bg-amber-500/80 shrink-0" />
+                  <span className="w-3 h-3 rounded-full bg-emerald-500/80 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-mono text-slate-400 ml-1.5 sm:ml-2 truncate">koszudikas-c@devstation:~</span>
                 </div>
-                <Sparkles className="w-4 h-4 text-[#38bdf8]" />
+                <Sparkles className="w-4 h-4 text-[#38bdf8] shrink-0" />
               </div>
 
               {/* Centro: Avatar com Moldura Isométrica e Status */}
@@ -463,37 +463,37 @@ export default function App() {
                   <img
                     src="https://github.com/Koszudikas-C.png"
                     alt="Matheus Gomes"
-                    className="relative w-28 h-28 rounded-full object-cover border-2 border-slate-700 shadow-2xl bg-slate-900"
+                    className="relative w-22 h-22 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-slate-700 shadow-2xl bg-slate-900"
                   />
                   <div className="absolute -bottom-1 -right-1 p-1 rounded-full bg-slate-950 border border-slate-700">
-                    <span className="block w-4 h-4 rounded-full bg-emerald-400" />
+                    <span className="block w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-emerald-400" />
                   </div>
                 </div>
 
-                <h3 className="text-lg font-bold text-white mt-4 flex items-center gap-1.5">
+                <h3 className="text-base sm:text-lg font-bold text-white mt-3 sm:mt-4 flex items-center gap-1.5">
                   Matheus Gomes
                 </h3>
-                <p className="text-xs text-[#38bdf8] font-mono">
+                <p className="text-[11px] sm:text-xs text-[#38bdf8] font-mono">
                   @Koszudikas-C • Systems Architect
                 </p>
 
                 {/* Linha de Código Interativa */}
-                <div className="mt-4 p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-left font-mono text-[11px] text-slate-300 w-full">
-                  <div className="text-emerald-400 flex items-center gap-1">
-                    <Terminal className="w-3 h-3" />
-                    <span>$ cargo run --release --target=clean-arch</span>
+                <div className="mt-3.5 sm:mt-4 p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-left font-mono text-[10px] sm:text-[11px] text-slate-300 w-full overflow-hidden">
+                  <div className="text-emerald-400 flex items-center gap-1 truncate">
+                    <Terminal className="w-3 h-3 shrink-0" />
+                    <span className="truncate">$ cargo run --release --target=clean-arch</span>
                   </div>
                   <div className="text-slate-400 mt-1">
                     ✓ 33 repositórios compilados com sucesso.
                   </div>
-                  <div className="text-blue-400 mt-0.5">
+                  <div className="text-blue-400 mt-0.5 leading-tight text-[9.5px] sm:text-[11px]">
                     ● +1.120 testes auditados (API: 470 • Front: 416 • Auth: 234).
                   </div>
                 </div>
               </div>
 
               {/* Rodapé do Card Terminal */}
-              <div className="flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-800 pt-3 font-mono">
+              <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 border-t border-slate-800 pt-3 font-mono mt-2">
                 <span>ESTADO: ONLINE</span>
                 <span className="text-emerald-400">LATÊNCIA: 12ms</span>
               </div>
@@ -506,7 +506,7 @@ export default function App() {
       </section>
 
       {/* 3. SCI-FI LAB: ABOUT & SKILLS HUD (Inspirado no Holographic Pod das telas 00:06 a 00:08) */}
-      <section id="about" className="relative z-10 max-w-7xl mx-auto px-6 py-20 border-t border-slate-800/80">
+      <section id="about" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-800/80">
         
         {/* Header da Seção */}
         <div className="mb-12">
@@ -716,7 +716,7 @@ export default function App() {
       </section>
 
       {/* 4. PORTFOLIO SHOWCASE: "Some things I've worked on" (Carrossel Horizontal como na referência 00:09-00:13) */}
-      <section id="portfolio" className="relative z-10 max-w-7xl mx-auto px-6 py-20 border-t border-slate-800/80">
+      <section id="portfolio" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-800/80">
         
         {/* Header da Seção */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
@@ -1150,7 +1150,7 @@ export default function App() {
       </section>
 
       {/* 5. CONTACT SECTION: "Say hello 👋 / Contact me" (Inspirado nas telas 00:14 a 00:17) */}
-      <section id="contact" className="relative z-10 max-w-7xl mx-auto px-6 py-20 border-t border-slate-800/80">
+      <section id="contact" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-800/80">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           
@@ -1477,7 +1477,7 @@ export default function App() {
       )}
 
       {/* 7. FOOTER GERAL */}
-      <footer className="max-w-7xl mx-auto px-6 mt-20 text-center text-xs text-slate-400 border-t border-slate-800/80 pt-8 pb-10 flex flex-col items-center justify-center gap-3">
+      <footer className="max-w-7xl mx-auto px-4 sm:px-6 mt-16 sm:mt-20 text-center text-xs text-slate-400 border-t border-slate-800/80 pt-8 pb-10 flex flex-col items-center justify-center gap-3">
         <div className="flex items-center gap-2 text-slate-300">
           <IsometricCubeLogo className="w-5 h-5" />
           <span className="font-bold text-white tracking-wide">Koszudikas-C.dev</span>
