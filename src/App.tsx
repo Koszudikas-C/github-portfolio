@@ -1,18 +1,13 @@
 import { useState, useMemo, useEffect, useRef, useCallback, memo } from 'react';
 import { 
-  Search, 
   Folder, 
   Lock, 
   ExternalLink, 
   Code, 
-  Database, 
   X, 
-  Layers, 
   Cpu, 
-  Globe, 
   FileText,
   Terminal,
-  BookOpen,
   Sparkles,
   CheckCircle2,
   Network,
@@ -27,62 +22,19 @@ import {
   Rocket,
   ArrowRight,
   Check,
-  Loader2,
   Hand,
   Menu,
   Copy,
   Mail
 } from 'lucide-react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
 import { repositories } from './data/repositories';
 import type { Repository } from './data/repositories';
 import avatarTransparentImg from './assets/avatar-transparent.webp';
 import avatarProfileImg from './assets/avatar-profile.webp';
 import bgMusicAudio from './assets/Ink_and_Keys.mp3';
 import { useLanguage } from './i18n/useLanguage';
-
-// Mapeamento de cores para linguagens
-const languageColors: Record<string, string> = {
-  "PHP": "#777BB4",
-  "TypeScript": "#38bdf8",
-  "C#": "#22c55e",
-  "Rust": "#fb923c",
-  "CSS": "#a855f7",
-  "HTML": "#f97316",
-  "JavaScript": "#facc15",
-  "Liquid": "#84cc16",
-  "Shell": "#10b981",
-  "Default": "#94a3b8"
-};
-
-const categoryIcons: Record<string, any> = {
-  "Todos": Layers,
-  "IA, Integração & Automação": Cpu,
-  "Web & Front-end": Globe,
-  "APIs & Back-end": Database,
-  "Blockchain & Cripto": Lock,
-  "Estudos & Utilitários": BookOpen
-};
-
-const categoriesList = [
-  "Todos",
-  "IA, Integração & Automação",
-  "Web & Front-end",
-  "APIs & Back-end",
-  "Blockchain & Cripto",
-  "Estudos & Utilitários"
-];
-
-// Matriz de Skills para a seção Sci-Fi Lab
-const skillsData = [
-  { name: ".NET 10 & C# 13", level: 95, desc: "Clean Architecture, DDD, CQRS, SignalR" },
-  { name: "Rust High-Performance", level: 85, desc: "Streaming I/O, LanceDB, Tract-ONNX, Multithreading" },
-  { name: "PHP & APIs RESTful", level: 90, desc: "Arquitetura Desacoplada, JWT, Webhooks (Stripe/Asaas), MySQL" },
-  { name: "Angular & React / TS", level: 90, desc: "Control Flow, RxJS, NgZorro, Tailwind, Vitest" },
-  { name: "IA Generativa & ONNX", level: 88, desc: "YOLOv11/v26, Gemini API, OpenAI, Calibração Persona" },
-  { name: "PostgreSQL & pgvector", level: 90, desc: "Busca Vetorial, SQLite, EF Core, Índices" },
-  { name: "Kubernetes (K3s) & DevOps", level: 85, desc: "Dev/Prod Overlays, Shell Script, Docker, CI/CD" },
-];
+import { languageColors, categoryIcons, skillsData } from './data/constants';
+import { CatalogSection } from './components/CatalogSection';
 
 // Ícone 3D Isometric Cube com < /> (inspirado na abertura e marca da referência)
 const IsometricCubeLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
@@ -102,180 +54,6 @@ const IsometricCubeLogo = ({ className = "w-8 h-8" }: { className?: string }) =>
     </g>
   </svg>
 );
-
-// Tooltip customizado de alto contraste para o gráfico de linguagens
-const CustomLanguageTooltip = ({ active, payload, totalRepos }: any) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    const percentage = totalRepos > 0 ? Math.round((data.Quantidade / totalRepos) * 100) : 0;
-    return (
-      <div className="bg-[#0f172a]/95 border border-slate-700/80 rounded-xl px-3.5 py-2.5 shadow-xl shadow-black/60 min-w-[155px]">
-        <div className="flex items-center gap-2 mb-1.5 border-b border-slate-800 pb-1.5">
-          <span
-            className="w-2.5 h-2.5 rounded-full shrink-0 ring-2 ring-white/20"
-            style={{ backgroundColor: data.color }}
-          />
-          <span className="font-bold text-sm text-white">{data.name}</span>
-        </div>
-        <div className="flex items-center justify-between gap-4 text-xs">
-          <span className="text-slate-300">Repositórios:</span>
-          <span className="font-semibold text-white">
-            {data.Quantidade} <span className="text-slate-400 font-normal">({percentage}%)</span>
-          </span>
-        </div>
-      </div>
-    );
-  }
-  return null;
-};
-
-// Componente Memoizado: Gráfico de Distribuição de Linguagens (Recharts isolado)
-const LanguageDistributionChart = memo(({
-  langData,
-  selectedLanguage,
-  totalRepos,
-  onSelectLanguage,
-}: {
-  langData: Array<{ name: string; Quantidade: number; color: string }>;
-  selectedLanguage: string;
-  totalRepos: number;
-  onSelectLanguage: (lang: string) => void;
-}) => {
-  return (
-    <div className="w-full h-14">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={langData} margin={{ left: 0, right: 0, top: 2, bottom: 0 }}>
-          <XAxis dataKey="name" hide />
-          <YAxis hide />
-          <Tooltip cursor={{ fill: 'rgba(56, 189, 248, 0.12)', radius: 4 }} content={<CustomLanguageTooltip totalRepos={totalRepos} />} />
-          <Bar
-            dataKey="Quantidade"
-            radius={[4, 4, 0, 0]}
-            className="cursor-pointer"
-            onClick={(data: any) => {
-              if (data && data.name) {
-                onSelectLanguage(data.name);
-              }
-            }}
-          >
-            {langData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={entry.color}
-                fillOpacity={selectedLanguage === "Todas" || selectedLanguage === entry.name ? 1 : 0.3}
-              />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-});
-
-// Componente Memoizado: Card individual de Repositório (Zero re-renders ao filtrar ou rolar)
-const RepositoryCard = memo(({
-  repo,
-  idx,
-  language,
-  categoryLabel,
-  ecosystemLabel,
-  privateBadgeText,
-  publicBadgeText,
-  viewDetailsText,
-  onSelect,
-  onPlaySound,
-}: {
-  repo: Repository;
-  idx: number;
-  language: 'pt' | 'en';
-  categoryLabel: string;
-  ecosystemLabel?: string;
-  privateBadgeText: string;
-  publicBadgeText: string;
-  viewDetailsText: string;
-  onSelect: (repo: Repository) => void;
-  onPlaySound: (freq?: number, duration?: number) => void;
-}) => {
-  const CategoryIcon = categoryIcons[repo.category] || Folder;
-
-  return (
-    <article
-      onClick={() => {
-        onPlaySound(460, 0.06);
-        onSelect(repo);
-      }}
-      style={{ animationDelay: `${(idx % 6) * 45}ms` }}
-      className="lazy-card group relative cursor-pointer glass-card p-6 rounded-2xl flex flex-col justify-between overflow-hidden"
-    >
-      <div className="min-w-0">
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="p-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[#38bdf8] shrink-0">
-              <CategoryIcon className="w-4 h-4" />
-            </div>
-            <span className="text-[11px] text-slate-300 tracking-wide uppercase font-semibold truncate">
-              {categoryLabel}
-            </span>
-          </div>
-          <span className={`px-2.5 py-0.5 text-[11px] font-semibold rounded-full border shrink-0 ${
-            repo.private
-              ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
-              : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
-          }`}>
-            {repo.private ? privateBadgeText : publicBadgeText}
-          </span>
-        </div>
-
-        {repo.ecosystem && ecosystemLabel && (
-          <div className="mb-2">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-[10px] font-semibold">
-              <Network className="w-3 h-3" />
-              {ecosystemLabel}
-            </span>
-          </div>
-        )}
-
-        <h4
-          title={repo.name}
-          className="text-lg font-bold text-white group-hover:text-[#38bdf8] transition-colors leading-snug truncate"
-        >
-          {repo.name}
-        </h4>
-
-        <p className="text-slate-300 text-sm mt-2 line-clamp-2 leading-relaxed">
-          {repo.description || (language === 'pt' ? "Nenhuma descrição fornecida." : "No description provided.")}
-        </p>
-
-        {repo.techStack && repo.techStack.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-3.5">
-            {repo.techStack.slice(0, 3).map((tech) => (
-              <span
-                key={tech}
-                className="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-800/80 text-slate-200 border border-slate-700/70"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="border-t border-slate-800/80 group-hover:border-blue-500/30 pt-4 mt-5 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2">
-          <span 
-            className="w-2.5 h-2.5 rounded-full ring-2 ring-white/10" 
-            style={{ backgroundColor: languageColors[repo.language] || languageColors.Default }}
-          />
-          <span className="text-slate-200 font-medium">{repo.language || (language === 'pt' ? "Outra" : "Other")}</span>
-        </div>
-
-        <span className="text-[#38bdf8] group-hover:text-white font-semibold flex items-center gap-1">
-          {viewDetailsText} &rarr;
-        </span>
-      </div>
-    </article>
-  );
-});
 
 // Componente Memoizado: Hero 3D Interactive Avatar (Direct DOM / rAF - Eye Tracking & Blinking)
 const HeroInteractiveAvatar = memo(({
@@ -653,22 +431,41 @@ export default function App() {
     };
   }, [mobileMenuOpen]);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("Todas");
-  const [selectedEcosystem, setSelectedEcosystem] = useState<string>("Todos");
-  const [visibilityFilter, setVisibilityFilter] = useState<"Todos" | "Publicos" | "Privados">("Todos");
-  const [sortOrder, setSortOrder] = useState<"default" | "recent" | "oldest">("default");
   const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null);
-
-  // Lazy loading progressivo para o catálogo
-  const [visibleCount, setVisibleCount] = useState(9);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const [selectedEcosystem, setSelectedEcosystem] = useState<string>("Todos");
 
   // Estado do Som / Áudio Sintético & Música de Fundo (Ink and Keys)
   const [soundEnabled, setSoundEnabled] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const bgMusicRef = useRef<HTMLAudioElement | null>(null);
+
+  // Reprodução de bip sutil de sci-fi
+  const playSound = useCallback((freq = 440, duration = 0.08) => {
+    if (!soundEnabled) return;
+    try {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    } catch {
+      // Audio não suportado ou bloqueado
+    }
+  }, [soundEnabled]);
+
+  // Callback estável para o clique no avatar 3D (evita re-renderizações desnecessárias)
+  const handleAvatarClick = useCallback(() => {
+    playSound(720, 0.08);
+  }, [playSound]);
 
   // Controle da Música de Fundo quando o usuário ativa o som
   useEffect(() => {
@@ -746,6 +543,14 @@ export default function App() {
     setTimeout(() => setCopiedEmail(false), 2500);
   };
 
+  // Navegação suave confiável para qualquer seção sem truncamento
+  const scrollToSection = useCallback((sectionId: string) => {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
+
   // Conversão rápida a partir do Modal de Projeto
   const handleDiscussProject = (repo: Repository) => {
     setSelectedRepo(null);
@@ -756,10 +561,7 @@ export default function App() {
       : `Hi Matheus! I reviewed the "${repo.name}" project (${categoryName}) and I'm interested in implementing a similar architecture or solution for my business.\n\nProject details:`;
     setContactMessage(intro);
     setTimeout(() => {
-      const contactSection = document.getElementById('contact');
-      if (contactSection) {
-        contactSection.scrollIntoView({ behavior: 'smooth' });
-      }
+      scrollToSection('contact');
     }, 120);
   };
 
@@ -777,28 +579,7 @@ export default function App() {
     });
   };
 
-  // Reprodução de bip sutil de sci-fi
-  const playSound = useCallback((freq = 440, duration = 0.08) => {
-    if (!soundEnabled) return;
-    try {
-      if (!audioCtxRef.current) {
-        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      }
-      const ctx = audioCtxRef.current;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, ctx.currentTime);
-      gain.gain.setValueAtTime(0.04, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + duration);
-    } catch {
-      // Audio não suportado ou bloqueado
-    }
-  }, [soundEnabled]);
+
 
   // Fechar modal ou menu mobile com tecla ESC
   useEffect(() => {
@@ -843,74 +624,7 @@ export default function App() {
     return { total, publicCount, privateCount, langData, categoryCounts, ecosystemCounts, featuredRepos };
   }, []);
 
-  // Repositórios filtrados para o catálogo
-  const filteredRepos = useMemo(() => {
-    let filtered = repositories.filter(repo => {
-      const q = searchQuery.toLowerCase();
-      const matchesSearch = 
-        repo.name.toLowerCase().includes(q) ||
-        repo.description.toLowerCase().includes(q) ||
-        repo.techStack.some(t => t.toLowerCase().includes(q)) ||
-        (repo.ecosystem && repo.ecosystem.toLowerCase().includes(q));
 
-      const matchesCategory = selectedCategory === "Todos" || repo.category === selectedCategory;
-      const matchesLanguage = selectedLanguage === "Todas" || repo.language === selectedLanguage;
-      const matchesEcosystem = selectedEcosystem === "Todos" || repo.ecosystem === selectedEcosystem;
-      
-      const matchesVisibility = 
-        visibilityFilter === "Todos" ? true :
-        visibilityFilter === "Publicos" ? !repo.private :
-        repo.private;
-
-      return matchesSearch && matchesCategory && matchesLanguage && matchesEcosystem && matchesVisibility;
-    });
-
-    if (sortOrder === "recent") {
-      filtered = [...filtered].sort((a, b) => b.id - a.id);
-    } else if (sortOrder === "oldest") {
-      filtered = [...filtered].sort((a, b) => a.id - b.id);
-    }
-
-    return filtered;
-  }, [searchQuery, selectedCategory, selectedLanguage, selectedEcosystem, visibilityFilter, sortOrder]);
-
-  const resetAllFilters = () => {
-    setSearchQuery("");
-    setSelectedCategory("Todos");
-    setSelectedLanguage("Todas");
-    setSelectedEcosystem("Todos");
-    setVisibilityFilter("Todos");
-    setSortOrder("default");
-  };
-
-  // Reset do contador visível ao alterar qualquer filtro de busca ou categoria
-  useEffect(() => {
-    setVisibleCount(9);
-  }, [searchQuery, selectedCategory, selectedLanguage, selectedEcosystem, visibilityFilter, sortOrder]);
-
-  // Observer para scroll infinito / carregamento progressivo sob demanda
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          setVisibleCount((prev) => Math.min(prev + 6, filteredRepos.length));
-        }
-      },
-      { rootMargin: '250px' }
-    );
-    const el = loadMoreRef.current;
-    if (el) observer.observe(el);
-    return () => {
-      if (el) observer.unobserve(el);
-    };
-  }, [filteredRepos.length]);
-
-  // Itens visíveis fatiados para não travar a renderização inicial do DOM
-  const visibleRepos = useMemo(() => {
-    return filteredRepos.slice(0, visibleCount);
-  }, [filteredRepos, visibleCount]);
-
-  const hasMore = visibleCount < filteredRepos.length;
 
   // Controles do Carrossel de Projetos
   const nextSlide = () => {
@@ -979,7 +693,11 @@ export default function App() {
           <div className="hidden md:flex items-center gap-1.5 lg:gap-2 text-sm font-medium">
             <a 
               href="#hero" 
-              onClick={() => playSound(480, 0.04)}
+              onClick={(e) => {
+                e.preventDefault();
+                playSound(480, 0.04);
+                scrollToSection('hero');
+              }}
               className={`px-3 py-1.5 rounded-xl transition-all ${
                 activeSection === 'hero' 
                   ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
@@ -990,7 +708,11 @@ export default function App() {
             </a>
             <a 
               href="#about" 
-              onClick={() => playSound(520, 0.04)}
+              onClick={(e) => {
+                e.preventDefault();
+                playSound(520, 0.04);
+                scrollToSection('about');
+              }}
               className={`px-3 py-1.5 rounded-xl transition-all ${
                 activeSection === 'about' 
                   ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
@@ -1001,7 +723,11 @@ export default function App() {
             </a>
             <a 
               href="#portfolio" 
-              onClick={() => playSound(560, 0.04)}
+              onClick={(e) => {
+                e.preventDefault();
+                playSound(560, 0.04);
+                scrollToSection('portfolio');
+              }}
               className={`px-3 py-1.5 rounded-xl transition-all ${
                 activeSection === 'portfolio' 
                   ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
@@ -1012,7 +738,11 @@ export default function App() {
             </a>
             <a 
               href="#contact" 
-              onClick={() => playSound(600, 0.04)}
+              onClick={(e) => {
+                e.preventDefault();
+                playSound(600, 0.04);
+                scrollToSection('contact');
+              }}
               className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition-all font-semibold text-xs cursor-pointer ${
                 activeSection === 'contact' 
                   ? 'bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-lg shadow-orange-500/25 ring-1 ring-orange-400' 
@@ -1111,9 +841,11 @@ export default function App() {
             <div className="flex flex-col gap-2">
               <a
                 href="#hero"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   playSound(480, 0.04);
                   setMobileMenuOpen(false);
+                  scrollToSection('hero');
                 }}
                 className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   activeSection === 'hero'
@@ -1125,9 +857,11 @@ export default function App() {
               </a>
               <a
                 href="#about"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   playSound(520, 0.04);
                   setMobileMenuOpen(false);
+                  scrollToSection('about');
                 }}
                 className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   activeSection === 'about'
@@ -1139,9 +873,11 @@ export default function App() {
               </a>
               <a
                 href="#portfolio"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   playSound(560, 0.04);
                   setMobileMenuOpen(false);
+                  scrollToSection('portfolio');
                 }}
                 className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   activeSection === 'portfolio'
@@ -1153,9 +889,11 @@ export default function App() {
               </a>
               <a
                 href="#contact"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   playSound(600, 0.04);
                   setMobileMenuOpen(false);
+                  scrollToSection('contact');
                 }}
                 className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all ${
                   activeSection === 'contact'
@@ -1263,7 +1001,11 @@ export default function App() {
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-7 sm:mt-8 w-full sm:w-auto">
               <a
                 href="#contact"
-                onClick={() => playSound(520, 0.08)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  playSound(520, 0.08);
+                  scrollToSection('contact');
+                }}
                 className="flex-1 sm:flex-initial justify-center px-7 py-3.5 rounded-2xl btn-cta-orange text-slate-950 font-extrabold text-sm transition-all shadow-lg cursor-pointer flex items-center gap-2 group active:scale-95"
               >
                 {t.hero.ctaPrimary}
@@ -1272,7 +1014,11 @@ export default function App() {
 
               <a
                 href="#portfolio"
-                onClick={() => playSound(440, 0.08)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  playSound(440, 0.08);
+                  scrollToSection('portfolio');
+                }}
                 className="flex-1 sm:flex-initial justify-center px-6 py-3.5 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 text-white font-semibold text-sm transition-all cursor-pointer flex items-center gap-2 hover:border-[#38bdf8]/50"
               >
                 {t.hero.ctaSecondary}
@@ -1306,14 +1052,14 @@ export default function App() {
             chip1Text={t.hero.chips.chip1}
             chip2Text={t.hero.chips.chip2}
             chip3Text={t.hero.chips.chip3}
-            onAvatarClick={() => playSound(720, 0.08)}
+            onAvatarClick={handleAvatarClick}
           />
 
         </div>
       </section>
 
       {/* 3. SCI-FI LAB: ABOUT & SKILLS HUD (Inspirado no Holographic Pod das telas 00:06 a 00:08) */}
-      <section id="about" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-800/80">
+      <section id="about" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-800/80 scroll-mt-20 sm:scroll-mt-24">
         
         {/* Header da Seção */}
         <div className="mb-12">
@@ -1502,8 +1248,7 @@ export default function App() {
                     key={eco}
                     onClick={() => {
                       setSelectedEcosystem(eco);
-                      const el = document.getElementById("portfolio");
-                      el?.scrollIntoView({ behavior: 'smooth' });
+                      scrollToSection('portfolio');
                     }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 text-left transition-all cursor-pointer group"
                   >
@@ -1523,7 +1268,7 @@ export default function App() {
       </section>
 
       {/* 4. PORTFOLIO SHOWCASE: "Some things I've worked on" (Carrossel Horizontal como na referência 00:09-00:13) */}
-      <section id="portfolio" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-800/80">
+      <section id="portfolio" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-800/80 scroll-mt-20 sm:scroll-mt-24">
         
         {/* Header da Seção */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
@@ -1669,215 +1414,20 @@ export default function App() {
         </div>
 
         {/* ÁREA EXPANSÍVEL: CATÁLOGO COMPLETO COM BUSCA & FILTROS (33 Repositórios) */}
-        <div className="mt-16 pt-12 border-t border-slate-800/80">
-          
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
-                <Database className="w-6 h-6 text-[#38bdf8]" />
-                {t.catalog.title}
-              </h3>
-              <p className="text-slate-400 text-xs mt-1">
-                {language === 'pt' ? 'Filtre por tecnologias, visibilidade e categorias em tempo real.' : 'Filter by technologies, visibility, and categories in real-time.'}
-              </p>
-            </div>
-
-            <span className="text-xs text-slate-400 font-mono">
-              {language === 'pt' 
-                ? <>Exibindo <strong className="text-white">{filteredRepos.length}</strong> de {stats.total} projetos</>
-                : <>Showing <strong className="text-white">{filteredRepos.length}</strong> of {stats.total} projects</>}
-            </span>
-          </div>
-
-          {/* Barra de Filtros Compacta */}
-          <div className="glass-panel p-5 rounded-2xl flex flex-col gap-4 mb-8">
-            <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-3 w-4 h-4 text-slate-400" />
-                <input 
-                  type="text" 
-                  placeholder={t.catalog.searchPlaceholder} 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl py-2.5 pl-11 pr-9 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6] transition-all"
-                />
-                {searchQuery && (
-                  <button 
-                    onClick={() => setSearchQuery("")} 
-                    className="absolute right-3 top-2.5 text-slate-400 hover:text-white cursor-pointer"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-
-              {/* Filtro de Visibilidade */}
-              <div className="flex items-center gap-1.5 text-xs text-slate-300 bg-slate-900/80 border border-slate-800 p-1 rounded-xl">
-                <button 
-                  onClick={() => setVisibilityFilter("Todos")}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${visibilityFilter === "Todos" ? "bg-[#2563eb] text-white" : "text-slate-300 hover:text-white"}`}
-                >
-                  {t.catalog.filterAll} ({stats.total})
-                </button>
-                <button 
-                  onClick={() => setVisibilityFilter("Publicos")}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${visibilityFilter === "Publicos" ? "bg-[#2563eb] text-white" : "text-slate-300 hover:text-white"}`}
-                >
-                  {t.catalog.filterPublic} ({stats.publicCount})
-                </button>
-                <button 
-                  onClick={() => setVisibilityFilter("Privados")}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${visibilityFilter === "Privados" ? "bg-[#2563eb] text-white" : "text-slate-300 hover:text-white"}`}
-                >
-                  {t.catalog.filterPrivate} ({stats.privateCount})
-                </button>
-              </div>
-            </div>
-
-            {/* Linha de Categorias */}
-            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-800/80 pt-3.5">
-              <div className="flex flex-wrap gap-2">
-                {categoriesList.map((cat) => {
-                  const Icon = categoryIcons[cat] || Folder;
-                  const active = selectedCategory === cat;
-                  const count = stats.categoryCounts[cat] || 0;
-                  const label = t.categories[cat as keyof typeof t.categories] || cat;
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() => setSelectedCategory(cat)}
-                      className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-all cursor-pointer flex items-center gap-1.5 ${
-                        active
-                          ? "bg-[#2563eb] text-white border-[#3b82f6] shadow-md shadow-[#2563eb]/25"
-                          : "bg-slate-800/50 text-slate-200 border-slate-700/60 hover:bg-slate-800 hover:text-white"
-                      }`}
-                    >
-                      <Icon className="w-3.5 h-3.5 shrink-0" />
-                      <span>{label}</span>
-                      <span className={`px-1.5 py-0.2 rounded-md text-[10px] ${
-                        active ? "bg-blue-800/80 text-blue-100" : "bg-slate-900/80 text-slate-400"
-                      }`}>
-                        {count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {(searchQuery || selectedCategory !== "Todos" || visibilityFilter !== "Todos" || selectedLanguage !== "Todas" || selectedEcosystem !== "Todos") && (
-                <button
-                  onClick={resetAllFilters}
-                  className="text-xs text-[#38bdf8] hover:underline font-medium cursor-pointer ml-auto"
-                >
-                  {t.catalog.clearFilters}
-                </button>
-              )}
-            </div>
-
-            {/* Linha de Linguagens com Gráfico Interativo */}
-            <div className="border-t border-slate-800/80 pt-4 flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                  <Code className="w-3.5 h-3.5 text-[#38bdf8]" />
-                  {language === 'pt' ? 'Distribuição de Linguagens:' : 'Language Distribution:'}
-                </span>
-                {selectedLanguage !== "Todas" && (
-                  <button
-                    onClick={() => setSelectedLanguage("Todas")}
-                    className="text-[11px] text-[#38bdf8] hover:underline cursor-pointer"
-                  >
-                    {language === 'pt' ? 'Mostrar todas' : 'Show all'}
-                  </button>
-                )}
-              </div>
-
-              {/* Mini Gráfico Recharts Memoizado */}
-              <LanguageDistributionChart
-                langData={stats.langData}
-                selectedLanguage={selectedLanguage}
-                totalRepos={stats.total}
-                onSelectLanguage={(lang) => setSelectedLanguage((prev) => (prev === lang ? "Todas" : lang))}
-              />
-
-              {/* Pills de Linguagem */}
-              <div className="flex flex-wrap gap-1.5">
-                {stats.langData.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => setSelectedLanguage((prev) => prev === item.name ? "Todas" : item.name)}
-                    className={`px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer flex items-center gap-1.5 border ${
-                      selectedLanguage === item.name
-                        ? "bg-blue-500/25 border-blue-400 text-white font-semibold shadow-sm"
-                        : "bg-slate-900/60 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white"
-                    }`}
-                  >
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span>{item.name}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">({item.Quantidade})</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Grade de Todos os Projetos */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredRepos.length === 0 ? (
-              <div className="col-span-full py-16 text-center glass-card rounded-2xl border border-slate-800">
-                <Folder className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <h3 className="text-white font-bold text-lg">{t.catalog.emptyTitle}</h3>
-                <p className="text-slate-400 text-sm mt-1 max-w-md mx-auto">
-                  {t.catalog.emptyDesc}
-                </p>
-                <button
-                  onClick={resetAllFilters}
-                  className="mt-4 px-4 py-2 rounded-xl bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 text-xs font-semibold cursor-pointer transition-all"
-                >
-                  {t.catalog.clearFilters}
-                </button>
-              </div>
-            ) : (
-              visibleRepos.map((repo, idx) => (
-                <RepositoryCard
-                  key={`catalog-${repo.id}`}
-                  repo={repo}
-                  idx={idx}
-                  language={language}
-                  categoryLabel={t.categories[repo.category as keyof typeof t.categories] || repo.category}
-                  ecosystemLabel={repo.ecosystem ? (t.ecosystems[repo.ecosystem as keyof typeof t.ecosystems] || repo.ecosystem) : undefined}
-                  privateBadgeText={t.catalog.card.privateBadge}
-                  publicBadgeText={t.catalog.card.publicBadge}
-                  viewDetailsText={language === 'pt' ? 'Ver detalhes' : 'View details'}
-                  onSelect={handleSelectRepo}
-                  onPlaySound={playSound}
-                />
-              ))
-            )}
-
-            {hasMore && (
-              <div ref={loadMoreRef} className="col-span-full py-8 flex flex-col items-center justify-center gap-2">
-                <div className="flex items-center gap-2 text-xs text-[#38bdf8] font-mono">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>{language === 'pt' ? 'Carregando mais projetos...' : 'Loading more projects...'}</span>
-                </div>
-                <button
-                  onClick={() => setVisibleCount(filteredRepos.length)}
-                  className="text-[11px] text-slate-400 hover:text-white underline cursor-pointer mt-1"
-                >
-                  {language === 'pt' 
-                    ? `Carregar todos de uma vez (${filteredRepos.length - visibleCount} restantes)` 
-                    : `Load all at once (${filteredRepos.length - visibleCount} remaining)`}
-                </button>
-              </div>
-            )}
-          </div>
-
-        </div>
+        <CatalogSection
+          language={language}
+          t={t}
+          stats={stats}
+          selectedEcosystem={selectedEcosystem}
+          setSelectedEcosystem={setSelectedEcosystem}
+          onSelectRepo={handleSelectRepo}
+          onPlaySound={playSound}
+        />
 
       </section>
 
       {/* 5. CONTACT SECTION: "Say hello 👋 / Contact me" (Inspirado nas telas 00:14 a 00:17) */}
-      <section id="contact" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-800/80">
+      <section id="contact" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-800/80 scroll-mt-20 sm:scroll-mt-24">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           
@@ -2277,13 +1827,13 @@ export default function App() {
         </div>
         <p>&copy; {new Date().getFullYear()} Matheus Gomes (Koszudikas-C). {t.footer.techStack}</p>
         <div className="flex items-center gap-4 text-[11px] text-slate-500">
-          <a href="#hero" className="hover:text-slate-300">{t.nav.home}</a>
+          <a href="#hero" onClick={(e) => { e.preventDefault(); scrollToSection('hero'); }} className="hover:text-slate-300">{t.nav.home}</a>
           <span>•</span>
-          <a href="#about" className="hover:text-slate-300">{t.nav.about}</a>
+          <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="hover:text-slate-300">{t.nav.about}</a>
           <span>•</span>
-          <a href="#portfolio" className="hover:text-slate-300">{t.nav.projects}</a>
+          <a href="#portfolio" onClick={(e) => { e.preventDefault(); scrollToSection('portfolio'); }} className="hover:text-slate-300">{t.nav.projects}</a>
           <span>•</span>
-          <a href="#contact" className="hover:text-slate-300">{t.nav.contact}</a>
+          <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }} className="hover:text-slate-300">{t.nav.contact}</a>
         </div>
       </footer>
 
