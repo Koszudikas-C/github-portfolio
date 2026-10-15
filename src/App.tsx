@@ -18,7 +18,6 @@ import {
   Network,
   ChevronRight,
   ChevronLeft,
-  Mail,
   User,
   Send,
   Volume2,
@@ -28,7 +27,8 @@ import {
   Rocket,
   ArrowRight,
   Check,
-  Loader2
+  Loader2,
+  Hand
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
 import { repositories } from './data/repositories';
@@ -303,10 +303,10 @@ export default function App() {
     e.preventDefault();
     playSound(660, 0.12);
     setContactSubmitted(true);
-    // Abre cliente de e-mail como fallback
+    // Abre cliente de e-mail com destino matheusprgc@gmail.com
     const subject = encodeURIComponent(`Contato pelo Portfólio de ${contactName || 'Visitante'}`);
     const body = encodeURIComponent(`Olá Matheus,\n\nNome: ${contactName}\nEmail: ${contactEmail}\n\nMensagem:\n${contactMessage}`);
-    window.open(`mailto:koszudikasc@gmail.com?subject=${subject}&body=${body}`, '_blank');
+    window.open(`mailto:matheusprgc@gmail.com?subject=${subject}&body=${body}`, '_blank');
   };
 
   return (
@@ -1158,7 +1158,8 @@ export default function App() {
           <div className="lg:col-span-7 flex flex-col">
             
             <span className="text-xs font-semibold uppercase tracking-wider text-amber-400 flex items-center gap-2">
-              — Diga um olá 👋
+              — Diga um olá
+              <Hand className="w-3.5 h-3.5 text-amber-400 inline-block -rotate-12" />
             </span>
             <h2 className="text-3xl sm:text-5xl font-extrabold text-white mt-2">
               Entre em contato
@@ -1173,7 +1174,7 @@ export default function App() {
                 <div>
                   <h4 className="font-bold text-white text-base">Mensagem Iniciada!</h4>
                   <p className="text-xs text-slate-300 mt-0.5">
-                    Seu cliente de e-mail foi aberto com os dados preenchidos para envio direto a Matheus Gomes.
+                    Seu cliente de e-mail foi aberto com os dados preenchidos para envio direto a Matheus Gomes (matheusprgc@gmail.com).
                   </p>
                 </div>
               </div>
@@ -1225,29 +1226,21 @@ export default function App() {
                   />
                 </div>
 
-                {/* Linha Inferior com Ícones Sociais + Botão Submit */}
+                {/* Linha Inferior com Ícone do GitHub + Botão Submit */}
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2">
                   
-                  {/* Ícones de Redes (GitHub, Mail, etc.) */}
+                  {/* Link GitHub */}
                   <div className="flex items-center gap-3 text-slate-400">
                     <a
                       href="https://github.com/Koszudikas-C"
                       target="_blank"
                       rel="noreferrer"
                       className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:text-white hover:border-slate-700 transition-colors"
-                      title="GitHub"
+                      title="GitHub: Koszudikas-C"
                     >
                       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.08-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.18 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" />
                       </svg>
-                    </a>
-
-                    <a
-                      href="mailto:koszudikasc@gmail.com"
-                      className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:text-white hover:border-slate-700 transition-colors"
-                      title="Enviar E-mail"
-                    >
-                      <Mail className="w-5 h-5" />
                     </a>
                   </div>
 
