@@ -32,15 +32,15 @@ export const repositories: Repository[] = [
     private: true,
     category: "IA, Integração & Automação",
     featured: true,
-    highlightMetric: "470+ Testes • .NET 10 & pgvector",
+    highlightMetric: "470 Testes • .NET 10 & pgvector",
     ecosystem: "Ecossistema AIFreelas",
-    details: "Back-end em .NET 10 e C# 13 estruturado em Clean Architecture, DDD e CQRS com PostgreSQL + pgvector e mais de 470 testes automatizados. Realiza calibração estatística de persona a partir de conversas reais do WhatsApp, negociação assistida em duas etapas (Response Planner + Voice Renderer), ingestão de funil comercial (99Freelas/WhatsApp) e sanitização avançada contra prompt injection.",
+    details: "Back-end em .NET 10 e C# 13 estruturado em Clean Architecture, DDD e CQRS com PostgreSQL + pgvector e suíte de 470 testes automatizados (229 Domain, 190 Application, 50 Infrastructure e 1 E2E com 100% de sucesso). Realiza calibração estatística de persona a partir de conversas reais do WhatsApp, negociação assistida em duas etapas (Response Planner + Voice Renderer), ingestão de funil comercial (99Freelas/WhatsApp) e sanitização avançada contra prompt injection.",
     techStack: ["C#", ".NET 10", "PostgreSQL", "pgvector", "Clean Architecture", "OpenAI / Gemini", "Ollama"],
     highlights: [
+      "Suíte de 470 testes automatizados passando (229 Domain, 190 Application, 50 Infrastructure, 1 E2E)",
       "Calibração estatística de persona em lotes determinísticos a partir de histórico real do WhatsApp",
       "Pipeline de negociação em 2 estágios: Response Planner (estratégia) + Voice Renderer (tom calibrado)",
-      "Defense-in-Depth com FluentValidation e MessageSanitizer contra Prompt Injection e payloads maliciosos",
-      "Busca semântica vetorial com PostgreSQL + pgvector e cobertura com mais de 470 testes automatizados"
+      "Defense-in-Depth com FluentValidation e MessageSanitizer contra Prompt Injection e payloads maliciosos"
     ]
   },
   {
@@ -62,7 +62,7 @@ export const repositories: Repository[] = [
     highlights: [
       "Monitoramento simultâneo de 7 marketplaces (CSFloat, DMarket, Skinport, BuffMarket, BleikStore, ShadowPay, CubeSkins)",
       "Motor de arbitragem com cálculo preciso de taxas reais de compra/venda, liquidez e benchmark Steam",
-      "Interface híbrida Desktop em .NET MAUI + MudBlazor alimentada em tempo real via SignalR Hubs",
+      "Suíte de testes estruturada em 5 camadas (Domain.Test, Application.Test, Infrastructure.Test, API.Test e Harvester.Test)",
       "Resiliência de rede com políticas de retry/circuit-breaker via Polly e persistência local SQLite"
     ]
   },
@@ -86,7 +86,7 @@ export const repositories: Repository[] = [
       "Resolução de Captcha multi-estágio combinando modelo ONNX local (57k classes) com DeepSeek Vision e Gemini",
       "Automação anti-detecção (Camoufox/Playwright) com isolamento de fingerprint, geolocalização nativa e proxy",
       "Captura instantânea de códigos OTP via Google Cloud Pub/Sub (OAuth2) e suporte a contas Outlook",
-      "Proteção de credenciais e configurações sensíveis com criptografia autenticada AES-256-GCM"
+      "Suíte de testes automatizados com xUnit em InstaFlow.Test para validação de fluxos críticos"
     ]
   },
   {
@@ -109,7 +109,7 @@ export const repositories: Repository[] = [
       "Processamento em streaming de arquivos CSV de 7GB+ da Receita Federal com baixíssimo uso de RAM",
       "Máquina de estados transacional em SQLite (pending → sent → replied / bounced) para rastreamento ponta a ponta",
       "Disparo automatizado e sincronização de caixa de entrada/NDR bounces via Microsoft Graph API (OAuth2)",
-      "Rotação inteligente Round-Robin de contas emissoras com atraso randômico (Anti-Spam Jitter)"
+      "Testes automatizados em Rust (test_cadastral e test_email_flow) para validação das regras de negócio"
     ]
   },
   {
@@ -168,12 +168,13 @@ export const repositories: Repository[] = [
     private: true,
     category: "Web & Front-end",
     ecosystem: "Ecossistema AIFreelas",
-    details: "Aplicação web moderna em Angular e SCSS do ecossistema AIFreelas. Oferece Cockpit de negociação com perfil enriquecido do cliente, funil comercial, calibração de persona, quality gate (Laya) e comunicação em tempo real via Content Script Bridge com a extensão para importação de oportunidades do 99Freelas e WhatsApp.",
+    highlightMetric: "416 Testes • Vitest & Signals",
+    details: "Aplicação web moderna em Angular 21 (Stand-alone & Signals) e SCSS do ecossistema AIFreelas, com suíte de 416 testes unitários em Vitest (79.87% de cobertura de linhas). Oferece Cockpit de negociação com perfil enriquecido do cliente, funil comercial, calibração de persona, quality gate (Laya) e comunicação em tempo real via Content Script Bridge com a extensão para importação de oportunidades do 99Freelas e WhatsApp.",
     techStack: ["Angular", "TypeScript", "SCSS", "RxJS", "Vitest", "Extension Bridge"],
     highlights: [
+      "Suíte frontend com 416 testes unitários em Vitest v4 e Signals com 100% de aprovação (79.87% de cobertura de linhas)",
       "Cockpit interativo de negociação com adaptação de propostas ao nível de familiaridade do cliente",
-      "Integração bidirecional via window.postMessage com a extensão Chrome para busca de projetos no 99Freelas",
-      "Templates modernizados com novo Control Flow do Angular e testes unitários com Vitest"
+      "Integração bidirecional via window.postMessage com a extensão Chrome para busca de projetos no 99Freelas"
     ]
   },
   {
@@ -189,12 +190,13 @@ export const repositories: Repository[] = [
     private: true,
     category: "APIs & Back-end",
     ecosystem: "Ecossistema AIFreelas",
-    details: "Microsserviço de autenticação e autorização (Identity API) em ASP.NET Core com controle de sessões simultâneas por dispositivo (deviceToken), RBAC completo (Roles e Policies), webhooks de eventos de segurança, documentação técnica para integração de Agentes IA e suíte com 230+ testes automatizados (>85% de cobertura).",
+    highlightMetric: "234 Testes • 85.15% Cobertura",
+    details: "Microsserviço de autenticação e autorização (Identity API) em ASP.NET Core (.NET 10) com controle de sessões simultâneas por dispositivo (deviceToken), RBAC completo (Roles e Policies), webhooks de eventos de segurança, documentação técnica para integração de Agentes IA e suíte com 234 testes automatizados cobrindo 85.15% do código de aplicação.",
     techStack: ["C#", ".NET 10", "ASP.NET Core", "JWT / Multi-Device", "PostgreSQL", "Docker", "xUnit"],
     highlights: [
+      "Suíte com 234 testes automatizados em xUnit com 100% de sucesso cobrindo 85.15% do código de aplicação",
       "Controle rigoroso de login simultâneo e reutilização segura de token por dispositivo (deviceToken)",
-      "13 endpoints de autenticação e autorização RBAC com suporte a cookies e cabeçalhos Bearer",
-      "Mais de 230 testes cobrindo fluxos de concorrência, mocks de webhooks e middlewares (85.2% de cobertura)"
+      "13 endpoints de autenticação e autorização RBAC com suporte a cookies e cabeçalhos Bearer"
     ]
   },
   {

@@ -453,7 +453,7 @@ export default function App() {
                     ✓ 33 repositórios compilados com sucesso.
                   </div>
                   <div className="text-blue-400 mt-0.5">
-                    ● 470+ testes unitários & integração ativos.
+                    ● +1.120 testes auditados (API: 470 • Front: 416 • Auth: 234).
                   </div>
                 </div>
               </div>
@@ -631,8 +631,11 @@ export default function App() {
                   <span className="text-white font-bold">{stats.total} Repositórios</span>
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
-                  <span className="text-slate-400">Testes Automatizados</span>
-                  <span className="text-emerald-400 font-bold">+700 Casos</span>
+                  <div className="flex flex-col text-left">
+                    <span className="text-slate-400">Testes Auditados</span>
+                    <span className="text-[10px] text-slate-500 font-normal">API: 470 • Front: 416 • Auth: 234</span>
+                  </div>
+                  <span className="text-emerald-400 font-bold text-sm">1.120 Casos</span>
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
                   <span className="text-slate-400">Públicos / Privados</span>
