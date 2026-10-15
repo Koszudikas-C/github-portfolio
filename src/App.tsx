@@ -27,7 +27,8 @@ import {
   Heart,
   Rocket,
   ArrowRight,
-  Check
+  Check,
+  Loader2
 } from 'lucide-react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
 import { repositories } from './data/repositories';
@@ -128,6 +129,10 @@ export default function App() {
   const [visibilityFilter, setVisibilityFilter] = useState<"Todos" | "Publicos" | "Privados">("Todos");
   const [sortOrder, setSortOrder] = useState<"default" | "recent" | "oldest">("default");
   const [selectedRepo, setSelectedRepo] = useState<Repository | null>(null);
+
+  // Lazy loading progressivo para o catálogo
+  const [visibleCount, setVisibleCount] = useState(9);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   // Estado do Som / Áudio Sintético (inspirado no botão de som da referência)
   const [soundEnabled, setSoundEnabled] = useState(false);
@@ -244,6 +249,35 @@ export default function App() {
     setVisibilityFilter("Todos");
     setSortOrder("default");
   };
+
+  // Reset do contador visível ao alterar qualquer filtro de busca ou categoria
+  useEffect(() => {
+    setVisibleCount(9);
+  }, [searchQuery, selectedCategory, selectedLanguage, selectedEcosystem, visibilityFilter, sortOrder]);
+
+  // Observer para scroll infinito / carregamento progressivo sob demanda
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + 6, filteredRepos.length));
+        }
+      },
+      { rootMargin: '250px' }
+    );
+    const el = loadMoreRef.current;
+    if (el) observer.observe(el);
+    return () => {
+      if (el) observer.unobserve(el);
+    };
+  }, [filteredRepos.length]);
+
+  // Itens visíveis fatiados para não travar a renderização inicial do DOM
+  const visibleRepos = useMemo(() => {
+    return filteredRepos.slice(0, visibleCount);
+  }, [filteredRepos, visibleCount]);
+
+  const hasMore = visibleCount < filteredRepos.length;
 
   // Controles do Carrossel de Projetos
   const nextSlide = () => {
@@ -997,86 +1031,118 @@ export default function App() {
 
           {/* Grade de Todos os Projetos */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredRepos.map((repo) => {
-              const CategoryIcon = categoryIcons[repo.category] || Folder;
-              return (
-                <article
-                  key={`catalog-${repo.id}`}
-                  onClick={() => {
-                    playSound(460, 0.06);
-                    setSelectedRepo(repo);
-                  }}
-                  className="group relative cursor-pointer glass-card p-6 rounded-2xl flex flex-col justify-between overflow-hidden"
+            {filteredRepos.length === 0 ? (
+              <div className="col-span-full py-16 text-center glass-card rounded-2xl border border-slate-800">
+                <Folder className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                <h3 className="text-white font-bold text-lg">Nenhum projeto encontrado</h3>
+                <p className="text-slate-400 text-sm mt-1 max-w-md mx-auto">
+                  Nenhum repositório corresponde aos filtros selecionados. Tente ajustar os termos de busca ou limpar os filtros.
+                </p>
+                <button
+                  onClick={resetAllFilters}
+                  className="mt-4 px-4 py-2 rounded-xl bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 text-xs font-semibold cursor-pointer transition-all"
                 >
-                  <div className="min-w-0">
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className="p-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[#38bdf8] shrink-0">
-                          <CategoryIcon className="w-4 h-4" />
+                  Limpar filtros
+                </button>
+              </div>
+            ) : (
+              visibleRepos.map((repo, idx) => {
+                const CategoryIcon = categoryIcons[repo.category] || Folder;
+                return (
+                  <article
+                    key={`catalog-${repo.id}`}
+                    onClick={() => {
+                      playSound(460, 0.06);
+                      setSelectedRepo(repo);
+                    }}
+                    style={{ animationDelay: `${(idx % 6) * 60}ms` }}
+                    className="lazy-card group relative cursor-pointer glass-card p-6 rounded-2xl flex flex-col justify-between overflow-hidden"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-3">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="p-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[#38bdf8] shrink-0">
+                            <CategoryIcon className="w-4 h-4" />
+                          </div>
+                          <span className="text-[11px] text-slate-300 tracking-wide uppercase font-semibold truncate">
+                            {repo.category}
+                          </span>
                         </div>
-                        <span className="text-[11px] text-slate-300 tracking-wide uppercase font-semibold truncate">
-                          {repo.category}
+                        <span className={`px-2.5 py-0.5 text-[11px] font-semibold rounded-full border shrink-0 ${
+                          repo.private
+                            ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                            : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                        }`}>
+                          {repo.private ? "Privado" : "Público"}
                         </span>
                       </div>
-                      <span className={`px-2.5 py-0.5 text-[11px] font-semibold rounded-full border shrink-0 ${
-                        repo.private
-                          ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
-                          : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
-                      }`}>
-                        {repo.private ? "Privado" : "Público"}
+
+                      {repo.ecosystem && (
+                        <div className="mb-2">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-[10px] font-semibold">
+                            <Network className="w-3 h-3" />
+                            {repo.ecosystem}
+                          </span>
+                        </div>
+                      )}
+
+                      <h4
+                        title={repo.name}
+                        className="text-lg font-bold text-white group-hover:text-[#38bdf8] transition-colors leading-snug truncate"
+                      >
+                        {repo.name}
+                      </h4>
+
+                      <p className="text-slate-300 text-sm mt-2 line-clamp-2 leading-relaxed">
+                        {repo.description || "Nenhuma descrição fornecida."}
+                      </p>
+
+                      {repo.techStack && repo.techStack.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-3.5">
+                          {repo.techStack.slice(0, 3).map((tech) => (
+                            <span
+                              key={tech}
+                              className="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-800/80 text-slate-200 border border-slate-700/70"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="border-t border-slate-800/80 group-hover:border-blue-500/30 pt-4 mt-5 flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <span 
+                          className="w-2.5 h-2.5 rounded-full ring-2 ring-white/10" 
+                          style={{ backgroundColor: languageColors[repo.language] || languageColors.Default }}
+                        />
+                        <span className="text-slate-200 font-medium">{repo.language || "Outra"}</span>
+                      </div>
+
+                      <span className="text-[#38bdf8] group-hover:text-white font-semibold flex items-center gap-1">
+                        Ver detalhes &rarr;
                       </span>
                     </div>
+                  </article>
+                );
+              })
+            )}
 
-                    {repo.ecosystem && (
-                      <div className="mb-2">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-[10px] font-semibold">
-                          <Network className="w-3 h-3" />
-                          {repo.ecosystem}
-                        </span>
-                      </div>
-                    )}
-
-                    <h4
-                      title={repo.name}
-                      className="text-lg font-bold text-white group-hover:text-[#38bdf8] transition-colors leading-snug truncate"
-                    >
-                      {repo.name}
-                    </h4>
-
-                    <p className="text-slate-300 text-sm mt-2 line-clamp-2 leading-relaxed">
-                      {repo.description || "Nenhuma descrição fornecida."}
-                    </p>
-
-                    {repo.techStack && repo.techStack.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-3.5">
-                        {repo.techStack.slice(0, 3).map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-800/80 text-slate-200 border border-slate-700/70"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="border-t border-slate-800/80 group-hover:border-blue-500/30 pt-4 mt-5 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <span 
-                        className="w-2.5 h-2.5 rounded-full ring-2 ring-white/10" 
-                        style={{ backgroundColor: languageColors[repo.language] || languageColors.Default }}
-                      />
-                      <span className="text-slate-200 font-medium">{repo.language || "Outra"}</span>
-                    </div>
-
-                    <span className="text-[#38bdf8] group-hover:text-white font-semibold flex items-center gap-1">
-                      Ver detalhes &rarr;
-                    </span>
-                  </div>
-                </article>
-              );
-            })}
+            {hasMore && (
+              <div ref={loadMoreRef} className="col-span-full py-8 flex flex-col items-center justify-center gap-2">
+                <div className="flex items-center gap-2 text-xs text-[#38bdf8] font-mono">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Carregando mais projetos...</span>
+                </div>
+                <button
+                  onClick={() => setVisibleCount(filteredRepos.length)}
+                  className="text-[11px] text-slate-400 hover:text-white underline cursor-pointer mt-1"
+                >
+                  Carregar todos de uma vez ({filteredRepos.length - visibleCount} restantes)
+                </button>
+              </div>
+            )}
           </div>
 
         </div>
