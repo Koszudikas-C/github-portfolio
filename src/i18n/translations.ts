@@ -43,7 +43,7 @@ export const translations = {
     about: {
       badge: "Sobre mim & Habilidades",
       title: "Estação de Habilidades & Trajetória",
-      description: "Inspirada na estação de bio-escaneamento e laboratório HUD, consolidando a stack técnica e visão arquitetural.",
+      description: "Painel de telemetria técnica e trajetória, consolidando a stack principal, pilares de engenharia e visão arquitetural.",
       idDev: "ID_DEVs: #0023",
       devName: "Matheus Gomes",
       devRole: "Full-Stack & Systems Architect",
@@ -209,7 +209,7 @@ export const translations = {
     about: {
       badge: "About Me & Skills",
       title: "Skills & Trajectory Station",
-      description: "Inspired by sci-fi bio-scanning and HUD lab stations, consolidating core technical stack and architectural vision.",
+      description: "Technical telemetry and career station, consolidating the core stack, engineering pillars, and architectural vision.",
       idDev: "ID_DEVs: #0023",
       devName: "Matheus Gomes",
       devRole: "Full-Stack & Systems Architect",
