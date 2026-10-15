@@ -826,14 +826,13 @@ export default function App() {
                   playSound(480, 0.04);
                   setMobileMenuOpen(false);
                 }}
-                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   activeSection === 'hero'
                     ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
                     : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
                 }`}
               >
-                <span>{t.nav.home}</span>
-                <ChevronRight className="w-4 h-4 text-slate-500" />
+                {t.nav.home}
               </a>
               <a
                 href="#about"
@@ -841,14 +840,13 @@ export default function App() {
                   playSound(520, 0.04);
                   setMobileMenuOpen(false);
                 }}
-                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   activeSection === 'about'
                     ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
                     : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
                 }`}
               >
-                <span>{t.nav.about}</span>
-                <ChevronRight className="w-4 h-4 text-slate-500" />
+                {t.nav.about}
               </a>
               <a
                 href="#portfolio"
@@ -856,14 +854,13 @@ export default function App() {
                   playSound(560, 0.04);
                   setMobileMenuOpen(false);
                 }}
-                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   activeSection === 'portfolio'
                     ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
                     : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
                 }`}
               >
-                <span>{t.nav.projects}</span>
-                <ChevronRight className="w-4 h-4 text-slate-500" />
+                {t.nav.projects}
               </a>
               <a
                 href="#contact"
@@ -871,14 +868,13 @@ export default function App() {
                   playSound(600, 0.04);
                   setMobileMenuOpen(false);
                 }}
-                className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   activeSection === 'contact'
                     ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
                     : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
                 }`}
               >
-                <span>{t.nav.contact}</span>
-                <ChevronRight className="w-4 h-4 text-slate-500" />
+                {t.nav.contact}
               </a>
 
               {/* Divisor */}
