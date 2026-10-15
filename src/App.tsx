@@ -516,7 +516,15 @@ export default function App() {
               <div className="grid grid-cols-2 gap-3 text-xs font-mono">
                 <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
                   <span className="text-slate-500 block text-[10px]">PAÍS / BASE</span>
-                  <span className="text-white font-semibold">Brasil 🇧🇷</span>
+                  <div className="flex items-center gap-1.5 font-semibold text-white mt-0.5">
+                    <svg className="w-4 h-3 rounded-[2px] shrink-0 overflow-hidden" viewBox="0 0 720 504">
+                      <rect width="720" height="504" fill="#009b3a"/>
+                      <polygon points="360,40 680,252 360,464 40,252" fill="#fedf00"/>
+                      <circle cx="360" cy="252" r="126" fill="#002776"/>
+                      <path d="M234,252 A126,126 0 0,0 486,252 A126,110 0 0,1 234,252" fill="#ffffff" />
+                    </svg>
+                    <span>Brasil</span>
+                  </div>
                 </div>
                 <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
                   <span className="text-slate-500 block text-[10px]">REPOSITÓRIOS</span>
