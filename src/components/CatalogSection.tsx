@@ -86,7 +86,7 @@ const RepositoryCard = memo(({
         </h4>
 
         <p className="text-slate-300 text-sm mt-2 line-clamp-2 leading-relaxed">
-          {repo.description || (language === 'pt' ? "Nenhuma descrição fornecida." : "No description provided.")}
+          {((language === 'en' && repo.descriptionEn) ? repo.descriptionEn : repo.description) || (language === 'pt' ? "Nenhuma descrição fornecida." : "No description provided.")}
         </p>
 
         {repo.techStack && repo.techStack.length > 0 && (

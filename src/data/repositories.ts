@@ -4,6 +4,7 @@ export interface Repository {
   fullName: string;
   htmlUrl: string;
   description: string;
+  descriptionEn?: string;
   language: string;
   stars: number;
   forks: number;
@@ -11,11 +12,14 @@ export interface Repository {
   private: boolean;
   category: 'Web & Front-end' | 'APIs & Back-end' | 'Blockchain & Cripto' | 'IA, Integração & Automação' | 'Estudos & Utilitários';
   details: string;
+  detailsEn?: string;
   techStack: string[];
   featured?: boolean;
   highlightMetric?: string;
+  highlightMetricEn?: string;
   ecosystem?: 'Ecossistema AIFreelas' | 'Rede Blockchain PoW' | 'Plataforma Ativo Byte' | 'WhatsApp Export Pro' | 'Purple Deco E-commerce';
   highlights?: string[];
+  highlightsEn?: string[];
 }
 
 export const repositories: Repository[] = [
@@ -25,6 +29,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/AIFreelas",
     htmlUrl: "https://github.com/Koszudikas-C/AIFreelas",
     description: "Plataforma em .NET 10 para calibração estatística de persona, funil comercial e negociação assistida por IA multimodelo.",
+    descriptionEn: ".NET 10 platform for statistical persona calibration, commercial sales funnel, and multi-model AI-assisted negotiation.",
     language: "C#",
     stars: 0,
     forks: 0,
@@ -35,12 +40,19 @@ export const repositories: Repository[] = [
     highlightMetric: "470 Testes • .NET 10 & pgvector",
     ecosystem: "Ecossistema AIFreelas",
     details: "Back-end em .NET 10 e C# 13 estruturado em Clean Architecture, DDD e CQRS com PostgreSQL + pgvector e suíte de 470 testes automatizados (229 Domain, 190 Application, 50 Infrastructure e 1 E2E com 100% de sucesso). Realiza calibração estatística de persona a partir de conversas reais do WhatsApp, negociação assistida em duas etapas (Response Planner + Voice Renderer), ingestão de funil comercial (99Freelas/WhatsApp) e sanitização avançada contra prompt injection.",
+    detailsEn: "Back-end in .NET 10 and C# 13 structured in Clean Architecture, DDD, and CQRS with PostgreSQL + pgvector and a suite of 470 automated tests (229 Domain, 190 Application, 50 Infrastructure, and 1 E2E with 100% pass rate). Performs statistical persona calibration from real WhatsApp conversations, two-stage assisted negotiation (Response Planner + Voice Renderer), commercial funnel ingestion (99Freelas/WhatsApp), and advanced sanitization against prompt injection.",
     techStack: ["C#", ".NET 10", "PostgreSQL", "pgvector", "Clean Architecture", "OpenAI / Gemini", "Ollama"],
     highlights: [
       "Suíte de 470 testes automatizados passando (229 Domain, 190 Application, 50 Infrastructure, 1 E2E)",
       "Calibração estatística de persona em lotes determinísticos a partir de histórico real do WhatsApp",
       "Pipeline de negociação em 2 estágios: Response Planner (estratégia) + Voice Renderer (tom calibrado)",
       "Defense-in-Depth com FluentValidation e MessageSanitizer contra Prompt Injection e payloads maliciosos"
+    ],
+    highlightsEn: [
+      "Suite of 470 automated tests passing (229 Domain, 190 Application, 50 Infrastructure, 1 E2E)",
+      "Statistical persona calibration in deterministic batches from real WhatsApp history",
+      "Two-stage negotiation pipeline: Response Planner (strategy) + Voice Renderer (calibrated tone)",
+      "Defense-in-Depth with FluentValidation and MessageSanitizer against Prompt Injection and malicious payloads"
     ]
   },
   {
@@ -49,6 +61,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/OrchestratorMarketplacesCs2",
     htmlUrl: "https://github.com/Koszudikas-C/OrchestratorMarketplacesCs2",
     description: "Sistema de inteligência e arbitragem automatizada de skins de CS2 em 7 marketplaces e Steam.",
+    descriptionEn: "Automated market intelligence and arbitrage system for CS2 skins across 7 marketplaces and Steam.",
     language: "C#",
     stars: 0,
     forks: 0,
@@ -58,12 +71,19 @@ export const repositories: Repository[] = [
     featured: true,
     highlightMetric: "7 Marketplaces • Arbitragem Real-Time",
     details: "Plataforma completa em .NET 10 com Clean Architecture, DDD e interface desktop híbrida (.NET MAUI + MudBlazor). Monitora 7 marketplaces em tempo real (CSFloat, DMarket, Skinport, BuffMarket, BleikStore, ShadowPay e CubeSkins), coleta orderbooks em massa da Steam (Harvester), calcula taxas/liquidez e transmite oportunidades via SignalR com resiliência Polly.",
+    detailsEn: "Full-featured platform in .NET 10 with Clean Architecture, DDD, and hybrid desktop UI (.NET MAUI + MudBlazor). Monitors 7 marketplaces in real time (CSFloat, DMarket, Skinport, BuffMarket, BleikStore, ShadowPay, and CubeSkins), scrapes mass orderbooks from Steam (Harvester), computes actual fees and liquidity, and streams opportunities via SignalR with Polly resilience.",
     techStack: ["C#", ".NET 10", ".NET MAUI", "MudBlazor", "SignalR", "EF Core SQLite", "Polly", "Docker"],
     highlights: [
       "Monitoramento simultâneo de 7 marketplaces (CSFloat, DMarket, Skinport, BuffMarket, BleikStore, ShadowPay, CubeSkins)",
       "Motor de arbitragem com cálculo preciso de taxas reais de compra/venda, liquidez e benchmark Steam",
       "Suíte de testes estruturada em 5 camadas (Domain.Test, Application.Test, Infrastructure.Test, API.Test e Harvester.Test)",
       "Resiliência de rede com políticas de retry/circuit-breaker via Polly e persistência local SQLite"
+    ],
+    highlightsEn: [
+      "Simultaneous monitoring of 7 marketplaces (CSFloat, DMarket, Skinport, BuffMarket, BleikStore, ShadowPay, CubeSkins)",
+      "Arbitrage engine with accurate calculation of actual buy/sell fees, liquidity, and Steam benchmark",
+      "5-tier test suite (Domain.Test, Application.Test, Infrastructure.Test, API.Test, and Harvester.Test)",
+      "Network resilience with retry and circuit-breaker policies via Polly and local SQLite persistence"
     ]
   },
   {
@@ -72,6 +92,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/InstaFlow",
     htmlUrl: "https://github.com/Koszudikas-C/InstaFlow",
     description: "Automação desktop híbrida com navegador anti-detecção, resolução de Captcha com IA Vision/ONNX e gestão de contas.",
+    descriptionEn: "Hybrid desktop automation with anti-detect browser, AI Vision/ONNX Captcha solver, and account management.",
     language: "C#",
     stars: 0,
     forks: 0,
@@ -81,12 +102,19 @@ export const repositories: Repository[] = [
     featured: true,
     highlightMetric: "Anti-Detect • ONNX & Vision",
     details: "Aplicação desktop híbrida em .NET 10 (Windows Forms + Blazor WebView) para automação em lote com navegador anti-detecção (Camoufox/CloakBrowser via Playwright), controle de fingerprint e telemetria, suporte a múltiplos modos de proxy, integração OAuth2/IMAP (Gmail via Cloud Pub/Sub e Outlook) para captura automática de códigos OTP, resolução multi-estágio de Captcha (ONNX local + DeepSeek Vision + Gemini) e criptografia autenticada AES-256-GCM com persistência em SQLite.",
+    detailsEn: "Hybrid desktop application in .NET 10 (Windows Forms + Blazor WebView) for batch automation with anti-detection browser (Camoufox/CloakBrowser via Playwright), fingerprint and telemetry control, multi-proxy mode support, OAuth2/IMAP integration (Gmail via Cloud Pub/Sub and Outlook) for instant OTP code retrieval, multi-stage Captcha resolution (local ONNX + DeepSeek Vision + Gemini), and authenticated AES-256-GCM encryption with SQLite persistence.",
     techStack: ["C#", ".NET 10", "Blazor Hybrid", "Playwright", "ONNX Runtime", "Gemini Vision", "SQLite", "AES-256-GCM"],
     highlights: [
       "Resolução de Captcha multi-estágio combinando modelo ONNX local (57k classes) com DeepSeek Vision e Gemini",
       "Automação anti-detecção (Camoufox/Playwright) com isolamento de fingerprint, geolocalização nativa e proxy",
       "Captura instantânea de códigos OTP via Google Cloud Pub/Sub (OAuth2) e suporte a contas Outlook",
       "Suíte de testes automatizados com xUnit em InstaFlow.Test para validação de fluxos críticos"
+    ],
+    highlightsEn: [
+      "Multi-stage Captcha solving combining local ONNX model (57k classes) with DeepSeek Vision and Gemini",
+      "Anti-detection automation (Camoufox/Playwright) with fingerprint isolation, native geolocation, and proxy routing",
+      "Instant OTP code extraction via Google Cloud Pub/Sub (OAuth2) and Outlook account support",
+      "Automated test suite with xUnit in InstaFlow.Test for critical workflow validation"
     ]
   },
   {
@@ -95,6 +123,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/runner",
     htmlUrl: "https://github.com/Koszudikas-C/runner",
     description: "Motor em Rust de alta performance para inteligência cadastral da Receita Federal e automação de e-mails.",
+    descriptionEn: "High-performance Rust engine for Brazilian Federal Revenue registration intelligence and automated outbound mailing.",
     language: "Rust",
     stars: 0,
     forks: 0,
@@ -104,12 +133,19 @@ export const repositories: Repository[] = [
     featured: true,
     highlightMetric: "Streaming 7GB+ • Rust & Graph",
     details: "Motor modular de alta performance em Rust projetado para leitura em streaming de datasets massivos (7GB+) da Receita Federal do Brasil (RFB), filtragem seletiva por CNAE, enriquecimento de inteligência comercial, controle de estado transacional em SQLite e automação de disparos e leitura de bounces (NDR) via Microsoft Graph API com OAuth2, rotação Round-Robin e anti-spam jitter.",
+    detailsEn: "High-performance modular engine in Rust designed for streaming massive datasets (7GB+) from the Brazilian Federal Revenue (RFB), selective filtering by CNAE, commercial intelligence enrichment, transactional state management in SQLite, and automated dispatch and non-delivery report (NDR) bounce tracking via Microsoft Graph API with OAuth2, Round-Robin rotation, and anti-spam jitter.",
     techStack: ["Rust", "SQLite", "Microsoft Graph API", "OAuth2", "Streaming I/O", "CLI"],
     highlights: [
       "Processamento em streaming de arquivos CSV de 7GB+ da Receita Federal com baixíssimo uso de RAM",
       "Máquina de estados transacional em SQLite (pending → sent → replied / bounced) para rastreamento ponta a ponta",
       "Disparo automatizado e sincronização de caixa de entrada/NDR bounces via Microsoft Graph API (OAuth2)",
       "Testes automatizados em Rust (test_cadastral e test_email_flow) para validação das regras de negócio"
+    ],
+    highlightsEn: [
+      "Streaming processing of 7GB+ CSV files from the Federal Revenue with ultra-low RAM footprint",
+      "Transactional SQLite state machine (pending → sent → replied / bounced) for end-to-end auditability",
+      "Automated mailing and inbox/NDR bounce synchronization via Microsoft Graph API (OAuth2)",
+      "Automated tests in Rust (test_cadastral and test_email_flow) validating business logic"
     ]
   },
   {
@@ -118,6 +154,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/CocoaManager",
     htmlUrl: "https://github.com/Koszudikas-C/CocoaManager",
     description: "Gestão agronômica e detecção inteligente de doenças no cacau com Inteligência Artificial ONNX/YOLO.",
+    descriptionEn: "Agronomic management and smart cocoa disease detection using ONNX/YOLO Artificial Intelligence.",
     language: "HTML",
     stars: 0,
     forks: 0,
@@ -127,11 +164,17 @@ export const repositories: Repository[] = [
     featured: true,
     highlightMetric: "IA Agronômica • YOLOv11/v26",
     details: "Plataforma de gestão para produtores de cacau que integra o Boletim Técnico 221 para calagem/fertilização com um pipeline de IA (ONNX) para detectar pragas e doenças foliares e do fruto utilizando modelos YOLO v11/v26.",
+    detailsEn: "Management platform for cocoa growers integrating Technical Bulletin 221 for liming/fertilization with an AI pipeline (ONNX) to detect leaf and pod pests and diseases using YOLO v11/v26 models.",
     techStack: ["C#", ".NET MAUI", "Blazor", "ONNX Runtime", "YOLOv11", "YOLOv26"],
     highlights: [
       "Inferência local de visão computacional com ONNX Runtime utilizando redes YOLOv11 e YOLOv26",
       "Cálculo agronômico automatizado de calagem e adubação baseado no Boletim Técnico 221",
       "Aplicação multiplataforma construída com .NET MAUI Blazor Hybrid para uso em campo"
+    ],
+    highlightsEn: [
+      "Local computer vision inference with ONNX Runtime using YOLOv11 and YOLOv26 networks",
+      "Automated agronomic calculation of liming and fertilizing based on Technical Bulletin 221",
+      "Cross-platform application built with .NET MAUI Blazor Hybrid for in-field usage"
     ]
   },
   {
@@ -140,6 +183,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/Project-AIFreelas",
     htmlUrl: "https://github.com/Koszudikas-C/Project-AIFreelas",
     description: "Infraestrutura Kubernetes (K3s), automação DevOps e suíte de testes de API do ecossistema AIFreelas.",
+    descriptionEn: "Kubernetes (K3s) infrastructure, DevOps automation, and API test suites for the AIFreelas ecosystem.",
     language: "Shell",
     stars: 0,
     forks: 0,
@@ -148,11 +192,17 @@ export const repositories: Repository[] = [
     category: "IA, Integração & Automação",
     ecosystem: "Ecossistema AIFreelas",
     details: "Repositório central de infraestrutura, orquestração e governança do ecossistema AIFreelas. Contém manifestos e overlays Kubernetes (K3s) para ambientes de desenvolvimento e produção, scripts de provisionamento e migração de bancos de dados, limpeza automatizada multiplataforma (Linux/Windows) e coleções completas do Postman com geração dinâmica de device fingerprint.",
+    detailsEn: "Central infrastructure, orchestration, and governance repository for the AIFreelas ecosystem. Contains Kubernetes (K3s) manifests and overlays for development and production environments, database provisioning and migration scripts, automated cross-platform cleanup (Linux/Windows), and complete Postman collections with dynamic device fingerprint generation.",
     techStack: ["Kubernetes (K3s)", "Shell Script", "Python", "PowerShell", "Postman", "DevOps"],
     highlights: [
       "Orquestração Kubernetes (K3s) com overlays dedicados para ambientes Development e Production",
       "Automação de deploy isolado de bancos de dados, volumes persistentes e migrações EF Core",
       "Suíte completa de coleções Postman com scripts pre-request para assinatura e device fingerprint"
+    ],
+    highlightsEn: [
+      "Kubernetes (K3s) orchestration with dedicated overlays for Development and Production environments",
+      "Automated isolated deployment of databases, persistent volumes, and EF Core migrations",
+      "Comprehensive Postman collection suite with pre-request scripts for signing and device fingerprinting"
     ]
   },
   {
@@ -161,6 +211,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/AIFreelas-SIte",
     htmlUrl: "https://github.com/Koszudikas-C/AIFreelas-SIte",
     description: "Front-end em Angular do ecossistema AIFreelas com Cockpit de negociação, calibração de persona e integração 99Freelas.",
+    descriptionEn: "Angular front-end for the AIFreelas ecosystem featuring negotiation cockpit, persona calibration, and 99Freelas integration.",
     language: "TypeScript",
     stars: 0,
     forks: 0,
@@ -170,11 +221,17 @@ export const repositories: Repository[] = [
     ecosystem: "Ecossistema AIFreelas",
     highlightMetric: "416 Testes • Vitest & Signals",
     details: "Aplicação web moderna em Angular 21 (Stand-alone & Signals) e SCSS do ecossistema AIFreelas, com suíte de 416 testes unitários em Vitest (79.87% de cobertura de linhas). Oferece Cockpit de negociação com perfil enriquecido do cliente, funil comercial, calibração de persona, quality gate (Laya) e comunicação em tempo real via Content Script Bridge com a extensão para importação de oportunidades do 99Freelas e WhatsApp.",
+    detailsEn: "Modern web application in Angular 21 (Stand-alone & Signals) and SCSS for the AIFreelas ecosystem, featuring a suite of 416 unit tests in Vitest (79.87% line coverage). Provides a negotiation cockpit with enriched client profiling, commercial funnel, persona calibration, quality gate (Laya), and real-time communication via Content Script Bridge with the extension for importing opportunities from 99Freelas and WhatsApp.",
     techStack: ["Angular", "TypeScript", "SCSS", "RxJS", "Vitest", "Extension Bridge"],
     highlights: [
       "Suíte frontend com 416 testes unitários em Vitest v4 e Signals com 100% de aprovação (79.87% de cobertura de linhas)",
       "Cockpit interativo de negociação com adaptação de propostas ao nível de familiaridade do cliente",
       "Integração bidirecional via window.postMessage com a extensão Chrome para busca de projetos no 99Freelas"
+    ],
+    highlightsEn: [
+      "Frontend suite with 416 unit tests in Vitest v4 and Signals with 100% pass rate (79.87% line coverage)",
+      "Interactive negotiation cockpit adapting proposals to the client's familiarity level",
+      "Bidirectional integration via window.postMessage with Chrome extension to fetch projects from 99Freelas"
     ]
   },
   {
@@ -183,6 +240,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/ProviderAuth",
     htmlUrl: "https://github.com/Koszudikas-C/ProviderAuth",
     description: "Microsserviço de identidade e autenticação centralizada multi-device em ASP.NET Core.",
+    descriptionEn: "Centralized multi-device identity and authentication microservice in ASP.NET Core.",
     language: "C#",
     stars: 0,
     forks: 0,
@@ -192,11 +250,17 @@ export const repositories: Repository[] = [
     ecosystem: "Ecossistema AIFreelas",
     highlightMetric: "234 Testes • 85.15% Cobertura",
     details: "Microsserviço de autenticação e autorização (Identity API) em ASP.NET Core (.NET 10) com controle de sessões simultâneas por dispositivo (deviceToken), RBAC completo (Roles e Policies), webhooks de eventos de segurança, documentação técnica para integração de Agentes IA e suíte com 234 testes automatizados cobrindo 85.15% do código de aplicação.",
+    detailsEn: "Authentication and authorization microservice (Identity API) in ASP.NET Core (.NET 10) with simultaneous session control per device (deviceToken), comprehensive RBAC (Roles and Policies), security event webhooks, technical documentation for AI Agent integration, and an automated test suite with 234 tests covering 85.15% of application code.",
     techStack: ["C#", ".NET 10", "ASP.NET Core", "JWT / Multi-Device", "PostgreSQL", "Docker", "xUnit"],
     highlights: [
       "Suíte com 234 testes automatizados em xUnit com 100% de sucesso cobrindo 85.15% do código de aplicação",
       "Controle rigoroso de login simultâneo e reutilização segura de token por dispositivo (deviceToken)",
       "13 endpoints de autenticação e autorização RBAC com suporte a cookies e cabeçalhos Bearer"
+    ],
+    highlightsEn: [
+      "Suite of 234 automated tests in xUnit with 100% pass rate covering 85.15% of application code",
+      "Strict concurrent login enforcement and safe token reuse per device (deviceToken)",
+      "13 authentication and RBAC authorization endpoints with cookie and Bearer header support"
     ]
   },
   {
@@ -205,6 +269,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/ExtensionWebDrive",
     htmlUrl: "https://github.com/Koszudikas-C/ExtensionWebDrive",
     description: "Extensão Manifest V3 com Event Bus bidirecional para extração criptografada do WhatsApp Web e integração 99Freelas.",
+    descriptionEn: "Manifest V3 extension with bidirectional Event Bus for encrypted WhatsApp Web extraction and 99Freelas integration.",
     language: "TypeScript",
     stars: 0,
     forks: 0,
@@ -213,11 +278,17 @@ export const repositories: Repository[] = [
     category: "IA, Integração & Automação",
     ecosystem: "Ecossistema AIFreelas",
     details: "Extensão Chrome/Edge (Manifest V3) que atua como ponte bidirecional (Event Bus) e motor de extração 100% local com criptografia via Web Crypto API. Integra o motor WPPConnect para sincronização em lotes de conversas do WhatsApp Web e extrai oportunidades autenticadas do 99Freelas diretamente para o painel do ecossistema AIFreelas.",
+    detailsEn: "Chrome/Edge extension (Manifest V3) acting as a bidirectional event bridge (Event Bus) and 100% local extraction engine with encryption via Web Crypto API. Integrates the WPPConnect engine for batch synchronization of WhatsApp Web chats and scrapes authenticated 99Freelas opportunities directly into the AIFreelas ecosystem dashboard.",
     techStack: ["TypeScript", "Chrome Extension MV3", "WPPConnect", "Web Crypto API", "Webpack"],
     highlights: [
       "Barramento de eventos bidirecional (Event Bus) com roteamento desduplicado entre página web e Background Worker",
       "Extração 100% local de conversas do WhatsApp Web com criptografia em trânsito e repouso via Web Crypto API",
       "Delegação de chamadas de IA local para o Service Worker evitando restrições de CORS no navegador"
+    ],
+    highlightsEn: [
+      "Bidirectional Event Bus with deduplicated routing between web pages and the Background Worker",
+      "100% local extraction of WhatsApp Web chats with encryption in transit and at rest via Web Crypto API",
+      "Delegation of local AI calls to the Service Worker avoiding browser CORS restrictions"
     ]
   },
   {
@@ -226,6 +297,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/IAConversationClientsFreelas",
     htmlUrl: "https://github.com/Koszudikas-C/IAConversationClientsFreelas",
     description: "Bot autônomo de IA para triagem de conversas e atendimento de clientes de freelancer.",
+    descriptionEn: "Autonomous AI bot for conversation triage and customer service for freelancers.",
     language: "C#",
     stars: 0,
     forks: 0,
@@ -234,6 +306,7 @@ export const repositories: Repository[] = [
     category: "IA, Integração & Automação",
     ecosystem: "Ecossistema AIFreelas",
     details: "Agente inteligente construído em C# com APIs do Gemini/OpenAI para responder mensagens recebidas de potenciais clientes e leads. Realiza triagem de escopo de projetos e orçamentos iniciais de forma autônoma.",
+    detailsEn: "Intelligent agent built in C# using Gemini/OpenAI APIs to handle incoming messages from potential clients and leads. Performs autonomous project scope triage and preliminary quote assessments.",
     techStack: ["C#", "LLM Integration", "Gemini API", "OpenAI API", "Webhooks"]
   },
   {
@@ -242,6 +315,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/IntegrationTractLanceDb",
     htmlUrl: "https://github.com/Koszudikas-C/IntegrationTractLanceDb",
     description: "Pipeline de embeddings vetoriais com Tract-ONNX e armazenamento no banco de dados LanceDB em Rust.",
+    descriptionEn: "Vector embedding pipeline using Tract-ONNX and LanceDB embedded database storage in Rust.",
     language: "Rust",
     stars: 0,
     forks: 0,
@@ -249,10 +323,15 @@ export const repositories: Repository[] = [
     private: false,
     category: "IA, Integração & Automação",
     details: "Software de alta performance em Rust que carrega modelos ONNX quantizados na CPU via biblioteca `tract-onnx` (Sonos Tract) para gerar embeddings vetoriais a partir de textos e salvá-los de forma estruturada no banco de dados embutido LanceDB usando registros Apache Arrow.",
+    detailsEn: "High-performance Rust software that loads quantized ONNX models on CPU via the tract-onnx library (Sonos Tract) to generate text embeddings and store them structurally into the embedded LanceDB database using Apache Arrow record batches.",
     techStack: ["Rust", "Tokio", "LanceDB", "Tract-ONNX", "Apache Arrow"],
     highlights: [
       "Inferência de modelos de linguagem ONNX em CPU pura utilizando Sonos Tract em Rust",
       "Persistência vetorial colunar de alta velocidade com LanceDB e Apache Arrow"
+    ],
+    highlightsEn: [
+      "Pure CPU ONNX language model inference using Sonos Tract in Rust",
+      "High-speed columnar vector persistence with LanceDB and Apache Arrow"
     ]
   },
   {
@@ -261,6 +340,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/ServerBlockChain",
     htmlUrl: "https://github.com/Koszudikas-C/ServerBlockChain",
     description: "Servidor de nó de rede Blockchain para validação e consenso de transações.",
+    descriptionEn: "Blockchain network node server for transaction validation and distributed consensus.",
     language: "C#",
     stars: 1,
     forks: 0,
@@ -269,6 +349,7 @@ export const repositories: Repository[] = [
     category: "Blockchain & Cripto",
     ecosystem: "Rede Blockchain PoW",
     details: "Implementação de um nó de rede (node) completo para uma blockchain simplificada. Gerencia o pool de transações pendentes (mempool), expõe endpoints para sincronização de blocos e implementa o protocolo de validação P2P.",
+    detailsEn: "Complete node implementation for a lightweight blockchain network. Manages the pending transaction pool (mempool), exposes endpoints for block synchronization, and enforces the P2P validation protocol.",
     techStack: ["C#", "ASP.NET Core", "P2P Networking", "Cryptography"]
   },
   {
@@ -277,6 +358,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/ClientBlockChain",
     htmlUrl: "https://github.com/Koszudikas-C/ClientBlockChain",
     description: "Cliente de carteira digital e envio de transações para a rede ServerBlockChain.",
+    descriptionEn: "Digital wallet client and transaction submission tool for the ServerBlockChain network.",
     language: "C#",
     stars: 1,
     forks: 0,
@@ -285,6 +367,7 @@ export const repositories: Repository[] = [
     category: "Blockchain & Cripto",
     ecosystem: "Rede Blockchain PoW",
     details: "Carteira (Wallet) e interface cliente para a rede Blockchain. Gera chaves criptográficas públicas/privadas de criptografia elíptica, assina transações digitalmente, consulta saldos e interage com os nós validadores (ServerBlockChain).",
+    detailsEn: "Wallet interface and client for the blockchain network. Generates elliptic curve cryptographic key pairs (ECC), digitally signs transactions, checks account balances, and communicates with validator nodes (ServerBlockChain).",
     techStack: ["C#", ".NET", "Cryptography", "ECC", "REST API"]
   },
   {
@@ -293,6 +376,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/Miner",
     htmlUrl: "https://github.com/Koszudikas-C/Miner",
     description: "Mecanismo autônomo de mineração e cálculo de Hash Proof-of-Work (PoW).",
+    descriptionEn: "Autonomous Proof-of-Work (PoW) mining engine and cryptographic hash calculator.",
     language: "C#",
     stars: 1,
     forks: 0,
@@ -301,6 +385,7 @@ export const repositories: Repository[] = [
     category: "Blockchain & Cripto",
     ecosystem: "Rede Blockchain PoW",
     details: "Software minerador integrado à rede ServerBlockChain. Implementa algoritmos paralelos de criptografia baseados em SHA-256 para resolver o quebra-cabeça matemático de Proof-of-Work (PoW) com ajuste dinâmico de dificuldade.",
+    detailsEn: "Mining software integrated with the ServerBlockChain network. Implements parallel SHA-256 cryptographic algorithms to solve the Proof-of-Work mathematical puzzle with dynamic difficulty adjustment.",
     techStack: ["C#", "SHA-256", "Multithreading", "Parallel Programming"]
   },
   {
@@ -309,6 +394,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/FrontEndMiner",
     htmlUrl: "https://github.com/Koszudikas-C/FrontEndMiner",
     description: "Interface web (Dashboard) para monitorar atividades e hashes do script Miner.",
+    descriptionEn: "Real-time web dashboard for monitoring Miner script activities, hashrate, and telemetry.",
     language: "HTML",
     stars: 0,
     forks: 0,
@@ -317,6 +403,7 @@ export const repositories: Repository[] = [
     category: "Web & Front-end",
     ecosystem: "Rede Blockchain PoW",
     details: "Dashboard front-end em tempo real. Conecta via WebSockets ao servidor do minerador C# para exibir estatísticas como hashrate, blocos minerados com sucesso, dificuldade de rede e temperatura da CPU.",
+    detailsEn: "Real-time frontend dashboard. Connects via WebSockets to the C# miner server to display telemetry such as hashrate, successfully mined blocks, network difficulty, and CPU temperature.",
     techStack: ["HTML5", "CSS3", "JavaScript", "WebSockets"]
   },
   {
@@ -325,6 +412,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/api_login_cl_ativo_byte",
     htmlUrl: "https://github.com/Koszudikas-C/api_login_cl_ativo_byte",
     description: "API de autenticação e controle de acesso para clientes da Ativo Byte.",
+    descriptionEn: "Authentication and access control API for Ativo Byte clients.",
     language: "PHP",
     stars: 2,
     forks: 0,
@@ -333,6 +421,7 @@ export const repositories: Repository[] = [
     category: "APIs & Back-end",
     ecosystem: "Plataforma Ativo Byte",
     details: "API RESTful desenvolvida em PHP para gerenciar o fluxo de autenticação (login, cadastro, recuperação de senha) e controle de permissões de acesso para os portais da Ativo Byte. Possui arquitetura desacoplada e segurança baseada em tokens.",
+    detailsEn: "RESTful API built in PHP to manage authentication workflows (login, registration, password recovery) and access permissions for Ativo Byte portals. Features a decoupled architecture and token-based security.",
     techStack: ["PHP", "MySQL", "REST API", "JWT"]
   },
   {
@@ -341,6 +430,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/area-cliente-ativo-byte",
     htmlUrl: "https://github.com/Koszudikas-C/area-cliente-ativo-byte",
     description: "Portal do cliente da empresa Ativo Byte.",
+    descriptionEn: "Client portal web app for software consulting firm Ativo Byte.",
     language: "TypeScript",
     stars: 2,
     forks: 0,
@@ -349,6 +439,7 @@ export const repositories: Repository[] = [
     category: "Web & Front-end",
     ecosystem: "Plataforma Ativo Byte",
     details: "Área logada e portal do cliente desenvolvido em Angular com NG-ZORRO para consulta de faturas, abertura de chamados técnicos, visualização de contratos ativos e atualizações de serviços.",
+    detailsEn: "Authenticated customer portal developed in Angular with NG-ZORRO for viewing invoices, opening technical support tickets, tracking active contracts, and reviewing service status updates.",
     techStack: ["Angular", "TypeScript", "NG-ZORRO", "RxJS", "ngx-mask"]
   },
   {
@@ -357,6 +448,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/ativo-byte-vanilla",
     htmlUrl: "https://github.com/Koszudikas-C/ativo-byte-vanilla",
     description: "Site institucional da empresa de consultoria de software Ativo Byte feito em HTML/CSS baunilha.",
+    descriptionEn: "Corporate landing page for software consulting firm Ativo Byte built with vanilla HTML/CSS.",
     language: "CSS",
     stars: 0,
     forks: 0,
@@ -365,6 +457,7 @@ export const repositories: Repository[] = [
     category: "Web & Front-end",
     ecosystem: "Plataforma Ativo Byte",
     details: "Landing page corporativa e site de apresentação da Ativo Byte. Construído do zero usando apenas HTML e CSS sem frameworks, focando em excelente SEO, velocidade de carregamento de menos de 1 segundo e responsividade completa.",
+    detailsEn: "Corporate landing page for Ativo Byte. Built from scratch with vanilla HTML5 and CSS3 without frameworks, achieving optimal SEO, sub-second load times, and complete responsiveness.",
     techStack: ["HTML5", "CSS3", "Vanilla JS", "SEO"]
   },
   {
@@ -373,6 +466,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/whatsapp-export-pro",
     htmlUrl: "https://github.com/Koszudikas-C/whatsapp-export-pro",
     description: "Extensão avançada em TypeScript para extração e backup profissional de chats do WhatsApp.",
+    descriptionEn: "Advanced TypeScript browser extension for professional WhatsApp chat extraction and backups.",
     language: "TypeScript",
     stars: 0,
     forks: 0,
@@ -381,6 +475,7 @@ export const repositories: Repository[] = [
     category: "IA, Integração & Automação",
     ecosystem: "WhatsApp Export Pro",
     details: "Extensão de navegador (Chrome/Edge Extension) construída sob a especificação Manifest V3. Permite exportar o histórico de mensagens, contatos, mídias e arquivos de áudio diretamente do painel do WhatsApp Web em formatos estruturados como JSON ou CSV.",
+    detailsEn: "Browser extension (Chrome/Edge) built under Manifest V3 specifications. Enables exporting message history, contacts, media, and voice notes directly from WhatsApp Web into structured JSON or CSV formats.",
     techStack: ["TypeScript", "Chrome Extensions", "Manifest V3", "WPPConnect"]
   },
   {
@@ -389,6 +484,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/LadingPageExportHistory",
     htmlUrl: "https://github.com/Koszudikas-C/LadingPageExportHistory",
     description: "Landing page para promoção e guias de uso da extensão de exportação de chat.",
+    descriptionEn: "Marketing landing page and user guide for the chat history export extension.",
     language: "HTML",
     stars: 0,
     forks: 0,
@@ -397,6 +493,7 @@ export const repositories: Repository[] = [
     category: "Estudos & Utilitários",
     ecosystem: "WhatsApp Export Pro",
     details: "Landing page estática com animações em CSS puro para explicar o funcionamento e facilitar o download da extensão WhatsApp Export Pro.",
+    detailsEn: "Static landing page with pure CSS animations explaining features and simplifying downloads for the WhatsApp Export Pro extension.",
     techStack: ["HTML5", "CSS3", "JavaScript", "SEO"]
   },
   {
@@ -405,6 +502,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/PaymentsExtesion",
     htmlUrl: "https://github.com/Koszudikas-C/PaymentsExtesion",
     description: "API de integração de pagamentos e assinaturas recorrentes.",
+    descriptionEn: "Payment integration API and recurring subscription billing gateway.",
     language: "PHP",
     stars: 0,
     forks: 0,
@@ -413,6 +511,7 @@ export const repositories: Repository[] = [
     category: "APIs & Back-end",
     ecosystem: "WhatsApp Export Pro",
     details: "Adaptador de gateway de pagamentos construído em PHP. Lida com chamadas de webhook para confirmação de transações financeiras, geração de boletos, Pix e cobrança de assinaturas periódicas via Stripe e Asaas.",
+    detailsEn: "Payment gateway adapter developed in PHP. Handles webhook events for transaction confirmations, payment slip and Pix generation, and recurring subscription billing via Stripe and Asaas.",
     techStack: ["PHP", "Stripe API", "Asaas API", "Webhooks"]
   },
   {
@@ -421,6 +520,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/purple_deco_theme",
     htmlUrl: "https://github.com/Koszudikas-C/purple_deco_theme",
     description: "Tema personalizado desenvolvido do zero em Liquid para e-commerce Shopify.",
+    descriptionEn: "Custom Shopify e-commerce theme developed from scratch in Liquid.",
     language: "Liquid",
     stars: 1,
     forks: 0,
@@ -429,6 +529,7 @@ export const repositories: Repository[] = [
     category: "Web & Front-end",
     ecosystem: "Purple Deco E-commerce",
     details: "Tema customizado e otimizado para e-commerce na plataforma Shopify, desenvolvido do zero utilizando a linguagem de templating Liquid, HTML5, CSS3 e JavaScript. Focado em alta velocidade, design responsivo premium e SEO.",
+    detailsEn: "High-performance customized Shopify theme built from scratch using Liquid templating, HTML5, CSS3, and JavaScript. Focused on fast load times, premium responsive design, and SEO optimization.",
     techStack: ["Liquid", "Shopify", "CSS3", "JavaScript", "HTML5"]
   },
   {
@@ -437,6 +538,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/purple_deco",
     htmlUrl: "https://github.com/Koszudikas-C/purple_deco",
     description: "Interface moderna roxa para painel de controle e monitoramento.",
+    descriptionEn: "Modern dark purple control panel and monitoring dashboard.",
     language: "TypeScript",
     stars: 0,
     forks: 0,
@@ -445,6 +547,7 @@ export const repositories: Repository[] = [
     category: "Web & Front-end",
     ecosystem: "Purple Deco E-commerce",
     details: "Painel administrativo modular (Dashboard UI) estilizado com o tema roxo escuro. Contém componentes reutilizáveis como gráficos, tabelas e feeds de notificações dinâmicas.",
+    detailsEn: "Modular admin dashboard styled with a dark purple theme. Contains reusable components such as metrics charts, data tables, and dynamic notification feeds.",
     techStack: ["TypeScript", "React", "Tailwind CSS", "Framer Motion"]
   },
   {
@@ -453,6 +556,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/Blazing",
     htmlUrl: "https://github.com/Koszudikas-C/Blazing",
     description: "Repositório de exploração e estudos em C# Blazor.",
+    descriptionEn: "Exploration and experimental projects in C# ASP.NET Core Blazor.",
     language: "C#",
     stars: 1,
     forks: 0,
@@ -460,6 +564,7 @@ export const repositories: Repository[] = [
     private: false,
     category: "Estudos & Utilitários",
     details: "Projeto experimental explorando o framework ASP.NET Core Blazor, focado no desenvolvimento de componentes reutilizáveis, renderização do lado do servidor (SSR) e comunicação em tempo real usando WebSockets/SignalR.",
+    detailsEn: "Experimental project exploring ASP.NET Core Blazor, focused on reusable component development, server-side rendering (SSR), and real-time communication via WebSockets/SignalR.",
     techStack: ["C#", "Blazor", "ASP.NET Core", "WebSockets"]
   },
   {
@@ -468,6 +573,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/premiacaoAlura",
     htmlUrl: "https://github.com/Koszudikas-C/premiacaoAlura",
     description: "Aplicação frontend desenvolvida para gerenciamento e exibição de premiações de cursos da Alura.",
+    descriptionEn: "Frontend web app for managing and showcasing Alura course awards and achievements.",
     language: "JavaScript",
     stars: 0,
     forks: 0,
@@ -475,6 +581,7 @@ export const repositories: Repository[] = [
     private: false,
     category: "Estudos & Utilitários",
     details: "Página interativa criada como projeto prático na trilha Alura para exibir pontuações, certificados e conquistas do usuário, com layouts modernos e transições de tela dinâmicas.",
+    detailsEn: "Interactive page built as a hands-on project to display user learning scores, certifications, and course accomplishments with modern layouts and dynamic transitions.",
     techStack: ["JavaScript", "HTML5", "CSS3", "DOM Manipulation"]
   },
   {
@@ -483,6 +590,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/primiacaoAluraApi",
     htmlUrl: "https://github.com/Koszudikas-C/primiacaoAluraApi",
     description: "API Node.js para fornecer as pontuações e premiações da Alura.",
+    descriptionEn: "Node.js API for fetching and serving Alura learning scores and course certificates.",
     language: "JavaScript",
     stars: 0,
     forks: 0,
@@ -490,6 +598,7 @@ export const repositories: Repository[] = [
     private: false,
     category: "APIs & Back-end",
     details: "API construída com Express que faz raspagem ou consome dados oficiais da API Alura para retornar em formato JSON as conquistas de cursos, certificações e pontuações do usuário.",
+    detailsEn: "Express-based API that consumes course data to return user accomplishments, certifications, and educational scores in JSON format.",
     techStack: ["JavaScript", "Node.js", "Express", "Axios"]
   },
   {
@@ -498,6 +607,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/ConnectorExpXmlPosto",
     htmlUrl: "https://github.com/Koszudikas-C/ConnectorExpXmlPosto",
     description: "Exportador e leitor automático de XML de notas fiscais de postos de combustível.",
+    descriptionEn: "Automated XML invoice parser and exporter for gas stations.",
     language: "C#",
     stars: 0,
     forks: 0,
@@ -505,6 +615,7 @@ export const repositories: Repository[] = [
     private: true,
     category: "Estudos & Utilitários",
     details: "Utilitário em C# feito para automatizar a leitura, filtragem e exportação consolidada de notas fiscais eletrônicas (NF-e/NFC-e) geradas em postos de combustível. Auxilia na escrituração contábil.",
+    detailsEn: "C# utility built to automate reading, filtering, and consolidated exporting of electronic tax invoices (NF-e/NFC-e) generated by gas stations for accounting bookkeeping.",
     techStack: ["C#", ".NET", "XML Parsing", "File Management"]
   },
   {
@@ -513,6 +624,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/LojasfascinaNaoPaga",
     htmlUrl: "https://github.com/Koszudikas-C/LojasfascinaNaoPaga",
     description: "Repositório satírico/documentário de pendências de prestação de serviços de TI.",
+    descriptionEn: "Satirical documentary repository detailing unpaid IT service invoices and disputes.",
     language: "PHP",
     stars: 0,
     forks: 0,
@@ -520,6 +632,7 @@ export const repositories: Repository[] = [
     private: false,
     category: "Estudos & Utilitários",
     details: "Repositório criado para arquivar o histórico, logs de conversas e evidências de serviços prestados não quitados de forma satírica.",
+    detailsEn: "Archive documenting client interaction logs, evidence, and history of unpaid IT consulting services presented in a satirical format.",
     techStack: ["PHP", "HTML", "Markdown", "Git Documentation"]
   },
   {
@@ -528,6 +641,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/LogsCertificate",
     htmlUrl: "https://github.com/Koszudikas-C/LogsCertificate",
     description: "Visualizador e parser automatizado de logs de certificados SSL/TLS.",
+    descriptionEn: "Automated parser and monitor for SSL/TLS certificate log files.",
     language: "C#",
     stars: 0,
     forks: 0,
@@ -535,6 +649,7 @@ export const repositories: Repository[] = [
     private: true,
     category: "Estudos & Utilitários",
     details: "Serviço que monitora diretórios, analisa arquivos de log gerados por certificados SSL Let's Encrypt / IIS e extrai datas de expiração e erros de handshake para exibição em console ou webhook.",
+    detailsEn: "Monitoring service that watches directories, parses Let's Encrypt / IIS SSL log files, and extracts expiration dates and TLS handshake errors for console reporting or webhook alerts.",
     techStack: ["C#", ".NET Core", "SSL/TLS", "Regex Parsing"]
   },
   {
@@ -543,6 +658,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/convert_files_api",
     htmlUrl: "https://github.com/Koszudikas-C/convert_files_api",
     description: "API de alta performance para conversão de formatos de arquivos.",
+    descriptionEn: "High-performance file format conversion API built in PHP.",
     language: "PHP",
     stars: 0,
     forks: 0,
@@ -550,6 +666,7 @@ export const repositories: Repository[] = [
     private: false,
     category: "APIs & Back-end",
     details: "Microsserviço que processa conversões de formatos de arquivos multimídia e documentos (como PDF para imagem, PNG para WebP, DOCX para PDF) utilizando ferramentas de sistema Unix por baixo dos panos.",
+    detailsEn: "Microservice that processes document and multimedia format conversions (such as PDF to image, PNG to WebP, DOCX to PDF) leveraging underlying Unix system tools.",
     techStack: ["PHP", "Bash Scripting", "ImageMagick", "Pandoc"]
   },
   {
@@ -558,6 +675,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/EstruturaDados",
     htmlUrl: "https://github.com/Koszudikas-C/EstruturaDados",
     description: "Estudos de algoritmos avançados e estruturas de dados em C#.",
+    descriptionEn: "Advanced algorithm studies and classical data structures implementation in C#.",
     language: "C#",
     stars: 0,
     forks: 0,
@@ -565,6 +683,7 @@ export const repositories: Repository[] = [
     private: false,
     category: "Estudos & Utilitários",
     details: "Códigos de exemplo implementando árvores AVL, tabelas Hash colisionadas, grafos orientados, algoritmos de busca em profundidade (DFS) e largura (BFS) e ordenações clássicas de dados.",
+    detailsEn: "Comprehensive implementations of AVL trees, collision-handled hash tables, directed graphs, depth-first (DFS) and breadth-first (BFS) searches, and classical sorting algorithms.",
     techStack: ["C#", ".NET Core", "Algorithms", "Data Structures"]
   },
   {
@@ -573,6 +692,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/AprendendoAngula",
     htmlUrl: "https://github.com/Koszudikas-C/AprendendoAngula",
     description: "Repositório de aprendizado do framework Angular.",
+    descriptionEn: "Hands-on learning repository exploring the Angular framework ecosystem.",
     language: "HTML",
     stars: 0,
     forks: 0,
@@ -580,6 +700,7 @@ export const repositories: Repository[] = [
     private: false,
     category: "Estudos & Utilitários",
     details: "Aplicação experimental para estudo de Directivas, Dependency Injection, RxJS, roteamento e controle de estado reativo dentro do ecossistema do Angular.",
+    detailsEn: "Experimental application for studying Angular directives, dependency injection, RxJS reactive programming, routing, and reactive state management.",
     techStack: ["Angular", "TypeScript", "RxJS", "HTML5"]
   },
   {
@@ -588,6 +709,7 @@ export const repositories: Repository[] = [
     fullName: "Koszudikas-C/github-portfolio",
     htmlUrl: "https://github.com/Koszudikas-C/github-portfolio",
     description: "Meu portfólio interativo focado em apresentar projetos do GitHub.",
+    descriptionEn: "Interactive developer portfolio showcasing GitHub repositories and software architectures.",
     language: "TypeScript",
     stars: 0,
     forks: 0,
@@ -595,6 +717,7 @@ export const repositories: Repository[] = [
     private: false,
     category: "Web & Front-end",
     details: "Portfólio interativo em React/TypeScript com design moderno (Glassmorphism), gráficos analíticos interativos e filtros dinâmicos para apresentação dos projetos e arquiteturas.",
+    detailsEn: "Interactive React/TypeScript portfolio featuring modern design (Glassmorphism), analytical charts, live filtering, and 3D avatar telemetry to present software projects and engineering architectures.",
     techStack: ["React", "TypeScript", "Tailwind CSS", "Recharts", "Vite"]
   }
 ];

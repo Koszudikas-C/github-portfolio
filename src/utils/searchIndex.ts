@@ -25,12 +25,15 @@ export function buildSearchIndex(repos: Repository[]): IndexedRepository[] {
       repo.name,
       repo.fullName,
       repo.description,
+      repo.descriptionEn || '',
       repo.category,
       repo.language,
       repo.ecosystem || '',
       ...(repo.techStack || []),
       ...(repo.highlights || []),
-      repo.details || ''
+      ...(repo.highlightsEn || []),
+      repo.details || '',
+      repo.detailsEn || ''
     ].join(' ');
 
     return {

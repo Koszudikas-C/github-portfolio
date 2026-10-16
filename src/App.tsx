@@ -1425,7 +1425,7 @@ export default function App() {
 
                   {/* Descrição */}
                   <p className="text-slate-300 text-sm mt-3 line-clamp-3 leading-relaxed">
-                    {repo.description}
+                    {(language === 'en' && repo.descriptionEn) ? repo.descriptionEn : repo.description}
                   </p>
 
                   {/* Tech Stack Pills (como no Join/Sharkie/Portfolio da referência) */}
@@ -1775,19 +1775,19 @@ export default function App() {
                   {t.modal.overview}
                 </h4>
                 <p className="text-slate-200 text-sm leading-relaxed whitespace-pre-line">
-                  {selectedRepo.details}
+                  {(language === 'en' && selectedRepo.detailsEn) ? selectedRepo.detailsEn : selectedRepo.details}
                 </p>
               </div>
 
               {/* Destaques de Engenharia */}
-              {selectedRepo.highlights && selectedRepo.highlights.length > 0 && (
+              {(((language === 'en' && selectedRepo.highlightsEn) ? selectedRepo.highlightsEn : selectedRepo.highlights) || []).length > 0 && (
                 <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-4">
                   <h4 className="text-xs font-semibold tracking-wider text-[#38bdf8] uppercase mb-3 flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
                     {t.modal.highlights}
                   </h4>
                   <ul className="space-y-2">
-                    {selectedRepo.highlights.map((item, idx) => (
+                    {(((language === 'en' && selectedRepo.highlightsEn) ? selectedRepo.highlightsEn : selectedRepo.highlights) || []).map((item, idx) => (
                       <li key={idx} className="text-xs sm:text-sm text-slate-200 flex items-start gap-2.5 leading-relaxed">
                         <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                         <span>{item}</span>
@@ -1822,7 +1822,7 @@ export default function App() {
                     <Network className="w-4 h-4 text-indigo-400" />
                     {language === 'pt' 
                       ? `Outros Módulos em ${selectedRepo.ecosystem} (${relatedEcosystemRepos.length})` 
-                      : `Other Modules in ${selectedRepo.ecosystem} (${relatedEcosystemRepos.length})`}
+                      : `Other Modules in ${t.ecosystems[selectedRepo.ecosystem as keyof typeof t.ecosystems] || selectedRepo.ecosystem} (${relatedEcosystemRepos.length})`}
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {relatedEcosystemRepos.map((rel) => (
@@ -1836,7 +1836,7 @@ export default function App() {
                             {rel.name}
                           </p>
                           <p className="text-[11px] text-slate-400 truncate mt-0.5">
-                            {rel.description}
+                            {(language === 'en' && rel.descriptionEn) ? rel.descriptionEn : rel.description}
                           </p>
                         </div>
                         <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-indigo-300 shrink-0" />
