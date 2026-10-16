@@ -32,7 +32,23 @@ import type { Repository } from './data/repositories';
 import avatarProfileImg from './assets/avatar-profile.webp';
 import bgMusicAudio from './assets/Ink_and_Keys.mp3';
 import { useLanguage } from './i18n/useLanguage';
-import { languageColors, categoryIcons, skillsData } from './data/constants';
+import { languageColors, categoryIcons, skillsData, skillsDataByLanguage } from './data/constants';
+
+// Tradução de métricas de destaque dos projetos
+const translateHighlightMetric = (metric?: string, lang: 'pt' | 'en' = 'pt'): string => {
+  if (!metric) return '';
+  if (lang === 'pt') return metric;
+  const map: Record<string, string> = {
+    "470 Testes • .NET 10 & pgvector": "470 Tests • .NET 10 & pgvector",
+    "7 Marketplaces • Arbitragem Real-Time": "7 Marketplaces • Real-Time Arbitrage",
+    "Anti-Detect • ONNX & Vision": "Anti-Detect • ONNX & Vision",
+    "Streaming 7GB+ • Rust & Graph": "7GB+ Streaming • Rust & Graph",
+    "IA Agronômica • YOLOv11/v26": "Agronomic AI • YOLOv11/v26",
+    "416 Testes • Vitest & Signals": "416 Tests • Vitest & Signals",
+    "234 Testes • 85.15% Cobertura": "234 Tests • 85.15% Coverage",
+  };
+  return map[metric] || metric.replace(/Testes/g, 'Tests').replace(/Cobertura/g, 'Coverage').replace(/Arbitragem/g, 'Arbitrage');
+};
 
 // Imagens LCP pré-carregadas do diretório public
 const avatarTransparentImg = `${import.meta.env.BASE_URL}avatar-transparent.webp`;
@@ -1179,7 +1195,7 @@ export default function App() {
               </div>
 
               <div className="space-y-4">
-                {skillsData.map((skill) => (
+                {(skillsDataByLanguage[language] || skillsData).map((skill) => (
                   <div key={skill.name} className="space-y-1.5">
                     <div className="flex items-center justify-between text-xs">
                       <div>
@@ -1300,9 +1316,11 @@ export default function App() {
                     }}
                     className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 text-left transition-all cursor-pointer group"
                   >
-                    <span className="text-slate-200 group-hover:text-white truncate">{eco}</span>
+                    <span className="text-slate-200 group-hover:text-white truncate">
+                      {t.ecosystems[eco as keyof typeof t.ecosystems] || eco}
+                    </span>
                     <span className="text-[11px] text-indigo-300 font-semibold bg-indigo-500/20 px-2 py-0.5 rounded-md">
-                      {count} repos &rarr;
+                      {count} {language === 'pt' ? 'repos' : 'repos'} &rarr;
                     </span>
                   </button>
                 ))}
@@ -1380,7 +1398,9 @@ export default function App() {
                   <div className="flex items-center justify-between gap-2 mb-3 min-w-0">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-400/30 truncate">
                       <Sparkles className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                      <span className="truncate">{repo.highlightMetric || repo.category}</span>
+                      <span className="truncate">
+                        {translateHighlightMetric(repo.highlightMetric, language) || (t.categories[repo.category as keyof typeof t.categories] || repo.category)}
+                      </span>
                     </span>
 
                     <span className={`px-2.5 py-0.5 text-[11px] font-semibold rounded-full border shrink-0 ${
@@ -1437,7 +1457,7 @@ export default function App() {
                   </div>
 
                   <span className="px-3.5 py-1.5 rounded-xl bg-blue-600/30 group-hover:bg-blue-600 text-[#38bdf8] group-hover:text-white font-semibold transition-all flex items-center gap-1.5">
-                    Explorar &rarr;
+                    {language === 'pt' ? 'Explorar' : 'Explore'} &rarr;
                   </span>
                 </div>
               </article>
@@ -1470,7 +1490,7 @@ export default function App() {
         {/* ÁREA EXPANSÍVEL: CATÁLOGO COMPLETO COM BUSCA & FILTROS (33 Repositórios) */}
         <div ref={catalogContainerRef}>
           {shouldLoadCatalog ? (
-            <Suspense fallback={<div className="h-64 rounded-2xl bg-slate-900/30 border border-slate-800/50 animate-pulse my-8 flex items-center justify-center text-slate-500 font-mono text-xs">Carregando catálogo...</div>}>
+            <Suspense fallback={<div className="h-64 rounded-2xl bg-slate-900/30 border border-slate-800/50 animate-pulse my-8 flex items-center justify-center text-slate-400 font-mono text-xs">{language === 'pt' ? 'Carregando catálogo...' : 'Loading catalog...'}</div>}>
               <CatalogSection
                 language={language}
                 t={t}
@@ -1483,7 +1503,7 @@ export default function App() {
             </Suspense>
           ) : (
             <div className="h-40 rounded-2xl bg-slate-900/20 border border-slate-800/40 my-8 flex items-center justify-center text-slate-300 font-medium font-mono text-xs">
-              Role para ver os 33 projetos no catálogo...
+              {language === 'pt' ? 'Role para ver os 33 projetos no catálogo...' : 'Scroll to explore all 33 projects in the catalog...'}
             </div>
           )}
         </div>
@@ -1734,7 +1754,7 @@ export default function App() {
                 </h3>
                 {selectedRepo.highlightMetric && (
                   <p className="text-xs font-semibold text-[#38bdf8] mt-1">
-                    {selectedRepo.highlightMetric}
+                    {translateHighlightMetric(selectedRepo.highlightMetric, language)}
                   </p>
                 )}
               </div>

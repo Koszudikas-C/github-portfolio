@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
 
 // Tooltip customizado de alto contraste para o gráfico de linguagens
-const CustomLanguageTooltip = ({ active, payload, totalRepos }: any) => {
+const CustomLanguageTooltip = ({ active, payload, totalRepos, language }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     const percentage = totalRepos > 0 ? Math.round((data.Quantidade / totalRepos) * 100) : 0;
@@ -16,7 +16,7 @@ const CustomLanguageTooltip = ({ active, payload, totalRepos }: any) => {
           <span className="font-bold text-sm text-white">{data.name}</span>
         </div>
         <div className="flex items-center justify-between gap-4 text-xs">
-          <span className="text-slate-300">Repositórios:</span>
+          <span className="text-slate-300">{language === 'pt' ? 'Repositórios:' : 'Repositories:'}</span>
           <span className="font-semibold text-white">
             {data.Quantidade} <span className="text-slate-400 font-normal">({percentage}%)</span>
           </span>
@@ -33,11 +33,13 @@ export const LanguageDistributionChart = memo(({
   selectedLanguage,
   totalRepos,
   onSelectLanguage,
+  language = 'pt',
 }: {
   langData: Array<{ name: string; Quantidade: number; color: string }>;
   selectedLanguage: string;
   totalRepos: number;
   onSelectLanguage: (lang: string) => void;
+  language?: 'pt' | 'en';
 }) => {
   return (
     <div className="w-full h-14">
@@ -45,7 +47,7 @@ export const LanguageDistributionChart = memo(({
         <BarChart data={langData} margin={{ left: 0, right: 0, top: 2, bottom: 0 }}>
           <XAxis dataKey="name" hide />
           <YAxis hide />
-          <Tooltip cursor={{ fill: 'rgba(56, 189, 248, 0.12)', radius: 4 }} content={<CustomLanguageTooltip totalRepos={totalRepos} />} />
+          <Tooltip cursor={{ fill: 'rgba(56, 189, 248, 0.12)', radius: 4 }} content={<CustomLanguageTooltip totalRepos={totalRepos} language={language} />} />
           <Bar
             dataKey="Quantidade"
             radius={[4, 4, 0, 0]}

@@ -373,6 +373,7 @@ export const CatalogSection = memo(({
               selectedLanguage={selectedLanguage}
               totalRepos={stats.total}
               onSelectLanguage={handleSelectLanguage}
+              language={language}
             />
           </Suspense>
 
