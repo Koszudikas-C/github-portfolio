@@ -13,6 +13,34 @@ export const translations = {
       openMenu: "Abrir menu de navegação",
       closeMenu: "Fechar menu",
       langSwitch: "Alternar idioma",
+      techMode: "Técnico",
+      businessMode: "Negócios",
+      modeLabel: "Visão",
+      businessHome: "Início",
+      businessCases: "Casos de Sucesso",
+      businessProcess: "Metodologia",
+      businessContact: "Proposta",
+    },
+    gateway: {
+      badge: "Portal de Boas-Vindas",
+      title: "Como você prefere explorar meu trabalho?",
+      subtitle: "Personalize sua experiência escolhendo a perspectiva que melhor atende ao seu objetivo. Você pode alternar a qualquer momento no menu.",
+      tech: {
+        badge: "Engenharia & Arquitetura",
+        title: "Visão Técnica (CTO & Devs)",
+        description: "Explore o ecossistema com foco em código, Clean Architecture, testes unitários automatizados, microsserviços e métricas técnicas de 33 repositórios.",
+        pills: [".NET 10 & C# 13", "Rust Tokio High-I/O", "470+ Testes Automatizados", "Clean Arch & DDD"],
+        cta: "Explorar Perfil Técnico"
+      },
+      business: {
+        badge: "Soluções, ROI & Resultados",
+        title: "Visão de Negócios (Executivos & Clientes)",
+        description: "Descubra como ajudo empresas a reduzir custos operacionais, automatizar atendimentos com IA e lançar produtos digitais escaláveis com agilidade.",
+        pills: ["Ganhos Financeiros & ROI", "Automação Comercial com IA", "Entrega sem Surpresas", "Contato Direto"],
+        cta: "Explorar Soluções de Negócio"
+      },
+      rememberChoice: "Lembrar minha escolha neste dispositivo",
+      skip: "Pular e ir para o site"
     },
     hero: {
       statusBadge: "Disponível para Projetos & Arquiteturas",
@@ -191,6 +219,34 @@ export const translations = {
       openMenu: "Open navigation menu",
       closeMenu: "Close menu",
       langSwitch: "Switch language",
+      techMode: "Technical",
+      businessMode: "Business",
+      modeLabel: "View",
+      businessHome: "Home",
+      businessCases: "Case Studies",
+      businessProcess: "Process",
+      businessContact: "Proposal",
+    },
+    gateway: {
+      badge: "Welcome Gateway",
+      title: "How would you like to explore my portfolio?",
+      subtitle: "Customize your experience by picking the perspective that best fits your goals. You can switch at any time in the top menu.",
+      tech: {
+        badge: "Engineering & Architecture",
+        title: "Technical View (CTOs & Engineers)",
+        description: "Explore the ecosystem focused on code, Clean Architecture, automated unit tests, microservices, and technical metrics across 33 repositories.",
+        pills: [".NET 10 & C# 13", "Rust Tokio High-I/O", "470+ Automated Tests", "Clean Arch & DDD"],
+        cta: "Explore Technical Profile"
+      },
+      business: {
+        badge: "Solutions, ROI & Results",
+        title: "Business View (Executives & Founders)",
+        description: "Discover how I help companies cut operational costs, automate sales funnels with AI, and launch scalable digital products with confidence.",
+        pills: ["Financial Gains & ROI", "AI Commercial Automation", "Predictable Delivery", "Direct Contact"],
+        cta: "Explore Business Solutions"
+      },
+      rememberChoice: "Remember my choice on this device",
+      skip: "Skip to portfolio"
     },
     hero: {
       statusBadge: "Available for Projects & Architecture",

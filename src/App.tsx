@@ -4,6 +4,8 @@ import {
   Lock, 
   ExternalLink, 
   Code, 
+  Code2,
+  Briefcase,
   X, 
   Cpu, 
   FileText,
@@ -33,6 +35,8 @@ import avatarProfileImg from './assets/avatar-profile.webp';
 import bgMusicAudio from './assets/Ink_and_Keys.mp3';
 import { useLanguage } from './i18n/useLanguage';
 import { languageColors, categoryIcons, skillsData, skillsDataByLanguage } from './data/constants';
+import { VersionGatewayModal, type ViewMode } from './components/VersionGatewayModal';
+import { BusinessView } from './components/BusinessView';
 
 // Tradução de métricas de destaque dos projetos
 const translateHighlightMetric = (metric?: string, lang: 'pt' | 'en' = 'pt'): string => {
@@ -433,8 +437,53 @@ const HeroInteractiveAvatar = memo(({
 export default function App() {
   const { language, setLanguage, t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<'hero' | 'about' | 'portfolio' | 'contact'>('hero');
+  const [activeSection, setActiveSection] = useState<string>('hero');
   const navRef = useRef<HTMLElement | null>(null);
+
+  // Modo de visualização: 'tech' (CTOs, Devs, Arquitetura) vs 'business' (Clientes, Empreendedores, ROI)
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlMode = urlParams.get('view');
+      if (urlMode === 'tech' || urlMode === 'business') {
+        return urlMode;
+      }
+      const savedMode = localStorage.getItem('portfolio_view_mode');
+      if (savedMode === 'tech' || savedMode === 'business') {
+        return savedMode;
+      }
+    }
+    return 'tech';
+  });
+
+  // Modal Gateway de Boas-Vindas & Escolha de Versão (Abre no primeiro acesso se não houver escolha prévia)
+  const [isGatewayOpen, setIsGatewayOpen] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('view')) return false;
+      const savedMode = localStorage.getItem('portfolio_view_mode');
+      return !savedMode;
+    }
+    return false;
+  });
+
+  const handleSelectMode = (mode: ViewMode, remember: boolean) => {
+    setViewMode(mode);
+    setIsGatewayOpen(false);
+    if (remember && typeof window !== 'undefined') {
+      localStorage.setItem('portfolio_view_mode', mode);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSwitchMode = (mode: ViewMode) => {
+    playSound(mode === 'business' ? 640 : 540, 0.08);
+    setViewMode(mode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('portfolio_view_mode', mode);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Fecha o menu mobile ao clicar fora ou pressionar Escape
   useEffect(() => {
@@ -534,12 +583,12 @@ export default function App() {
   // Monitorar seções ativas via IntersectionObserver nativo (Zero layout thrashing / Zero forced reflows)
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return;
-    const sections = ['hero', 'about', 'portfolio', 'contact'] as const;
+    const sections = ['hero', 'about', 'portfolio', 'contact', 'business-hero', 'cases', 'process'] as const;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveSection(entry.target.id as any);
+            setActiveSection(entry.target.id);
           }
         });
       },
@@ -554,7 +603,7 @@ export default function App() {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [viewMode]);
 
   // Seleção de repositório memoizada
   const handleSelectRepo = useCallback((repo: Repository) => {
@@ -751,51 +800,103 @@ export default function App() {
 
           {/* Links de Navegação Desktop com Indicador Ativo de Scroll */}
           <div className="hidden md:flex items-center gap-1.5 lg:gap-2 text-sm font-medium">
-            <a 
-              href="#hero" 
-              onClick={(e) => {
-                e.preventDefault();
-                playSound(480, 0.04);
-                scrollToSection('hero');
-              }}
-              className={`px-3 py-1.5 rounded-xl transition-all ${
-                activeSection === 'hero' 
-                  ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
-              }`}
-            >
-              {t.nav.home}
-            </a>
-            <a 
-              href="#about" 
-              onClick={(e) => {
-                e.preventDefault();
-                playSound(520, 0.04);
-                scrollToSection('about');
-              }}
-              className={`px-3 py-1.5 rounded-xl transition-all ${
-                activeSection === 'about' 
-                  ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
-              }`}
-            >
-              {t.nav.about}
-            </a>
-            <a 
-              href="#portfolio" 
-              onClick={(e) => {
-                e.preventDefault();
-                playSound(560, 0.04);
-                scrollToSection('portfolio');
-              }}
-              className={`px-3 py-1.5 rounded-xl transition-all ${
-                activeSection === 'portfolio' 
-                  ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
-              }`}
-            >
-              {t.nav.projects}
-            </a>
+            {viewMode === 'tech' ? (
+              <>
+                <a 
+                  href="#hero" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    playSound(480, 0.04);
+                    scrollToSection('hero');
+                  }}
+                  className={`px-3 py-1.5 rounded-xl transition-all ${
+                    activeSection === 'hero' 
+                      ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  }`}
+                >
+                  {t.nav.home}
+                </a>
+                <a 
+                  href="#about" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    playSound(520, 0.04);
+                    scrollToSection('about');
+                  }}
+                  className={`px-3 py-1.5 rounded-xl transition-all ${
+                    activeSection === 'about' 
+                      ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  }`}
+                >
+                  {t.nav.about}
+                </a>
+                <a 
+                  href="#portfolio" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    playSound(560, 0.04);
+                    scrollToSection('portfolio');
+                  }}
+                  className={`px-3 py-1.5 rounded-xl transition-all ${
+                    activeSection === 'portfolio' 
+                      ? 'text-[#38bdf8] font-bold bg-[#38bdf8]/10 border border-[#38bdf8]/30 shadow-[0_0_15px_rgba(56,189,248,0.15)]' 
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  }`}
+                >
+                  {t.nav.projects}
+                </a>
+              </>
+            ) : (
+              <>
+                <a 
+                  href="#business-hero" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    playSound(480, 0.04);
+                    scrollToSection('business-hero');
+                  }}
+                  className={`px-3 py-1.5 rounded-xl transition-all ${
+                    activeSection === 'business-hero' 
+                      ? 'text-amber-300 font-bold bg-amber-500/15 border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.15)]' 
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  }`}
+                >
+                  {t.nav.businessHome}
+                </a>
+                <a 
+                  href="#cases" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    playSound(520, 0.04);
+                    scrollToSection('cases');
+                  }}
+                  className={`px-3 py-1.5 rounded-xl transition-all ${
+                    activeSection === 'cases' 
+                      ? 'text-amber-300 font-bold bg-amber-500/15 border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.15)]' 
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  }`}
+                >
+                  {t.nav.businessCases}
+                </a>
+                <a 
+                  href="#process" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    playSound(560, 0.04);
+                    scrollToSection('process');
+                  }}
+                  className={`px-3 py-1.5 rounded-xl transition-all ${
+                    activeSection === 'process' 
+                      ? 'text-amber-300 font-bold bg-amber-500/15 border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.15)]' 
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                  }`}
+                >
+                  {t.nav.businessProcess}
+                </a>
+              </>
+            )}
             <a 
               href="#contact" 
               onClick={(e) => {
@@ -810,12 +911,41 @@ export default function App() {
               }`}
             >
               <Send className="w-3.5 h-3.5" />
-              <span>{t.nav.contact}</span>
+              <span>{viewMode === 'business' ? t.nav.businessContact : t.nav.contact}</span>
             </a>
           </div>
 
-          {/* Controles da Direita (Seletor de Idioma + Som + GitHub + Hamburger Mobile) */}
+          {/* Controles da Direita (Seletor de Modo + Seletor de Idioma + Som + GitHub + Hamburger Mobile) */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            {/* Seletor de Modo Desktop: Técnico vs Negócios */}
+            <div className="hidden sm:flex items-center p-0.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-xs font-mono">
+              <button
+                type="button"
+                onClick={() => handleSwitchMode('tech')}
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                  viewMode === 'tech'
+                    ? 'bg-blue-600/30 text-[#38bdf8] font-bold border border-blue-500/40 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title={language === 'pt' ? 'Mudar para Visão Técnica' : 'Switch to Technical View'}
+              >
+                <Code2 className="w-3.5 h-3.5" />
+                <span className="hidden lg:inline">{t.nav.techMode}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSwitchMode('business')}
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
+                  viewMode === 'business'
+                    ? 'bg-amber-500/25 text-amber-300 font-bold border border-amber-500/40 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+                title={language === 'pt' ? 'Mudar para Visão de Negócios' : 'Switch to Business View'}
+              >
+                <Briefcase className="w-3.5 h-3.5" />
+                <span className="hidden lg:inline">{t.nav.businessMode}</span>
+              </button>
+            </div>
             {/* Seletor de Idioma PT / EN Desktop */}
             <div className="flex items-center p-0.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-xs font-mono">
               <button
@@ -899,54 +1029,150 @@ export default function App() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-slate-800/90 bg-[#070b13]/98 backdrop-blur-2xl px-4 py-5 shadow-2xl transition-all animate-fade-slide-down">
             <div className="flex flex-col gap-2">
-              <a
-                href="#hero"
-                onClick={(e) => {
-                  e.preventDefault();
-                  playSound(480, 0.04);
-                  setMobileMenuOpen(false);
-                  scrollToSection('hero');
-                }}
-                className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-                  activeSection === 'hero'
-                    ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
-                    : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-                }`}
-              >
-                {t.nav.home}
-              </a>
-              <a
-                href="#about"
-                onClick={(e) => {
-                  e.preventDefault();
-                  playSound(520, 0.04);
-                  setMobileMenuOpen(false);
-                  scrollToSection('about');
-                }}
-                className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-                  activeSection === 'about'
-                    ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
-                    : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-                }`}
-              >
-                {t.nav.about}
-              </a>
-              <a
-                href="#portfolio"
-                onClick={(e) => {
-                  e.preventDefault();
-                  playSound(560, 0.04);
-                  setMobileMenuOpen(false);
-                  scrollToSection('portfolio');
-                }}
-                className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-                  activeSection === 'portfolio'
-                    ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
-                    : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
-                }`}
-              >
-                {t.nav.projects}
-              </a>
+              
+              {/* Seletor de Modo Mobile (Técnico vs Negócios) */}
+              <div className="flex flex-col gap-1.5 p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 mb-2">
+                <span className="text-[10px] text-slate-400 uppercase font-mono tracking-wider">
+                  {t.nav.modeLabel}:
+                </span>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSwitchMode('tech');
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      viewMode === 'tech'
+                        ? 'bg-blue-600/30 text-[#38bdf8] border border-blue-500/40 shadow-sm'
+                        : 'text-slate-400 bg-slate-800/50 hover:text-white'
+                    }`}
+                  >
+                    <Code2 className="w-3.5 h-3.5" />
+                    <span>{t.nav.techMode}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSwitchMode('business');
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                      viewMode === 'business'
+                        ? 'bg-amber-500/25 text-amber-300 border border-amber-500/40 shadow-sm'
+                        : 'text-slate-400 bg-slate-800/50 hover:text-white'
+                    }`}
+                  >
+                    <Briefcase className="w-3.5 h-3.5" />
+                    <span>{t.nav.businessMode}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Links de Navegação Mobile Adaptativos */}
+              {viewMode === 'tech' ? (
+                <>
+                  <a
+                    href="#hero"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      playSound(480, 0.04);
+                      setMobileMenuOpen(false);
+                      scrollToSection('hero');
+                    }}
+                    className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                      activeSection === 'hero'
+                        ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`}
+                  >
+                    {t.nav.home}
+                  </a>
+                  <a
+                    href="#about"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      playSound(520, 0.04);
+                      setMobileMenuOpen(false);
+                      scrollToSection('about');
+                    }}
+                    className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                      activeSection === 'about'
+                        ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`}
+                  >
+                    {t.nav.about}
+                  </a>
+                  <a
+                    href="#portfolio"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      playSound(560, 0.04);
+                      setMobileMenuOpen(false);
+                      scrollToSection('portfolio');
+                    }}
+                    className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                      activeSection === 'portfolio'
+                        ? 'bg-[#38bdf8]/15 text-[#38bdf8] border border-[#38bdf8]/40'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`}
+                  >
+                    {t.nav.projects}
+                  </a>
+                </>
+              ) : (
+                <>
+                  <a
+                    href="#business-hero"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      playSound(480, 0.04);
+                      setMobileMenuOpen(false);
+                      scrollToSection('business-hero');
+                    }}
+                    className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                      activeSection === 'business-hero'
+                        ? 'bg-amber-500/15 text-amber-300 border border-amber-500/40'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`}
+                  >
+                    {t.nav.businessHome}
+                  </a>
+                  <a
+                    href="#cases"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      playSound(520, 0.04);
+                      setMobileMenuOpen(false);
+                      scrollToSection('cases');
+                    }}
+                    className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                      activeSection === 'cases'
+                        ? 'bg-amber-500/15 text-amber-300 border border-amber-500/40'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`}
+                  >
+                    {t.nav.businessCases}
+                  </a>
+                  <a
+                    href="#process"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      playSound(560, 0.04);
+                      setMobileMenuOpen(false);
+                      scrollToSection('process');
+                    }}
+                    className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                      activeSection === 'process'
+                        ? 'bg-amber-500/15 text-amber-300 border border-amber-500/40'
+                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                    }`}
+                  >
+                    {t.nav.businessProcess}
+                  </a>
+                </>
+              )}
               <a
                 href="#contact"
                 onClick={(e) => {
@@ -963,7 +1189,7 @@ export default function App() {
               >
                 <div className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-orange-400" />
-                  <span>{t.nav.contact}</span>
+                  <span>{viewMode === 'business' ? t.nav.businessContact : t.nav.contact}</span>
                 </div>
                 <span className="text-[10px] px-2 py-0.5 rounded-md bg-orange-500/30 text-orange-200 uppercase font-mono">
                   {language === 'pt' ? 'Conversar' : 'Chat'}
@@ -1039,8 +1265,16 @@ export default function App() {
       {/* LANDMARK PRINCIPAL PARA ACESSIBILIDADE 100% */}
       <main id="main-content">
 
-      {/* 2. HERO SECTION ("Hi, my name is David" -> Matheus Gomes) */}
-      <section id="hero" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-14 sm:pb-20">
+        {viewMode === 'business' ? (
+          <BusinessView 
+            language={language}
+            onContactClick={() => scrollToSection('contact')}
+            onPlaySound={playSound}
+          />
+        ) : (
+          <>
+            {/* 2. HERO SECTION ("Hi, my name is David" -> Matheus Gomes) */}
+            <section id="hero" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-14 sm:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
           {/* Lado Esquerdo - Apresentação Limpa & Direta */}
@@ -1509,6 +1743,8 @@ export default function App() {
         </div>
 
       </section>
+          </>
+        )}
 
       {/* 5. CONTACT SECTION: "Say hello 👋 / Contact me" (Inspirado nas telas 00:14 a 00:17) */}
       <section id="contact" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-14 sm:py-20 border-t border-slate-800/80 scroll-mt-20 sm:scroll-mt-24">
@@ -1915,16 +2151,38 @@ export default function App() {
           <span className="font-bold text-white tracking-wide">Koszudikas-C.dev</span>
         </div>
         <p>&copy; {new Date().getFullYear()} Matheus Gomes (Koszudikas-C). {t.footer.techStack}</p>
-        <div className="flex items-center gap-4 text-[11px] text-slate-400">
-          <a href="#hero" onClick={(e) => { e.preventDefault(); scrollToSection('hero'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.home}</a>
+        <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-slate-400">
+          {viewMode === 'tech' ? (
+            <>
+              <a href="#hero" onClick={(e) => { e.preventDefault(); scrollToSection('hero'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.home}</a>
+              <span className="text-slate-600">•</span>
+              <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.about}</a>
+              <span className="text-slate-600">•</span>
+              <a href="#portfolio" onClick={(e) => { e.preventDefault(); scrollToSection('portfolio'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.projects}</a>
+            </>
+          ) : (
+            <>
+              <a href="#business-hero" onClick={(e) => { e.preventDefault(); scrollToSection('business-hero'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.businessHome}</a>
+              <span className="text-slate-600">•</span>
+              <a href="#cases" onClick={(e) => { e.preventDefault(); scrollToSection('cases'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.businessCases}</a>
+              <span className="text-slate-600">•</span>
+              <a href="#process" onClick={(e) => { e.preventDefault(); scrollToSection('process'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.businessProcess}</a>
+            </>
+          )}
           <span className="text-slate-600">•</span>
-          <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.about}</a>
-          <span className="text-slate-600">•</span>
-          <a href="#portfolio" onClick={(e) => { e.preventDefault(); scrollToSection('portfolio'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.projects}</a>
-          <span className="text-slate-600">•</span>
-          <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.contact}</a>
+          <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }} className="text-slate-400 hover:text-white transition-colors">{viewMode === 'business' ? t.nav.businessContact : t.nav.contact}</a>
         </div>
       </footer>
+
+      {/* MODAL GATEWAY DE ESCOLHA DE VERSÃO (TÉCNICA VS NEGÓCIOS) */}
+      <VersionGatewayModal
+        isOpen={isGatewayOpen}
+        onSelectMode={handleSelectMode}
+        onClose={() => setIsGatewayOpen(false)}
+        language={language}
+        onToggleLanguage={(lang) => setLanguage(lang)}
+        onPlaySound={playSound}
+      />
 
     </div>
   );
