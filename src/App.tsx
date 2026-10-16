@@ -231,25 +231,25 @@ const HeroInteractiveAvatar = memo(({
         {/* Luz de Fundo e Brilho Suave */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 sm:w-[420px] h-80 sm:h-[420px] bg-gradient-to-tr from-blue-600/20 via-[#38bdf8]/15 to-orange-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
-        {/* Badges Flutuantes 100% Nítidos em Camada Vetorial */}
-        <div className="hidden sm:flex absolute top-4 -left-6 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c] border border-rose-500/50 text-rose-300 text-xs font-mono font-medium shadow-xl shadow-rose-950/30 animate-float pointer-events-none">
-          <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
+        {/* Badges Flutuantes 100% Nítidos em Camada Vetorial (100% Aceleração GPU / 60-120 FPS) */}
+        <div className="hidden sm:flex absolute top-4 -left-6 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c] border border-rose-500/50 text-rose-300 text-xs font-mono font-medium shadow-xl shadow-rose-950/30 animate-badge-1 pointer-events-none">
+          <span className="relative flex h-2 w-2 shrink-0">
+            <span className="animate-beacon absolute inline-flex h-full w-full rounded-full bg-rose-400" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
+          </span>
           <span className="font-semibold tracking-wide">{chip1Text}</span>
         </div>
 
-        <div
-          style={{ animationDelay: '1.2s' }}
-          className="hidden sm:flex absolute top-14 -right-6 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c] border border-amber-500/50 text-amber-300 text-xs font-mono font-medium shadow-xl shadow-amber-950/30 animate-float pointer-events-none"
-        >
-          <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+        <div className="hidden sm:flex absolute top-14 -right-6 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c] border border-amber-500/50 text-amber-300 text-xs font-mono font-medium shadow-xl shadow-amber-950/30 animate-badge-2 pointer-events-none">
+          <span className="relative flex h-2 w-2 shrink-0">
+            <span className="animate-beacon absolute inline-flex h-full w-full rounded-full bg-amber-400" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
+          </span>
           <span className="font-semibold tracking-wide">{chip2Text}</span>
         </div>
 
-        <div
-          style={{ animationDelay: '2.4s' }}
-          className="hidden sm:flex absolute bottom-28 -left-8 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c] border border-sky-500/50 text-[#38bdf8] text-xs font-mono font-medium shadow-xl shadow-sky-950/30 animate-float pointer-events-none"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-[#38bdf8]" />
+        <div className="hidden sm:flex absolute bottom-28 -left-8 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c] border border-sky-500/50 text-[#38bdf8] text-xs font-mono font-medium shadow-xl shadow-sky-950/30 animate-badge-3 pointer-events-none">
+          <Sparkles className="w-3.5 h-3.5 text-[#38bdf8] shrink-0 animate-pulse" />
           <span className="font-semibold tracking-wide">{chip3Text}</span>
         </div>
 

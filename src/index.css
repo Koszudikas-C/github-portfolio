@@ -129,15 +129,92 @@
   background-clip: text;
 }
 
-/* Animations */
+/* Animations - 100% GPU Hardware Accelerated (Compositor Thread / 60-120 FPS) */
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0px); }
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
 }
 
 .animate-float {
-  animation: float 5s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Variações fluidas com micro-rotação e subpixel bilinear filtering para Badges Flutuantes */
+@keyframes float-badge-left {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -11px, 0) rotate(-0.5deg);
+  }
+}
+
+@keyframes float-badge-right {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -13px, 0) rotate(0.6deg);
+  }
+}
+
+@keyframes float-badge-bottom {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0) rotate(-0.4deg);
+  }
+}
+
+.animate-badge-1 {
+  animation: float-badge-left 3.8s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.animate-badge-2 {
+  animation: float-badge-right 4.4s cubic-bezier(0.42, 0, 0.58, 1) infinite 0.6s;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.animate-badge-3 {
+  animation: float-badge-bottom 4.1s cubic-bezier(0.42, 0, 0.58, 1) infinite 1.2s;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Radar Beacon Pulsing (60 FPS suave sem desaparecer o ponto central) */
+@keyframes beacon-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  65%, 100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.animate-beacon {
+  animation: beacon-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
+  transform: translateZ(0);
 }
 
 @keyframes pulseGlow {
