@@ -6,10 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Portfólio interativo de desenvolvimento de software e análise de repositórios do desenvolvedor Koszudikas-C." />
     
-    <!-- Google Fonts: Urbanist & Inter -->
+    <!-- Google Fonts: Urbanist, Inter & JetBrains Mono (Streamlined & Non-blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Urbanist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Urbanist:wght@600;700;800&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Urbanist:wght@600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Urbanist:wght@600;700;800&display=swap">
+    </noscript>
+    
+    <!-- Preload LCP Avatar Image (Responsive) -->
+    <link rel="preload" as="image" href="./avatar-transparent-mobile.webp" type="image/webp" media="(max-width: 640px)" fetchpriority="high">
+    <link rel="preload" as="image" href="./avatar-transparent.webp" type="image/webp" media="(min-width: 641px)" fetchpriority="high">
     
     <title>Koszudikas-C.dev | Portfólio de Repositórios</title>
   </head>

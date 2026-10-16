@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef, useCallback, memo } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback, memo, lazy, Suspense } from 'react';
 import { 
   Folder, 
   Lock, 
@@ -29,12 +29,17 @@ import {
 } from 'lucide-react';
 import { repositories } from './data/repositories';
 import type { Repository } from './data/repositories';
-import avatarTransparentImg from './assets/avatar-transparent.webp';
 import avatarProfileImg from './assets/avatar-profile.webp';
 import bgMusicAudio from './assets/Ink_and_Keys.mp3';
 import { useLanguage } from './i18n/useLanguage';
 import { languageColors, categoryIcons, skillsData } from './data/constants';
-import { CatalogSection } from './components/CatalogSection';
+
+// Imagens LCP pré-carregadas do diretório public
+const avatarTransparentImg = `${import.meta.env.BASE_URL}avatar-transparent.webp`;
+const avatarTransparentMobileImg = `${import.meta.env.BASE_URL}avatar-transparent-mobile.webp`;
+
+// Catálogo completo carregado sob demanda (code-splitting da listagem e filtros)
+const CatalogSection = lazy(() => import('./components/CatalogSection').then(m => ({ default: m.CatalogSection })));
 
 // Ícone 3D Isometric Cube com < /> (inspirado na abertura e marca da referência)
 const IsometricCubeLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
@@ -58,12 +63,14 @@ const IsometricCubeLogo = ({ className = "w-8 h-8" }: { className?: string }) =>
 // Componente Memoizado: Hero 3D Interactive Avatar (Direct DOM / rAF - Eye Tracking & Blinking)
 const HeroInteractiveAvatar = memo(({
   avatarImg,
+  avatarMobileImg,
   chip1Text,
   chip2Text,
   chip3Text,
   onAvatarClick,
 }: {
   avatarImg: string;
+  avatarMobileImg?: string;
   chip1Text: string;
   chip2Text: string;
   chip3Text: string;
@@ -128,8 +135,13 @@ const HeroInteractiveAvatar = memo(({
     };
   }, [executeBlink]);
 
-  // Rastreamento suave do ponteiro do mouse em toda a janela (Aceleração GPU / Zero re-render)
+  // Rastreamento suave do ponteiro do mouse em toda a janela (Aceleração GPU / Zero re-render no desktop, inerte no mobile)
   useEffect(() => {
+    // Em dispositivos móveis touch, não registra ouvintes de mouse desnecessários
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+      return;
+    }
+
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (!containerRef.current || !avatarRef.current) return;
       
@@ -244,9 +256,13 @@ const HeroInteractiveAvatar = memo(({
           <div className="relative inline-block">
             <img
               src={avatarImg}
+              srcSet={avatarMobileImg ? `${avatarMobileImg} 440w, ${avatarImg} 662w` : undefined}
+              sizes="(max-width: 640px) 240px, 420px"
               alt="Matheus Gomes"
               loading="eager"
               fetchPriority="high"
+              width="662"
+              height="1811"
               className="relative z-10 h-[390px] sm:h-[490px] lg:h-[550px] w-auto max-w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.65)] pointer-events-none group-hover:scale-[1.01] transition-transform duration-300"
             />
 
@@ -258,8 +274,8 @@ const HeroInteractiveAvatar = memo(({
             >
               <defs>
                 {/* Filtro de Suavização para Sombras e Bordas Orgânicas */}
-                <filter id="eyeShadowBlur" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="3.5" />
+                <filter id="eyeShadowBlur" x="-10%" y="-10%" width="120%" height="120%">
+                  <feGaussianBlur stdDeviation="1.5" />
                 </filter>
 
                 {/* Recorte das órbitas oculares (dentro da armação dos óculos) */}
@@ -467,8 +483,15 @@ export default function App() {
     playSound(720, 0.08);
   }, [playSound]);
 
-  // Controle da Música de Fundo quando o usuário ativa o som
+  // Controle da Música de Fundo quando o usuário ativa o som (carregamento sob demanda)
   useEffect(() => {
+    if (!soundEnabled) {
+      if (bgMusicRef.current) {
+        bgMusicRef.current.pause();
+      }
+      return;
+    }
+
     if (!bgMusicRef.current) {
       const audio = new Audio(bgMusicAudio);
       audio.loop = true;
@@ -477,15 +500,11 @@ export default function App() {
     }
 
     const audio = bgMusicRef.current;
-    if (soundEnabled) {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((err) => {
-          console.warn('Reprodução de áudio prevenida pelo navegador:', err);
-        });
-      }
-    } else {
-      audio.pause();
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch((err) => {
+        console.warn('Reprodução de áudio prevenida pelo navegador:', err);
+      });
     }
 
     return () => {
@@ -496,31 +515,29 @@ export default function App() {
   // Estado do Carrossel de Projetos em Destaque
   const [carouselIndex, setCarouselIndex] = useState(0);
 
-  // Monitorar a rolagem da página para destacar a seção ativa no header sem layout thrashing
+  // Monitorar seções ativas via IntersectionObserver nativo (Zero layout thrashing / Zero forced reflows)
   useEffect(() => {
-    let rafId: number | null = null;
-    const handleScroll = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = null;
-        const sections = ['contact', 'portfolio', 'about', 'hero'] as const;
-        const scrollThreshold = window.scrollY + 220;
-        for (const sectionId of sections) {
-          const el = document.getElementById(sectionId);
-          if (el && el.offsetTop <= scrollThreshold) {
-            setActiveSection((prev) => (prev === sectionId ? prev : sectionId));
-            break;
+    if (typeof IntersectionObserver === 'undefined') return;
+    const sections = ['hero', 'about', 'portfolio', 'contact'] as const;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id as any);
           }
-        }
-      });
-    };
+        });
+      },
+      {
+        rootMargin: '-20% 0px -65% 0px',
+      }
+    );
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   // Seleção de repositório memoizada
@@ -543,8 +560,35 @@ export default function App() {
     setTimeout(() => setCopiedEmail(false), 2500);
   };
 
+  // Carregamento progressivo do catálogo para otimização extrema de performance inicial (Lighthouse >= 95)
+  const [shouldLoadCatalog, setShouldLoadCatalog] = useState(false);
+  const catalogContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (shouldLoadCatalog) return;
+    const el = catalogContainerRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setShouldLoadCatalog(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setShouldLoadCatalog(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '400px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [shouldLoadCatalog]);
+
   // Navegação suave confiável para qualquer seção sem truncamento
   const scrollToSection = useCallback((sectionId: string) => {
+    if (sectionId === 'portfolio' || sectionId === 'contact') {
+      setShouldLoadCatalog(true);
+    }
     const el = document.getElementById(sectionId);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
@@ -662,8 +706,8 @@ export default function App() {
       {/* Background Decorativo Global (Acelerado por Hardware) */}
       <div className="bg-ambient-layer" aria-hidden="true" />
       <div className="fixed top-0 left-0 w-full h-[700px] bg-gradient-to-b from-[#1e1b4b]/20 via-transparent to-transparent pointer-events-none -z-40 transform-gpu" />
-      <div className="fixed top-[-10%] left-[10%] w-[500px] h-[500px] bg-[#38bdf8]/5 rounded-full blur-[90px] pointer-events-none -z-40 transform-gpu" />
-      <div className="fixed top-[30%] right-[5%] w-[600px] h-[600px] bg-[#6366f1]/5 rounded-full blur-[110px] pointer-events-none -z-40 transform-gpu" />
+      <div className="hidden sm:block fixed top-[-10%] left-[10%] w-[500px] h-[500px] bg-[#38bdf8]/5 rounded-full blur-[90px] pointer-events-none -z-40 transform-gpu" />
+      <div className="hidden sm:block fixed top-[30%] right-[5%] w-[600px] h-[600px] bg-[#6366f1]/5 rounded-full blur-[110px] pointer-events-none -z-40 transform-gpu" />
 
       {/* 1. NAVBAR / HEADER SUPERIOR (Fixed com Scroll Tracking, Menu Mobile & Seletor de Idioma) */}
       <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#070b13]/90 border-b border-slate-800/80 shadow-lg shadow-black/40 transition-all duration-300">
@@ -976,6 +1020,9 @@ export default function App() {
       {/* Espaçador para compensar a navbar fixed no fluxo do documento */}
       <div className="h-16 sm:h-18" aria-hidden="true" />
 
+      {/* LANDMARK PRINCIPAL PARA ACESSIBILIDADE 100% */}
+      <main id="main-content">
+
       {/* 2. HERO SECTION ("Hi, my name is David" -> Matheus Gomes) */}
       <section id="hero" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-14 sm:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -1049,6 +1096,7 @@ export default function App() {
           {/* Lado Direito - Personagem 3D Direto na Cena (Memoizado / Acelerado por Hardware) */}
           <HeroInteractiveAvatar
             avatarImg={avatarTransparentImg}
+            avatarMobileImg={avatarTransparentMobileImg}
             chip1Text={t.hero.chips.chip1}
             chip2Text={t.hero.chips.chip2}
             chip3Text={t.hero.chips.chip3}
@@ -1398,31 +1446,47 @@ export default function App() {
         </div>
 
         {/* Indicadores / Bolinhas do Carrossel */}
-        <div className="flex items-center justify-center gap-2 mt-8">
+        <div className="flex items-center justify-center gap-1 mt-8">
           {stats.featuredRepos.map((_, idx) => (
             <button
               key={idx}
+              type="button"
+              aria-label={`Slide ${idx + 1}`}
               onClick={() => {
                 playSound(480, 0.05);
                 setCarouselIndex(idx);
               }}
-              className={`h-2 rounded-full transition-all cursor-pointer ${
-                carouselIndex === idx ? "w-8 bg-[#38bdf8]" : "w-2 bg-slate-700 hover:bg-slate-600"
-              }`}
-            />
+              className="p-2 flex items-center justify-center cursor-pointer min-w-[28px] min-h-[28px]"
+            >
+              <span
+                className={`h-2 rounded-full transition-all block ${
+                  carouselIndex === idx ? "w-8 bg-[#38bdf8]" : "w-2 bg-slate-700 hover:bg-slate-600"
+                }`}
+              />
+            </button>
           ))}
         </div>
 
         {/* ÁREA EXPANSÍVEL: CATÁLOGO COMPLETO COM BUSCA & FILTROS (33 Repositórios) */}
-        <CatalogSection
-          language={language}
-          t={t}
-          stats={stats}
-          selectedEcosystem={selectedEcosystem}
-          setSelectedEcosystem={setSelectedEcosystem}
-          onSelectRepo={handleSelectRepo}
-          onPlaySound={playSound}
-        />
+        <div ref={catalogContainerRef}>
+          {shouldLoadCatalog ? (
+            <Suspense fallback={<div className="h-64 rounded-2xl bg-slate-900/30 border border-slate-800/50 animate-pulse my-8 flex items-center justify-center text-slate-500 font-mono text-xs">Carregando catálogo...</div>}>
+              <CatalogSection
+                language={language}
+                t={t}
+                stats={stats}
+                selectedEcosystem={selectedEcosystem}
+                setSelectedEcosystem={setSelectedEcosystem}
+                onSelectRepo={handleSelectRepo}
+                onPlaySound={playSound}
+              />
+            </Suspense>
+          ) : (
+            <div className="h-40 rounded-2xl bg-slate-900/20 border border-slate-800/40 my-8 flex items-center justify-center text-slate-300 font-medium font-mono text-xs">
+              Role para ver os 33 projetos no catálogo...
+            </div>
+          )}
+        </div>
 
       </section>
 
@@ -1457,7 +1521,7 @@ export default function App() {
               <div className="mt-8 p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center gap-4">
                 <Check className="w-8 h-8 shrink-0 text-emerald-400" />
                 <div>
-                  <h4 className="font-bold text-white text-base">{t.contact.form.successTitle}</h4>
+                  <h3 className="font-bold text-white text-base">{t.contact.form.successTitle}</h3>
                   <p className="text-xs text-slate-300 mt-0.5">
                     {t.contact.form.successDesc}
                   </p>
@@ -1574,6 +1638,10 @@ export default function App() {
                   <img
                     src={avatarProfileImg}
                     alt="Matheus Gomes"
+                    loading="lazy"
+                    decoding="async"
+                    width="128"
+                    height="128"
                     className="w-full h-full object-cover object-top"
                   />
                 </div>
@@ -1582,7 +1650,7 @@ export default function App() {
                 </div>
               </div>
 
-              <h4 className="text-xl font-bold text-white">{t.contact.card.developerTitle}</h4>
+              <h3 className="text-xl font-bold text-white">{t.contact.card.developerTitle}</h3>
               <p className="text-xs text-[#38bdf8] font-mono mt-0.5">{t.contact.card.developerRole}</p>
 
               <p className="text-slate-300 text-xs mt-4 leading-relaxed max-w-sm">
@@ -1619,6 +1687,7 @@ export default function App() {
         </div>
 
       </section>
+      </main>
 
       {/* 6. MODAL DE ARQUITETURA / DETALHES DO PROJETO */}
       {selectedRepo && (
@@ -1826,14 +1895,14 @@ export default function App() {
           <span className="font-bold text-white tracking-wide">Koszudikas-C.dev</span>
         </div>
         <p>&copy; {new Date().getFullYear()} Matheus Gomes (Koszudikas-C). {t.footer.techStack}</p>
-        <div className="flex items-center gap-4 text-[11px] text-slate-500">
-          <a href="#hero" onClick={(e) => { e.preventDefault(); scrollToSection('hero'); }} className="hover:text-slate-300">{t.nav.home}</a>
-          <span>•</span>
-          <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="hover:text-slate-300">{t.nav.about}</a>
-          <span>•</span>
-          <a href="#portfolio" onClick={(e) => { e.preventDefault(); scrollToSection('portfolio'); }} className="hover:text-slate-300">{t.nav.projects}</a>
-          <span>•</span>
-          <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }} className="hover:text-slate-300">{t.nav.contact}</a>
+        <div className="flex items-center gap-4 text-[11px] text-slate-400">
+          <a href="#hero" onClick={(e) => { e.preventDefault(); scrollToSection('hero'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.home}</a>
+          <span className="text-slate-600">•</span>
+          <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.about}</a>
+          <span className="text-slate-600">•</span>
+          <a href="#portfolio" onClick={(e) => { e.preventDefault(); scrollToSection('portfolio'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.projects}</a>
+          <span className="text-slate-600">•</span>
+          <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }} className="text-slate-400 hover:text-white transition-colors">{t.nav.contact}</a>
         </div>
       </footer>
 
