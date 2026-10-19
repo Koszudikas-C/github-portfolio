@@ -8,7 +8,6 @@ import {
   DollarSign,
   ChevronRight,
   ExternalLink,
-  Lock,
   ZoomIn,
   X
 } from 'lucide-react';
@@ -409,30 +408,6 @@ export const BusinessView: React.FC<BusinessViewProps> = memo(({
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Card Especial: Projetos Privados & Confidenciais (NDA) */}
-          <div className="mt-10 p-5 sm:p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-start gap-3.5">
-              <div className="p-2.5 rounded-xl bg-slate-800 text-amber-400 border border-slate-700 shrink-0 mt-0.5">
-                <Lock className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-bold text-white">
-                    {isPt ? 'Projetos Proprietários & Cláusula de Sigilo (NDA)' : 'Proprietary Projects & NDA Compliance'}
-                  </h4>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/30 font-semibold uppercase">
-                    {isPt ? 'Confidencial' : 'Confidential'}
-                  </span>
-                </div>
-                <p className="text-xs text-slate-300 mt-1 max-w-3xl leading-relaxed">
-                  {isPt
-                    ? 'Projetos como o AIFreelas (plataforma em .NET 10, pgvector e agente autônomo multimodelo de negociação comercial com 470 testes) foram desenvolvidos sob rigorosa confidencialidade. Garantimos proteção contratual irrestrita sem exibição de telas, interfaces ou dados proprietários de clientes.'
-                    : 'Systems such as AIFreelas (.NET 10 platform, pgvector, and multi-model autonomous commercial negotiation engine with 470 tests) were engineered under strict non-disclosure agreements. We guarantee complete contractual data security without exposing private client UI or proprietary workflows.'}
-                </p>
-              </div>
-            </div>
           </div>
 
         </div>
