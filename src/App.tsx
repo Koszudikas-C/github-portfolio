@@ -43,15 +43,15 @@ const translateHighlightMetric = (metric?: string, lang: 'pt' | 'en' = 'pt'): st
   if (!metric) return '';
   if (lang === 'pt') return metric;
   const map: Record<string, string> = {
-    "470 Testes • .NET 10 & pgvector": "470 Tests • .NET 10 & pgvector",
+    ".NET 10 • pgvector & IA Multimodelo": ".NET 10 • pgvector & Multi-Model AI",
     "7 Marketplaces • Arbitragem Real-Time": "7 Marketplaces • Real-Time Arbitrage",
     "Anti-Detect • ONNX & Vision": "Anti-Detect • ONNX & Vision",
     "Streaming 7GB+ • Rust & Graph": "7GB+ Streaming • Rust & Graph",
     "IA Agronômica • YOLOv11/v26": "Agronomic AI • YOLOv11/v26",
-    "416 Testes • Vitest & Signals": "416 Tests • Vitest & Signals",
-    "234 Testes • 85.15% Cobertura": "234 Tests • 85.15% Coverage",
+    "Angular 21 • Signals & Cockpit": "Angular 21 • Signals & Cockpit",
+    "Identity API • Multi-Device RBAC": "Identity API • Multi-Device RBAC",
   };
-  return map[metric] || metric.replace(/Testes/g, 'Tests').replace(/Cobertura/g, 'Coverage').replace(/Arbitragem/g, 'Arbitrage');
+  return map[metric] || metric.replace(/Arbitragem/g, 'Arbitrage');
 };
 
 // Imagens LCP pré-carregadas do diretório public
@@ -425,7 +425,7 @@ const HeroInteractiveAvatar = memo(({
             </span>
             <span>•</span>
             <span className="text-slate-300">
-              33 repos • 1.120 testes
+              33 repos • Engenharia de Software
             </span>
           </div>
         </div>
@@ -1517,10 +1517,10 @@ export default function App() {
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
                   <div className="flex flex-col text-left">
-                    <span className="text-slate-400">{language === 'pt' ? 'Testes Auditados' : 'Audited Tests'}</span>
-                    <span className="text-[10px] text-slate-500 font-normal">API: 470 • Front: 416 • Auth: 234</span>
+                    <span className="text-slate-400">{language === 'pt' ? 'Arquitetura & Design' : 'Architecture & Design'}</span>
+                    <span className="text-[10px] text-slate-500 font-normal">{language === 'pt' ? 'Microsserviços • Event-Driven • APIs' : 'Microservices • Event-Driven • APIs'}</span>
                   </div>
-                  <span className="text-emerald-400 font-bold text-sm">{language === 'pt' ? '1.120 Casos' : '1,120 Cases'}</span>
+                  <span className="text-emerald-400 font-bold text-xs">{language === 'pt' ? 'Modular' : 'Modular'}</span>
                 </div>
                 <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
                   <span className="text-slate-400">{language === 'pt' ? 'Públicos / Privados' : 'Public / Private'}</span>

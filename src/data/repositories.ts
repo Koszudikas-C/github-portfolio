@@ -37,19 +37,19 @@ export const repositories: Repository[] = [
     private: true,
     category: "IA, Integração & Automação",
     featured: true,
-    highlightMetric: "470 Testes • .NET 10 & pgvector",
+    highlightMetric: ".NET 10 • pgvector & IA Multimodelo",
     ecosystem: "Ecossistema AIFreelas",
-    details: "Back-end em .NET 10 e C# 13 estruturado em Clean Architecture, DDD e CQRS com PostgreSQL + pgvector e suíte de 470 testes automatizados (229 Domain, 190 Application, 50 Infrastructure e 1 E2E com 100% de sucesso). Realiza calibração estatística de persona a partir de conversas reais do WhatsApp, negociação assistida em duas etapas (Response Planner + Voice Renderer), ingestão de funil comercial (99Freelas/WhatsApp) e sanitização avançada contra prompt injection.",
-    detailsEn: "Back-end in .NET 10 and C# 13 structured in Clean Architecture, DDD, and CQRS with PostgreSQL + pgvector and a suite of 470 automated tests (229 Domain, 190 Application, 50 Infrastructure, and 1 E2E with 100% pass rate). Performs statistical persona calibration from real WhatsApp conversations, two-stage assisted negotiation (Response Planner + Voice Renderer), commercial funnel ingestion (99Freelas/WhatsApp), and advanced sanitization against prompt injection.",
-    techStack: ["C#", ".NET 10", "PostgreSQL", "pgvector", "Clean Architecture", "OpenAI / Gemini", "Ollama"],
+    details: "Back-end modular em .NET 10 e C# 13 com PostgreSQL e extensão pgvector para busca semântica vetorial. Implementa calibração estatística de persona com base em conversas reais do WhatsApp, pipeline de negociação em dois estágios (Response Planner e Voice Renderer), ingestão de oportunidades comerciais e sanitização de payloads contra prompt injection.",
+    detailsEn: "Modular back-end in .NET 10 and C# 13 with PostgreSQL and pgvector for semantic vector search. Implements statistical persona calibration from real WhatsApp conversations, a two-stage negotiation pipeline (Response Planner and Voice Renderer), commercial opportunity ingestion, and payload sanitization against prompt injection.",
+    techStack: ["C#", ".NET 10", "PostgreSQL", "pgvector", "CQRS / MediatR", "OpenAI / Gemini", "Ollama"],
     highlights: [
-      "Suíte de 470 testes automatizados passando (229 Domain, 190 Application, 50 Infrastructure, 1 E2E)",
+      "Busca vetorial e matching semântico de perfis comerciais utilizando pgvector no PostgreSQL",
       "Calibração estatística de persona em lotes determinísticos a partir de histórico real do WhatsApp",
       "Pipeline de negociação em 2 estágios: Response Planner (estratégia) + Voice Renderer (tom calibrado)",
       "Defense-in-Depth com FluentValidation e MessageSanitizer contra Prompt Injection e payloads maliciosos"
     ],
     highlightsEn: [
-      "Suite of 470 automated tests passing (229 Domain, 190 Application, 50 Infrastructure, 1 E2E)",
+      "Vector search and semantic client profile matching using pgvector in PostgreSQL",
       "Statistical persona calibration in deterministic batches from real WhatsApp history",
       "Two-stage negotiation pipeline: Response Planner (strategy) + Voice Renderer (calibrated tone)",
       "Defense-in-Depth with FluentValidation and MessageSanitizer against Prompt Injection and malicious payloads"
@@ -70,19 +70,19 @@ export const repositories: Repository[] = [
     category: "IA, Integração & Automação",
     featured: true,
     highlightMetric: "7 Marketplaces • Arbitragem Real-Time",
-    details: "Plataforma completa em .NET 10 com Clean Architecture, DDD e interface desktop híbrida (.NET MAUI + MudBlazor). Monitora 7 marketplaces em tempo real (CSFloat, DMarket, Skinport, BuffMarket, BleikStore, ShadowPay e CubeSkins), coleta orderbooks em massa da Steam (Harvester), calcula taxas/liquidez e transmite oportunidades via SignalR com resiliência Polly.",
-    detailsEn: "Full-featured platform in .NET 10 with Clean Architecture, DDD, and hybrid desktop UI (.NET MAUI + MudBlazor). Monitors 7 marketplaces in real time (CSFloat, DMarket, Skinport, BuffMarket, BleikStore, ShadowPay, and CubeSkins), scrapes mass orderbooks from Steam (Harvester), computes actual fees and liquidity, and streams opportunities via SignalR with Polly resilience.",
+    details: "Plataforma de monitoramento e arbitragem financeira em .NET 10 com interface desktop (.NET MAUI + MudBlazor). Monitora simultaneamente 7 marketplaces e a Steam em tempo real, integrando scrapers paralelos assíncronos (Harvester), motor matemático de taxas e spread líquido, e transmissão de cotações via SignalR com políticas de resiliência via Polly.",
+    detailsEn: "Financial monitoring and arbitrage platform in .NET 10 with desktop interface (.NET MAUI + MudBlazor). Concurrently monitors 7 marketplaces and Steam in real time, integrating asynchronous parallel scrapers (Harvester), mathematical fee and net spread engine, and quote streaming via SignalR with Polly resilience policies.",
     techStack: ["C#", ".NET 10", ".NET MAUI", "MudBlazor", "SignalR", "EF Core SQLite", "Polly", "Docker"],
     highlights: [
       "Monitoramento simultâneo de 7 marketplaces (CSFloat, DMarket, Skinport, BuffMarket, BleikStore, ShadowPay, CubeSkins)",
       "Motor de arbitragem com cálculo preciso de taxas reais de compra/venda, liquidez e benchmark Steam",
-      "Suíte de testes estruturada em 5 camadas (Domain.Test, Application.Test, Infrastructure.Test, API.Test e Harvester.Test)",
+      "Scrapers paralelos com controle de rate-limiting e persistência local eficiente em SQLite",
       "Resiliência de rede com políticas de retry/circuit-breaker via Polly e persistência local SQLite"
     ],
     highlightsEn: [
       "Simultaneous monitoring of 7 marketplaces (CSFloat, DMarket, Skinport, BuffMarket, BleikStore, ShadowPay, CubeSkins)",
       "Arbitrage engine with accurate calculation of actual buy/sell fees, liquidity, and Steam benchmark",
-      "5-tier test suite (Domain.Test, Application.Test, Infrastructure.Test, API.Test, and Harvester.Test)",
+      "Parallel scrapers with rate-limiting controls and efficient local persistence in SQLite",
       "Network resilience with retry and circuit-breaker policies via Polly and local SQLite persistence"
     ]
   },
@@ -108,13 +108,13 @@ export const repositories: Repository[] = [
       "Resolução de Captcha multi-estágio combinando modelo ONNX local (57k classes) com DeepSeek Vision e Gemini",
       "Automação anti-detecção (Camoufox/Playwright) com isolamento de fingerprint, geolocalização nativa e proxy",
       "Captura instantânea de códigos OTP via Google Cloud Pub/Sub (OAuth2) e suporte a contas Outlook",
-      "Suíte de testes automatizados com xUnit em InstaFlow.Test para validação de fluxos críticos"
+      "Gerenciamento seguro de credenciais e proxies com criptografia autenticada AES-256-GCM"
     ],
     highlightsEn: [
       "Multi-stage Captcha solving combining local ONNX model (57k classes) with DeepSeek Vision and Gemini",
       "Anti-detection automation (Camoufox/Playwright) with fingerprint isolation, native geolocation, and proxy routing",
       "Instant OTP code extraction via Google Cloud Pub/Sub (OAuth2) and Outlook account support",
-      "Automated test suite with xUnit in InstaFlow.Test for critical workflow validation"
+      "Secure credential and proxy management with authenticated AES-256-GCM encryption"
     ]
   },
   {
@@ -139,13 +139,13 @@ export const repositories: Repository[] = [
       "Processamento em streaming de arquivos CSV de 7GB+ da Receita Federal com baixíssimo uso de RAM",
       "Máquina de estados transacional em SQLite (pending → sent → replied / bounced) para rastreamento ponta a ponta",
       "Disparo automatizado e sincronização de caixa de entrada/NDR bounces via Microsoft Graph API (OAuth2)",
-      "Testes automatizados em Rust (test_cadastral e test_email_flow) para validação das regras de negócio"
+      "Arquitetura CLI orientada a pipelines com baixa alocação de memória e tratamento assíncrono de I/O"
     ],
     highlightsEn: [
       "Streaming processing of 7GB+ CSV files from the Federal Revenue with ultra-low RAM footprint",
       "Transactional SQLite state machine (pending → sent → replied / bounced) for end-to-end auditability",
       "Automated mailing and inbox/NDR bounce synchronization via Microsoft Graph API (OAuth2)",
-      "Automated tests in Rust (test_cadastral and test_email_flow) validating business logic"
+      "Pipeline-oriented CLI architecture with low memory allocation and asynchronous I/O handling"
     ]
   },
   {
@@ -182,8 +182,8 @@ export const repositories: Repository[] = [
     name: "Project-AIFreelas",
     fullName: "Koszudikas-C/Project-AIFreelas",
     htmlUrl: "https://github.com/Koszudikas-C/Project-AIFreelas",
-    description: "Infraestrutura Kubernetes (K3s), automação DevOps e suíte de testes de API do ecossistema AIFreelas.",
-    descriptionEn: "Kubernetes (K3s) infrastructure, DevOps automation, and API test suites for the AIFreelas ecosystem.",
+    description: "Infraestrutura Kubernetes (K3s), manifestos de orquestração, scripts de automação e coleções Postman.",
+    descriptionEn: "Kubernetes (K3s) infrastructure, orchestration manifests, automation scripts, and Postman collections.",
     language: "Shell",
     stars: 0,
     forks: 0,
@@ -219,17 +219,17 @@ export const repositories: Repository[] = [
     private: true,
     category: "Web & Front-end",
     ecosystem: "Ecossistema AIFreelas",
-    highlightMetric: "416 Testes • Vitest & Signals",
-    details: "Aplicação web moderna em Angular 21 (Stand-alone & Signals) e SCSS do ecossistema AIFreelas, com suíte de 416 testes unitários em Vitest (79.87% de cobertura de linhas). Oferece Cockpit de negociação com perfil enriquecido do cliente, funil comercial, calibração de persona, quality gate (Laya) e comunicação em tempo real via Content Script Bridge com a extensão para importação de oportunidades do 99Freelas e WhatsApp.",
-    detailsEn: "Modern web application in Angular 21 (Stand-alone & Signals) and SCSS for the AIFreelas ecosystem, featuring a suite of 416 unit tests in Vitest (79.87% line coverage). Provides a negotiation cockpit with enriched client profiling, commercial funnel, persona calibration, quality gate (Laya), and real-time communication via Content Script Bridge with the extension for importing opportunities from 99Freelas and WhatsApp.",
-    techStack: ["Angular", "TypeScript", "SCSS", "RxJS", "Vitest", "Extension Bridge"],
+    highlightMetric: "Angular 21 • Signals & Cockpit",
+    details: "Aplicação web moderna em Angular 21 (Stand-alone Components & Signals) e SCSS. Oferece Cockpit de negociação com perfil enriquecido do cliente, funil comercial, calibração de persona, quality gate e comunicação em tempo real via Content Script Bridge com a extensão para importação de oportunidades do 99Freelas e WhatsApp.",
+    detailsEn: "Modern web application in Angular 21 (Stand-alone Components & Signals) and SCSS. Provides a negotiation cockpit with enriched client profiling, commercial funnel, persona calibration, quality gate, and real-time communication via Content Script Bridge with the extension for importing opportunities from 99Freelas and WhatsApp.",
+    techStack: ["Angular", "TypeScript", "SCSS", "RxJS", "Extension Bridge"],
     highlights: [
-      "Suíte frontend com 416 testes unitários em Vitest v4 e Signals com 100% de aprovação (79.87% de cobertura de linhas)",
+      "Arquitetura reativa baseada em Angular Signals e Stand-alone Components sem módulos legados",
       "Cockpit interativo de negociação com adaptação de propostas ao nível de familiaridade do cliente",
       "Integração bidirecional via window.postMessage com a extensão Chrome para busca de projetos no 99Freelas"
     ],
     highlightsEn: [
-      "Frontend suite with 416 unit tests in Vitest v4 and Signals with 100% pass rate (79.87% line coverage)",
+      "Reactive architecture built on Angular Signals and Stand-alone Components without legacy modules",
       "Interactive negotiation cockpit adapting proposals to the client's familiarity level",
       "Bidirectional integration via window.postMessage with Chrome extension to fetch projects from 99Freelas"
     ]
@@ -248,17 +248,17 @@ export const repositories: Repository[] = [
     private: true,
     category: "APIs & Back-end",
     ecosystem: "Ecossistema AIFreelas",
-    highlightMetric: "234 Testes • 85.15% Cobertura",
-    details: "Microsserviço de autenticação e autorização (Identity API) em ASP.NET Core (.NET 10) com controle de sessões simultâneas por dispositivo (deviceToken), RBAC completo (Roles e Policies), webhooks de eventos de segurança, documentação técnica para integração de Agentes IA e suíte com 234 testes automatizados cobrindo 85.15% do código de aplicação.",
-    detailsEn: "Authentication and authorization microservice (Identity API) in ASP.NET Core (.NET 10) with simultaneous session control per device (deviceToken), comprehensive RBAC (Roles and Policies), security event webhooks, technical documentation for AI Agent integration, and an automated test suite with 234 tests covering 85.15% of application code.",
-    techStack: ["C#", ".NET 10", "ASP.NET Core", "JWT / Multi-Device", "PostgreSQL", "Docker", "xUnit"],
+    highlightMetric: "Identity API • Multi-Device RBAC",
+    details: "Microsserviço de autenticação e autorização (Identity API) em ASP.NET Core (.NET 10) com controle de sessões simultâneas por dispositivo (deviceToken), RBAC completo (Roles e Policies), webhooks de eventos de segurança e documentação técnica para integração de Agentes IA.",
+    detailsEn: "Authentication and authorization microservice (Identity API) in ASP.NET Core (.NET 10) with simultaneous session control per device (deviceToken), comprehensive RBAC (Roles and Policies), security event webhooks, and technical documentation for AI Agent integration.",
+    techStack: ["C#", ".NET 10", "ASP.NET Core", "JWT / Multi-Device", "PostgreSQL", "Docker"],
     highlights: [
-      "Suíte com 234 testes automatizados em xUnit com 100% de sucesso cobrindo 85.15% do código de aplicação",
+      "Emissão e rotação de tokens JWT com validação criptográfica de device fingerprint",
       "Controle rigoroso de login simultâneo e reutilização segura de token por dispositivo (deviceToken)",
       "13 endpoints de autenticação e autorização RBAC com suporte a cookies e cabeçalhos Bearer"
     ],
     highlightsEn: [
-      "Suite of 234 automated tests in xUnit with 100% pass rate covering 85.15% of application code",
+      "JWT token issuance and rotation with cryptographic device fingerprint validation",
       "Strict concurrent login enforcement and safe token reuse per device (deviceToken)",
       "13 authentication and RBAC authorization endpoints with cookie and Bearer header support"
     ]

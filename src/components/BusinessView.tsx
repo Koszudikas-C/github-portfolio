@@ -95,9 +95,9 @@ export const BusinessView: React.FC<BusinessViewProps> = memo(({
         ? 'Motor de alta performance com scraping assíncrono de orderbooks em massa, cálculo de liquidez em milissegundos e alertas instantâneos via SignalR.'
         : 'High-throughput engine scraping massive orderbooks concurrently, computing real net fees in milliseconds with instant SignalR streams.',
       roi: isPt
-        ? 'Mitigação de risco em operações financeiras e identificação automática de centenas de oportunidades diárias com até +55% de spread.'
-        : 'Zero human error in fee calculations and automatic detection of hundreds of high-margin daily opportunities with up to +55% spread.',
-      tags: ['.NET MAUI', 'SignalR', 'Clean Architecture', 'CS2 Ecosystem']
+        ? 'Eliminação de erros manuais de cálculo de taxas, mitigação de risco cambial e identificação automática de divergências de preço entre corretoras.'
+        : 'Eliminated manual fee calculation errors, mitigated currency fluctuation risk, and automated price discrepancy detection across exchanges.',
+      tags: ['.NET MAUI', 'SignalR', 'MudBlazor', 'Docker']
     },
     {
       id: 'instaflow',
@@ -212,23 +212,23 @@ export const BusinessView: React.FC<BusinessViewProps> = memo(({
             </a>
           </div>
 
-          {/* Métricas de Confiança */}
+          {/* Métricas de Competência Técnica */}
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
             <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-center">
-              <span className="block text-2xl sm:text-3xl font-extrabold text-amber-400">33+</span>
-              <span className="text-xs text-slate-400 mt-1 block">{isPt ? 'Sistemas & Módulos Criados' : 'Systems & Modules Built'}</span>
+              <span className="block text-2xl sm:text-3xl font-extrabold text-amber-400">33</span>
+              <span className="text-xs text-slate-400 mt-1 block">{isPt ? 'Repositórios no GitHub' : 'GitHub Repositories'}</span>
             </div>
             <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-center">
-              <span className="block text-2xl sm:text-3xl font-extrabold text-cyan-400">100%</span>
-              <span className="text-xs text-slate-400 mt-1 block">{isPt ? 'Testado & Auditado' : 'Tested & Audited'}</span>
+              <span className="block text-xl sm:text-2xl font-extrabold text-cyan-400">Multi-Stack</span>
+              <span className="text-xs text-slate-400 mt-1 block">{isPt ? 'C#, Rust, TS & PHP' : 'C#, Rust, TS & PHP'}</span>
             </div>
             <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-center">
-              <span className="block text-2xl sm:text-3xl font-extrabold text-emerald-400">24/7</span>
-              <span className="text-xs text-slate-400 mt-1 block">{isPt ? 'Automação com IA' : 'AI Automation Uptime'}</span>
+              <span className="block text-xl sm:text-2xl font-extrabold text-emerald-400">Automação</span>
+              <span className="text-xs text-slate-400 mt-1 block">{isPt ? 'Pipelines & Agentes IA' : 'Pipelines & AI Agents'}</span>
             </div>
             <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-center">
-              <span className="block text-2xl sm:text-3xl font-extrabold text-rose-400">&lt;100ms</span>
-              <span className="text-xs text-slate-400 mt-1 block">{isPt ? 'Tempo de Resposta em I/O' : 'High I/O Response'}</span>
+              <span className="block text-xl sm:text-2xl font-extrabold text-indigo-400">Aplicações</span>
+              <span className="text-xs text-slate-400 mt-1 block">{isPt ? 'Desktop, Web & APIs' : 'Desktop, Web & APIs'}</span>
             </div>
           </div>
 

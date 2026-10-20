@@ -28,8 +28,8 @@ export const translations = {
       tech: {
         badge: "Engenharia & Arquitetura",
         title: "Visão Técnica (CTO & Devs)",
-        description: "Explore o ecossistema com foco em código, Clean Architecture, testes unitários automatizados, microsserviços e métricas técnicas de 33 repositórios.",
-        pills: [".NET 10 & C# 13", "Rust Tokio High-I/O", "470+ Testes Automatizados", "Clean Arch & DDD"],
+        description: "Explore o ecossistema com foco em código-fonte, arquitetura de software, microsserviços, automação e decisões de engenharia em 33 repositórios.",
+        pills: [".NET 10 & C# 13", "Rust Tokio High-I/O", "Sistemas Distribuídos & APIs", "IA & Automação"],
         cta: "Explorar Perfil Técnico"
       },
       business: {
@@ -51,14 +51,14 @@ export const translations = {
       ctaPrimary: "Entre em contato",
       ctaSecondary: "Explorar repositórios",
       chips: {
-        chip1: ".NET 10 • Clean Arch",
+        chip1: ".NET 10 • Sistemas Distribuídos",
         chip2: "Rust High-I/O",
         chip3: "AI Agent Systems",
       },
       telemetry: {
         developerName: "Matheus Gomes",
         onlineStatus: "ONLINE • 12ms",
-        statsBadge: "33 repos • 1.120 testes auditados",
+        statsBadge: "33 repos • Engenharia de Software",
       },
       miniTechs: [
         ".NET 10 & C# 13",
@@ -85,17 +85,17 @@ export const translations = {
         xp: "EXPERIÊNCIA:",
         xpVal: "SÊNIOR / FULL-STACK",
       },
-      bio: "Engenheiro de software especializado na concepção e implementação de sistemas de alta vazão, arquiteturas resilientes e pipelines inteligentes de IA. Com sólido domínio em C# (.NET 10), Rust, PHP, TypeScript e microsserviços orientados a eventos, atuo desde o core de domínios complexos até interfaces web reativas e de alta performance. Apaixonado por código limpo, rigor em testes de software e engenharia sem atalhos.",
+      bio: "Engenheiro de software especializado na concepção e implementação de sistemas de alta vazão, arquiteturas resilientes e pipelines inteligentes de IA. Com sólido domínio em C# (.NET 10), Rust, PHP, TypeScript e microsserviços orientados a eventos, atuo desde o core de domínios complexos até interfaces web reativas e de alta performance. Focado em código sustentável, robustez arquitetural e engenharia de software aplicada a problemas reais sem atalhos.",
       pillars: {
-        p1Title: "Arquitetura & DDD",
-        p1Desc: "Clean Architecture, CQRS, Event-Driven e modelagem rica de domínio com testes unitários em todas as camadas.",
+        p1Title: "Arquitetura de Software",
+        p1Desc: "Design modular orientado ao domínio, sistemas distribuídos, microsserviços desacoplados e APIs resilientes de alta disponibilidade.",
         p2Title: "Engenharia de IA",
         p2Desc: "Orquestração de LLMs (OpenAI, Gemini, Ollama), embeddings semânticos em pgvector, calibração estatística e agentes autônomos.",
         p3Title: "Alta Performance & I/O",
         p3Desc: "Serviços assíncronos em Rust Tokio e .NET 10 projetados para baixa latência, processamento em lote e throughput elevado.",
       },
-      metricsTitle: "1.120 Testes Automatizados no Portfólio",
-      metricsSub: "Curadoria rigorosa com 100% de aprovação em suítes de domínio, aplicação e infraestrutura nos 33 projetos.",
+      metricsTitle: "Engenharia e Soluções no Portfólio",
+      metricsSub: "Curadoria técnica com implementações em .NET, Rust, TypeScript e PHP nos 33 projetos.",
       hudTabs: {
         languages: "Linguagens & Core",
         architecture: "Arquitetura & IA",
@@ -131,13 +131,13 @@ export const translations = {
         privateBadge: "Privado",
         publicBadge: "Público",
         viewCode: "Ver Código",
-        details: "Detalhes & Testes",
+        details: "Detalhes de Engenharia",
       }
     },
     modal: {
       overview: "Visão Geral",
       architecture: "Arquitetura & Especificação Técnica",
-      highlights: "Destaques de Engenharia & Testes",
+      highlights: "Destaques de Engenharia",
       ecosystem: "Módulos do Mesmo Ecossistema",
       viewGithub: "Ver no GitHub",
       close: "Fechar modal",
@@ -234,8 +234,8 @@ export const translations = {
       tech: {
         badge: "Engineering & Architecture",
         title: "Technical View (CTOs & Engineers)",
-        description: "Explore the ecosystem focused on code, Clean Architecture, automated unit tests, microservices, and technical metrics across 33 repositories.",
-        pills: [".NET 10 & C# 13", "Rust Tokio High-I/O", "470+ Automated Tests", "Clean Arch & DDD"],
+        description: "Explore the ecosystem with a focus on source code, software architecture, microservices, automation, and engineering decisions across 33 repositories.",
+        pills: [".NET 10 & C# 13", "Rust Tokio High-I/O", "Distributed Systems & APIs", "AI & Automation"],
         cta: "Explore Technical Profile"
       },
       business: {
@@ -257,14 +257,14 @@ export const translations = {
       ctaPrimary: "Get in touch",
       ctaSecondary: "Explore repositories",
       chips: {
-        chip1: ".NET 10 • Clean Arch",
+        chip1: ".NET 10 • Distributed Systems",
         chip2: "Rust High-I/O",
         chip3: "AI Agent Systems",
       },
       telemetry: {
         developerName: "Matheus Gomes",
         onlineStatus: "ONLINE • 12ms",
-        statsBadge: "33 repos • 1,120 audited tests",
+        statsBadge: "33 repos • Software Engineering",
       },
       miniTechs: [
         ".NET 10 & C# 13",
@@ -291,17 +291,17 @@ export const translations = {
         xp: "EXPERIENCE:",
         xpVal: "SENIOR / FULL-STACK",
       },
-      bio: "Software engineer specialized in the design and implementation of high-throughput systems, resilient architectures, and intelligent AI pipelines. With deep expertise in C# (.NET 10), Rust, PHP, TypeScript, and event-driven microservices, I operate from core complex domains to reactive, high-performance web interfaces. Passionate about clean code, software testing rigor, and engineering without shortcuts.",
+      bio: "Software engineer specialized in the design and implementation of high-throughput systems, resilient architectures, and intelligent AI pipelines. With deep expertise in C# (.NET 10), Rust, PHP, TypeScript, and event-driven microservices, I operate from core complex domains to reactive, high-performance web interfaces. Focused on maintainable code, architectural robustness, and real-world software engineering without shortcuts.",
       pillars: {
-        p1Title: "Architecture & DDD",
-        p1Desc: "Clean Architecture, CQRS, Event-Driven, and rich domain modeling with unit tests across all application layers.",
+        p1Title: "Software Architecture",
+        p1Desc: "Domain-oriented modular design, distributed systems, decoupled microservices, and high-availability resilient APIs.",
         p2Title: "AI Engineering",
         p2Desc: "LLM orchestration (OpenAI, Gemini, Ollama), semantic embeddings in pgvector, statistical persona calibration, and autonomous agents.",
         p3Title: "High Performance & I/O",
         p3Desc: "Asynchronous services in Rust Tokio and .NET 10 designed for ultra-low latency, batch pipelines, and high throughput.",
       },
-      metricsTitle: "1,120 Automated Tests in Portfolio",
-      metricsSub: "Rigorous curation with 100% pass rate across domain, application, and infrastructure suites in 33 projects.",
+      metricsTitle: "Engineering & Solutions Portfolio",
+      metricsSub: "Technical curation with implementations across .NET, Rust, TypeScript, and PHP across 33 projects.",
       hudTabs: {
         languages: "Languages & Core",
         architecture: "Architecture & AI",
@@ -337,13 +337,13 @@ export const translations = {
         privateBadge: "Private",
         publicBadge: "Public",
         viewCode: "View Code",
-        details: "Details & Tests",
+        details: "Engineering Details",
       }
     },
     modal: {
       overview: "Overview",
       architecture: "Architecture & Technical Specs",
-      highlights: "Engineering & Testing Highlights",
+      highlights: "Engineering Highlights",
       ecosystem: "Modules in Same Ecosystem",
       viewGithub: "View on GitHub",
       close: "Close modal",

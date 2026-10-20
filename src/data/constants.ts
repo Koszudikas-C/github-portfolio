@@ -46,7 +46,7 @@ export interface SkillItem {
 
 export const skillsDataByLanguage: Record<'pt' | 'en', SkillItem[]> = {
   pt: [
-    { name: ".NET 10 & C# 13", level: 95, desc: "Clean Architecture, DDD, CQRS, SignalR" },
+    { name: ".NET 10 & C# 13", level: 95, desc: "Sistemas Distribuídos, Microsserviços, CQRS, SignalR" },
     { name: "Rust High-Performance", level: 85, desc: "Streaming I/O, LanceDB, Tract-ONNX, Multithreading" },
     { name: "PHP & APIs RESTful", level: 90, desc: "Arquitetura Desacoplada, JWT, Webhooks (Stripe/Asaas), MySQL" },
     { name: "Angular & React / TS", level: 90, desc: "Control Flow, RxJS, NgZorro, Tailwind, Vitest" },
@@ -55,7 +55,7 @@ export const skillsDataByLanguage: Record<'pt' | 'en', SkillItem[]> = {
     { name: "Kubernetes (K3s) & DevOps", level: 85, desc: "Dev/Prod Overlays, Shell Script, Docker, CI/CD" },
   ],
   en: [
-    { name: ".NET 10 & C# 13", level: 95, desc: "Clean Architecture, DDD, CQRS, SignalR" },
+    { name: ".NET 10 & C# 13", level: 95, desc: "Distributed Systems, Microservices, CQRS, SignalR" },
     { name: "Rust High-Performance", level: 85, desc: "Streaming I/O, LanceDB, Tract-ONNX, Multithreading" },
     { name: "PHP & RESTful APIs", level: 90, desc: "Decoupled Architecture, JWT, Webhooks (Stripe/Asaas), MySQL" },
     { name: "Angular & React / TS", level: 90, desc: "Control Flow, RxJS, NgZorro, Tailwind, Vitest" },
