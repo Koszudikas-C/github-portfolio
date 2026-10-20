@@ -105,6 +105,11 @@ const HeroInteractiveAvatar = memo(({
   const rafRef = useRef<number | null>(null);
   const blinkTimeoutRef = useRef<number | null>(null);
 
+  // Divide chip1Text em título e subtítulo para quebra elegante de linha sem sobrepor o personagem
+  const [chip1Title, chip1Sub] = chip1Text.includes('•')
+    ? chip1Text.split('•').map(s => s.trim())
+    : [chip1Text, ''];
+
   // Blinking orgânico e natural (a cada 3.2s a 5.8s, com chance de piscada dupla)
   const executeBlink = useCallback((isDouble = false) => {
     if (!leftEyelidRef.current || !rightEyelidRef.current) return;
@@ -236,15 +241,22 @@ const HeroInteractiveAvatar = memo(({
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 sm:w-[420px] h-80 sm:h-[420px] bg-gradient-to-tr from-blue-600/20 via-[#38bdf8]/15 to-orange-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
         {/* Badges Flutuantes 100% Nítidos em Camada Vetorial (100% Aceleração GPU / 60-120 FPS) */}
-        <div className="hidden sm:flex absolute top-4 -left-6 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c] border border-rose-500/50 text-rose-300 text-xs font-mono font-medium shadow-xl shadow-rose-950/30 animate-badge-1 pointer-events-none">
+        <div className="hidden sm:flex absolute top-1 -left-12 sm:-left-16 lg:-left-20 z-20 items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-[#090d1c]/95 border border-rose-500/50 text-rose-300 text-xs font-mono font-medium shadow-xl shadow-rose-950/40 animate-badge-1 pointer-events-none">
           <span className="relative flex h-2 w-2 shrink-0">
             <span className="animate-beacon absolute inline-flex h-full w-full rounded-full bg-rose-400" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.8)]" />
           </span>
-          <span className="font-semibold tracking-wide">{chip1Text}</span>
+          <div className="flex flex-col text-left leading-tight">
+            <span className="font-bold text-xs text-white tracking-wide">{chip1Title}</span>
+            {chip1Sub && (
+              <span className="text-[10px] text-rose-300 font-semibold tracking-tight whitespace-nowrap">
+                {chip1Sub}
+              </span>
+            )}
+          </div>
         </div>
 
-        <div className="hidden sm:flex absolute top-14 -right-6 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c] border border-amber-500/50 text-amber-300 text-xs font-mono font-medium shadow-xl shadow-amber-950/30 animate-badge-2 pointer-events-none">
+        <div className="hidden sm:flex absolute top-14 -right-8 lg:-right-12 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c]/95 border border-amber-500/50 text-amber-300 text-xs font-mono font-medium shadow-xl shadow-amber-950/30 animate-badge-2 pointer-events-none">
           <span className="relative flex h-2 w-2 shrink-0">
             <span className="animate-beacon absolute inline-flex h-full w-full rounded-full bg-amber-400" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
@@ -252,7 +264,7 @@ const HeroInteractiveAvatar = memo(({
           <span className="font-semibold tracking-wide">{chip2Text}</span>
         </div>
 
-        <div className="hidden sm:flex absolute bottom-28 -left-8 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c] border border-sky-500/50 text-[#38bdf8] text-xs font-mono font-medium shadow-xl shadow-sky-950/30 animate-badge-3 pointer-events-none">
+        <div className="hidden sm:flex absolute bottom-28 -left-10 lg:-left-16 z-20 items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#090d1c]/95 border border-sky-500/50 text-[#38bdf8] text-xs font-mono font-medium shadow-xl shadow-sky-950/30 animate-badge-3 pointer-events-none">
           <Sparkles className="w-3.5 h-3.5 text-[#38bdf8] shrink-0 animate-pulse" />
           <span className="font-semibold tracking-wide">{chip3Text}</span>
         </div>
@@ -306,47 +318,41 @@ const HeroInteractiveAvatar = memo(({
                   <ellipse cx="434" cy="447" rx="64" ry="53" />
                 </clipPath>
 
-                {/* Gradiente 3D da Esclera (Globo Ocular com Iluminação Volumétrica) */}
-                <radialGradient id="sclera3DLeft" cx="46%" cy="40%" r="62%">
-                  <stop offset="0%" stop-color="#ffffff" />
-                  <stop offset="65%" stop-color="#ece8e2" />
-                  <stop offset="90%" stop-color="#d4cfc6" />
-                  <stop offset="100%" stop-color="#b8b2a7" />
+                {/* Gradiente 3D da Esclera (Globo Ocular Limpo e Nítido) */}
+                <radialGradient id="sclera3DLeft" cx="48%" cy="46%" r="62%">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="85%" stopColor="#ffffff" />
+                  <stop offset="100%" stopColor="#f8fafc" />
                 </radialGradient>
-                <radialGradient id="sclera3DRight" cx="48%" cy="42%" r="62%">
-                  <stop offset="0%" stop-color="#ffffff" />
-                  <stop offset="65%" stop-color="#ece8e2" />
-                  <stop offset="90%" stop-color="#d4cfc6" />
-                  <stop offset="100%" stop-color="#b8b2a7" />
+                <radialGradient id="sclera3DRight" cx="48%" cy="46%" r="62%">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="85%" stopColor="#ffffff" />
+                  <stop offset="100%" stopColor="#f8fafc" />
                 </radialGradient>
 
                 {/* Gradiente da Íris (Castanho Profundo Raytraced) */}
                 <radialGradient id="irisGrad" cx="42%" cy="38%" r="60%">
-                  <stop offset="0%" stop-color="#4d2b1f" />
-                  <stop offset="70%" stop-color="#361c14" />
-                  <stop offset="100%" stop-color="#1f100a" />
+                  <stop offset="0%" stopColor="#4d2b1f" />
+                  <stop offset="70%" stopColor="#361c14" />
+                  <stop offset="100%" stopColor="#1f100a" />
                 </radialGradient>
 
                 {/* Gradiente das Pálpebras (Tom de Pele Exato com Sombra de Dobra) */}
                 <linearGradient id="eyelidSkinGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#df9f87" />
-                  <stop offset="70%" stop-color="#cb8870" />
-                  <stop offset="95%" stop-color="#a45e49" />
-                  <stop offset="100%" stop-color="#48241b" />
+                  <stop offset="0%" stopColor="#df9f87" />
+                  <stop offset="70%" stopColor="#cb8870" />
+                  <stop offset="95%" stopColor="#a45e49" />
+                  <stop offset="100%" stopColor="#48241b" />
                 </linearGradient>
               </defs>
 
               {/* Olho Esquerdo (do observador) */}
-              <g clip-path="url(#leftEyeClip)">
-                {/* Esclera 3D */}
+              <g clipPath="url(#leftEyeClip)">
+                {/* Esclera 3D limpa sem sombras escuras na parte branca */}
                 <ellipse cx="215" cy="450" rx="60" ry="50" fill="url(#sclera3DLeft)" />
-                {/* Sombra de oclusão ambiente superior gerada pelos óculos */}
-                <ellipse cx="215" cy="415" rx="62" ry="24" fill="rgba(38, 22, 18, 0.55)" filter="url(#eyeShadowBlur)" />
 
                 {/* Pupila Móvel (Segue o mouse em tempo real) */}
                 <g ref={leftPupilRef} style={{ transition: 'transform 0.06s cubic-bezier(0.2, 0, 0, 1)' }}>
-                  {/* Borda externa sutil */}
-                  <circle cx="227" cy="450" r="37" fill="#b09985" opacity="0.85" />
                   {/* Íris castanha principal */}
                   <circle cx="227" cy="450" r="35" fill="url(#irisGrad)" />
                   {/* Brilho especular nítido */}
@@ -364,21 +370,17 @@ const HeroInteractiveAvatar = memo(({
                 >
                   <rect x="145" y="395" width="140" height="115" fill="url(#eyelidSkinGrad)" rx="16" />
                   {/* Linha dos cílios */}
-                  <line x1="152" y1="508" x2="278" y2="508" stroke="#3b1b13" stroke-width="3.5" stroke-linecap="round" />
+                  <line x1="152" y1="508" x2="278" y2="508" stroke="#3b1b13" strokeWidth="3.5" strokeLinecap="round" />
                 </g>
               </g>
 
               {/* Olho Direito (do observador) */}
-              <g clip-path="url(#rightEyeClip)">
-                {/* Esclera 3D */}
+              <g clipPath="url(#rightEyeClip)">
+                {/* Esclera 3D limpa sem sombras escuras na parte branca */}
                 <ellipse cx="434" cy="447" rx="64" ry="53" fill="url(#sclera3DRight)" />
-                {/* Sombra de oclusão ambiente superior gerada pelos óculos */}
-                <ellipse cx="434" cy="410" rx="66" ry="26" fill="rgba(38, 22, 18, 0.55)" filter="url(#eyeShadowBlur)" />
 
                 {/* Pupila Móvel (Segue o mouse em tempo real) */}
                 <g ref={rightPupilRef} style={{ transition: 'transform 0.06s cubic-bezier(0.2, 0, 0, 1)' }}>
-                  {/* Borda externa sutil */}
-                  <circle cx="424" cy="447" r="41.5" fill="#b09985" opacity="0.85" />
                   {/* Íris castanha principal */}
                   <circle cx="424" cy="447" r="39.5" fill="url(#irisGrad)" />
                   {/* Brilho especular nítido */}
@@ -396,7 +398,7 @@ const HeroInteractiveAvatar = memo(({
                 >
                   <rect x="360" y="388" width="148" height="120" fill="url(#eyelidSkinGrad)" rx="16" />
                   {/* Linha dos cílios */}
-                  <line x1="368" y1="506" x2="500" y2="506" stroke="#3b1b13" stroke-width="3.5" stroke-linecap="round" />
+                  <line x1="368" y1="506" x2="500" y2="506" stroke="#3b1b13" strokeWidth="3.5" strokeLinecap="round" />
                 </g>
               </g>
             </svg>
